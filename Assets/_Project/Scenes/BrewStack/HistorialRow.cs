@@ -1,10 +1,6 @@
 using UnityEngine;
 using TMPro;
 
-/// <summary>
-/// Una fila del panel de historial: Fecha | Modo | Altura | Puntos.
-/// Este componente va en el prefab HistorialRowPrefab.
-/// </summary>
 public class HistorialRow : MonoBehaviour
 {
     [SerializeField] private TMP_Text fechaText;
