@@ -5,8 +5,29 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/_Project/Scenes/MainMenu/LogIn.unity
+    guid: 805680fee37fc4140b898a6d1078d430
+  - enabled: 1
+    path: Assets/_Project/Scenes/MainMenu/MainMenu.unity
+    guid: 8713a4e0a6bd6554890aa4f83e3d9bc8
+  - enabled: 1
+    path: Assets/_Project/Scenes/MainMenu/MenuMinijuegos.unity
+    guid: 2af582c85b00d5a49915423e184409ca
+  - enabled: 1
+    path: Assets/_Project/Scenes/AtlasExpress/MainMenuAE.unity
+    guid: aa834587f29a3e74598215985a01e6ca
+  - enabled: 1
+    path: Assets/_Project/Scenes/BrewStack/MainMenuBS.unity
+    guid: 191216659e816214695413359fba7649
+  - enabled: 1
+    path: Assets/_Project/Scenes/Headbreaker/MainMenuHB.unity
+    guid: 25d3570896349d149ad11cac1e1c94d7
+  - enabled: 1
+    path: Assets/_Project/Scenes/OrbitPayment/MainMenuOP.unity
+    guid: 214ba53d9626c82489f510db0dbad16c
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
