@@ -3,10 +3,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 
-/// <summary>
-/// Controla el menú principal de Torre de Café: navegación entre paneles,
-/// lectura de estadísticas guardadas, historial y audio.
-/// </summary>
 public class MenuManager : MonoBehaviour
 {
     [Header("Paneles")]
@@ -29,8 +25,6 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioClip clickSound;
 
-    // Claves de PlayerPrefs. Guárdalas iguales en el script del juego
-    // al terminar una partida.
     private const string KEY_MEJOR_PUNTAJE = "MejorPuntaje";
     private const string KEY_ULTIMA_PARTIDA = "UltimaPartida";
     private const string KEY_HISTORIAL = "HistorialJson";
@@ -41,8 +35,6 @@ public class MenuManager : MonoBehaviour
         CargarStats();
     }
 
-    // ---------- Audio ----------
-
     private void ReproducirClick()
     {
         if (sfxSource != null && clickSound != null)
@@ -51,7 +43,6 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    // ---------- Navegación ----------
 
     public void MostrarMainMenu()
     {
@@ -92,7 +83,6 @@ public class MenuManager : MonoBehaviour
 #endif
     }
 
-    // ---------- Stats ----------
 
     private void CargarStats()
     {
@@ -103,7 +93,6 @@ public class MenuManager : MonoBehaviour
         ultimaPartidaText.text = $"{ultima} pts";
     }
 
-    // ---------- Historial ----------
 
     [System.Serializable]
     public class HistorialEntry
@@ -122,7 +111,6 @@ public class MenuManager : MonoBehaviour
 
     private void PoblarHistorial()
     {
-        // Limpia filas anteriores
         foreach (Transform child in historialContent)
         {
             Destroy(child.gameObject);
@@ -132,7 +120,7 @@ public class MenuManager : MonoBehaviour
 
         if (entries.Count == 0)
         {
-            return; // Deja el panel vacío, sin partidas registradas todavía
+            return;
         }
 
         foreach (HistorialEntry entry in entries)
@@ -154,10 +142,6 @@ public class MenuManager : MonoBehaviour
         return wrapper != null ? wrapper.entries : new List<HistorialEntry>();
     }
 
-    /// <summary>
-    /// Llama esto desde el script del juego al terminar una partida
-    /// para guardar el resultado y actualizar mejor puntaje / última partida.
-    /// </summary>
     public static void GuardarResultado(string modo, int altura, int puntos)
     {
         int mejor = PlayerPrefs.GetInt(KEY_MEJOR_PUNTAJE, 0);
