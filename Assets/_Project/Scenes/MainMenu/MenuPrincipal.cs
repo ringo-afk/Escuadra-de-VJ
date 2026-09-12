@@ -34,7 +34,7 @@ public class MenuPrincipal : MonoBehaviour
     public void ToSpaceDefender()
     {
         // Space Defender
-        SceneManager.LoadScene("MainMenuSD");
+        SceneManager.LoadScene("SD_MainMenu");
     }
     
     public void ToOrbitPayment()
