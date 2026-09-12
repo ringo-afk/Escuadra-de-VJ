@@ -16,13 +16,13 @@ public class MenuPrincipal : MonoBehaviour
     public void ToAtlasExpress()
     {
         // Atlas Express
-        SceneManager.LoadScene("MainMenuAE");
+        SceneManager.LoadScene("MenuEXPRESS");
     }
     
     public void ToBrewStack()
     {
         // Brew Stack
-        SceneManager.LoadScene("MainMenuBS");
+        SceneManager.LoadScene("BS_Menu");
     }
 
     public void ToHeadBreaker()
