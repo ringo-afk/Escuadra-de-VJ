@@ -21,7 +21,7 @@ EditorBuildSettings:
     path: Assets/_Project/Scenes/BrewStack/MainMenuBS.unity
     guid: 191216659e816214695413359fba7649
   - enabled: 1
-    path: Assets/_Project/Scenes/Headbreaker/MainMenuHB.unity
+    path: Assets/_Project/Scenes/Headbreaker/HB_Scenes/MainMenuHB.unity
     guid: 25d3570896349d149ad11cac1e1c94d7
   - enabled: 0
     path: Assets/_Project/Scenes/OrbitPayment/MainMenuOP2.unity
@@ -30,13 +30,13 @@ EditorBuildSettings:
     path: Assets/_Project/Scenes/SpaceDefender/SD_MainMenu.unity
     guid: e3925a2524ca6da468d751f9fae7c350
   - enabled: 1
-    path: Assets/_Project/Scenes/AtlasExpress/MenuEXPRESS.unity
+    path: Assets/_Project/Scenes/AtlasExpress/AE_Scenes/AE_Menu.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
-    path: Assets/_Project/Scenes/BrewStack/Scenes/BS_Menu.unity
+    path: Assets/_Project/Scenes/BrewStack/BS_Scenes/BS_Menu.unity
     guid: ad55b91e1c054fb4784caa6ada391a77
   - enabled: 1
-    path: Assets/_Project/Scenes/OrbitPayment/MainMenuOP.unity
+    path: Assets/_Project/Scenes/OrbitPayment/OP_Scenes/OP_MainMenu.unity
     guid: 5832fb5ad1634884f93ee1a11c71825f
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

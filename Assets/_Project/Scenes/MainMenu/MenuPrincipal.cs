@@ -16,7 +16,7 @@ public class MenuPrincipal : MonoBehaviour
     public void ToAtlasExpress()
     {
         // Atlas Express
-        SceneManager.LoadScene("MenuEXPRESS");
+        SceneManager.LoadScene("AE_Menu");
     }
     
     public void ToBrewStack()
@@ -28,7 +28,7 @@ public class MenuPrincipal : MonoBehaviour
     public void ToHeadBreaker()
     {
         // Head Breaker
-        SceneManager.LoadScene("MainMenuHB");
+        SceneManager.LoadScene("HB_MainMenu");
     }
     
     public void ToSpaceDefender()
@@ -40,7 +40,7 @@ public class MenuPrincipal : MonoBehaviour
     public void ToOrbitPayment()
     {
         // Orbit Payment
-        SceneManager.LoadScene("MainMenuOP");
+        SceneManager.LoadScene("OP_MainMenu");
     }
 
 
