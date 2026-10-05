@@ -48,15 +48,19 @@ public static class BrewStackGameBuilder
         Sprite spriteBloque = CrearSpriteBloque();
         Bloque prefabBloque = CrearPrefabBloque(spriteBloque);
 
-        CrearCamara();
+        Camera cam = CrearCamara();
         CrearBase(spriteBloque);
         Torre torre = CrearTorre(prefabBloque);
+        AgregarSeguimientoCamara(cam, torre);
 
+        // el orden importa: lo que se crea después queda encima
         Transform canvas = CrearCanvas();
         CrearEventSystem();
+        HUDJuego hud = CrearHUD(canvas, torre, spriteBloque);
         TriviaUI trivia = CrearTrivia(canvas, spriteBloque);
+        ResultadoFinalUI resultado = CrearResultado(canvas);
 
-        CrearPruebaFisica(torre, trivia);
+        CrearPruebaFisica(torre, trivia, hud, resultado);
 
         EditorSceneManager.SaveScene(escena, RUTA_ESCENA);
         AssetDatabase.Refresh();
@@ -108,7 +112,7 @@ public static class BrewStackGameBuilder
         return prefab.GetComponent<Bloque>();
     }
 
-    private static void CrearCamara()
+    private static Camera CrearCamara()
     {
         GameObject obj = new GameObject("Main Camera");
         obj.tag = "MainCamera";
@@ -123,7 +127,7 @@ public static class BrewStackGameBuilder
 
         // el fondo va pegado a la cámara para que la siga cuando suba
         Sprite fondo = CargarPrimerSprite(RUTA_FONDO);
-        if (fondo == null) return;
+        if (fondo == null) return cam;
 
         GameObject objFondo = new GameObject("Fondo");
         objFondo.transform.SetParent(obj.transform, false);
@@ -138,6 +142,15 @@ public static class BrewStackGameBuilder
         float ancho = alto * 3f;
         Vector2 tamSprite = fondo.bounds.size;
         objFondo.transform.localScale = new Vector3(ancho / tamSprite.x, alto / tamSprite.y, 1f);
+        return cam;
+    }
+
+    private static void AgregarSeguimientoCamara(Camera cam, Torre torre)
+    {
+        CamaraTorre seguimiento = cam.gameObject.AddComponent<CamaraTorre>();
+        SerializedObject so = new SerializedObject(seguimiento);
+        so.FindProperty("torre").objectReferenceValue = torre;
+        so.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private static Sprite CargarPrimerSprite(string ruta)
@@ -175,7 +188,7 @@ public static class BrewStackGameBuilder
         return torre;
     }
 
-    private static void CrearPruebaFisica(Torre torre, TriviaUI trivia)
+    private static void CrearPruebaFisica(Torre torre, TriviaUI trivia, HUDJuego hud, ResultadoFinalUI resultado)
     {
         GameObject obj = new GameObject("PruebaFisica");
         PruebaFisica prueba = obj.AddComponent<PruebaFisica>();
@@ -183,7 +196,116 @@ public static class BrewStackGameBuilder
         SerializedObject so = new SerializedObject(prueba);
         so.FindProperty("torre").objectReferenceValue = torre;
         so.FindProperty("trivia").objectReferenceValue = trivia;
+        so.FindProperty("hud").objectReferenceValue = hud;
+        so.FindProperty("resultado").objectReferenceValue = resultado;
         so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static HUDJuego CrearHUD(Transform canvas, Torre torre, Sprite spriteBlanco)
+    {
+        TMP_FontAsset fuente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(RUTA_FUENTE);
+
+        GameObject hudObj = new GameObject("HUD", typeof(RectTransform));
+        hudObj.layer = LayerMask.NameToLayer("UI");
+        hudObj.transform.SetParent(canvas, false);
+        Estirar(hudObj, Vector2.zero, Vector2.one);
+
+        GameObject barraSuperior = CrearImagen("BarraSuperior", hudObj.transform, colorPanel, null);
+        Estirar(barraSuperior, new Vector2(0f, 0.91f), Vector2.one);
+        barraSuperior.GetComponent<Image>().raycastTarget = false;
+
+        TMP_Text puntos = CrearTexto("TextoPuntos", barraSuperior.transform, "Puntos: 0", 36f, colorTexto, fuente);
+        Estirar(puntos.gameObject, new Vector2(0.02f, 0f), new Vector2(0.32f, 1f));
+        puntos.alignment = TextAlignmentOptions.Left;
+
+        TMP_Text altura = CrearTexto("TextoAltura", barraSuperior.transform, "Altura: 0", 36f, colorTexto, fuente);
+        Estirar(altura.gameObject, new Vector2(0.35f, 0f), new Vector2(0.65f, 1f));
+
+        TMP_Text tiempo = CrearTexto("TextoTiempo", barraSuperior.transform, "Tiempo: 3:00", 36f, colorTexto, fuente);
+        Estirar(tiempo.gameObject, new Vector2(0.68f, 0f), new Vector2(0.98f, 1f));
+        tiempo.alignment = TextAlignmentOptions.Right;
+
+        TMP_Text etiqueta = CrearTexto("TextoEstabilidad", hudObj.transform, "Estabilidad", 24f, colorTexto, fuente);
+        Estirar(etiqueta.gameObject, new Vector2(0.3f, 0.86f), new Vector2(0.7f, 0.9f));
+
+        GameObject fondoBarra = CrearImagen("BarraEstabilidadFondo", hudObj.transform, new Color(1f, 1f, 1f, 0.1f), spriteBlanco);
+        Estirar(fondoBarra, new Vector2(0.3f, 0.835f), new Vector2(0.7f, 0.855f));
+        fondoBarra.GetComponent<Image>().raycastTarget = false;
+        GameObject relleno = CrearImagen("BarraEstabilidad", fondoBarra.transform, colorCeleste, spriteBlanco);
+        Estirar(relleno, Vector2.zero, Vector2.one);
+        relleno.GetComponent<Image>().raycastTarget = false;
+
+        HUDJuego hud = hudObj.AddComponent<HUDJuego>();
+        SerializedObject so = new SerializedObject(hud);
+        so.FindProperty("torre").objectReferenceValue = torre;
+        so.FindProperty("textoPuntos").objectReferenceValue = puntos;
+        so.FindProperty("textoAltura").objectReferenceValue = altura;
+        so.FindProperty("textoTiempo").objectReferenceValue = tiempo;
+        so.FindProperty("barraEstabilidad").objectReferenceValue = relleno.GetComponent<RectTransform>();
+        so.FindProperty("imagenEstabilidad").objectReferenceValue = relleno.GetComponent<Image>();
+        so.ApplyModifiedPropertiesWithoutUndo();
+        return hud;
+    }
+
+    private static ResultadoFinalUI CrearResultado(Transform canvas)
+    {
+        TMP_FontAsset fuente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(RUTA_FUENTE);
+        Sprite borde = CargarPrimerSprite(RUTA_BORDE_BOTON);
+
+        GameObject panel = CrearImagen("PanelResultado", canvas, colorPanel, null);
+        Estirar(panel, Vector2.zero, Vector2.one);
+
+        GameObject caja = CrearImagen("Caja", panel.transform, colorBordeCeleste, borde);
+        Estirar(caja, new Vector2(0.25f, 0.15f), new Vector2(0.75f, 0.85f));
+
+        TMP_Text titulo = CrearTexto("Titulo", caja.transform, "Fin de la partida", 56f, colorCeleste, fuente);
+        Estirar(titulo.gameObject, new Vector2(0.05f, 0.82f), new Vector2(0.95f, 0.95f));
+
+        TMP_Text motivo = CrearTexto("TextoMotivo", caja.transform, "Motivo", 32f, colorTexto, fuente);
+        Estirar(motivo.gameObject, new Vector2(0.05f, 0.72f), new Vector2(0.95f, 0.81f));
+
+        TMP_Text altura = CrearTexto("TextoAltura", caja.transform, "Altura: 0 bloques", 36f, colorTexto, fuente);
+        Estirar(altura.gameObject, new Vector2(0.05f, 0.6f), new Vector2(0.95f, 0.69f));
+
+        TMP_Text puntos = CrearTexto("TextoPuntos", caja.transform, "Puntos: 0", 36f, colorTexto, fuente);
+        Estirar(puntos.gameObject, new Vector2(0.05f, 0.5f), new Vector2(0.95f, 0.59f));
+
+        TMP_Text aciertos = CrearTexto("TextoAciertos", caja.transform, "Aciertos: 0%", 36f, colorTexto, fuente);
+        Estirar(aciertos.gameObject, new Vector2(0.05f, 0.4f), new Vector2(0.95f, 0.49f));
+
+        TMP_Text record = CrearTexto("TextoRecord", caja.transform, "¡Nuevo récord!", 40f, colorBase, fuente);
+        Estirar(record.gameObject, new Vector2(0.05f, 0.29f), new Vector2(0.95f, 0.38f));
+
+        Button jugar = CrearBoton("BotonJugarDeNuevo", caja.transform, "Jugar de nuevo", borde, fuente);
+        Estirar(jugar.gameObject, new Vector2(0.08f, 0.07f), new Vector2(0.48f, 0.2f));
+
+        Button volver = CrearBoton("BotonVolver", caja.transform, "Volver", borde, fuente);
+        Estirar(volver.gameObject, new Vector2(0.52f, 0.07f), new Vector2(0.92f, 0.2f));
+
+        GameObject obj = new GameObject("Resultado");
+        ResultadoFinalUI resultado = obj.AddComponent<ResultadoFinalUI>();
+        SerializedObject so = new SerializedObject(resultado);
+        so.FindProperty("panel").objectReferenceValue = panel;
+        so.FindProperty("textoMotivo").objectReferenceValue = motivo;
+        so.FindProperty("textoAltura").objectReferenceValue = altura;
+        so.FindProperty("textoPuntos").objectReferenceValue = puntos;
+        so.FindProperty("textoAciertos").objectReferenceValue = aciertos;
+        so.FindProperty("textoRecord").objectReferenceValue = record.gameObject;
+        so.FindProperty("botonJugarDeNuevo").objectReferenceValue = jugar;
+        so.FindProperty("botonVolver").objectReferenceValue = volver;
+        so.ApplyModifiedPropertiesWithoutUndo();
+        return resultado;
+    }
+
+    private static Button CrearBoton(string nombre, Transform padre, string texto, Sprite borde, TMP_FontAsset fuente)
+    {
+        GameObject obj = CrearImagen(nombre, padre, colorBordeCeleste, borde);
+        Button boton = obj.AddComponent<Button>();
+        boton.targetGraphic = obj.GetComponent<Image>();
+
+        TMP_Text tmp = CrearTexto("Texto", obj.transform, texto, 32f, colorTexto, fuente);
+        Estirar(tmp.gameObject, Vector2.zero, Vector2.one);
+        return boton;
     }
 
     private static Transform CrearCanvas()

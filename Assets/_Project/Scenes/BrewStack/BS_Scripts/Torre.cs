@@ -53,10 +53,14 @@ public class Torre : MonoBehaviour
     private float desfaseAcumulado;
     private int malPuestosSeguidos;
     private bool terminada;
+    private int alturaAlcanzada;
 
     public int Altura => bloques.Count;
     public float Estabilidad => Mathf.Clamp01(1f - Mathf.Abs(desfaseAcumulado) / umbralDesfase);
     public bool Terminada => terminada;
+    // la altura que tenía antes de colapsar, para el resultado final
+    public int AlturaAlcanzada => alturaAlcanzada;
+    public float YBloqueBalanceo => transform.position.y + bloques.Count * prefabBloque.Alto + alturaBalanceo;
     public bool HayBloqueBalanceando => bloqueActual != null && bloqueActual.EstadoActual == Bloque.Estado.Balanceando;
 
     private void Awake()
@@ -92,6 +96,7 @@ public class Torre : MonoBehaviour
         desfaseAcumulado = 0f;
         malPuestosSeguidos = 0;
         terminada = false;
+        alturaAlcanzada = 0;
     }
 
     public void PrepararBloque(bool acierto)
@@ -173,6 +178,18 @@ public class Torre : MonoBehaviour
         bloques.Add(b);
         xArriba = b.transform.localPosition.x;
         anchoArriba = b.Ancho;
+        alturaAlcanzada = bloques.Count;
+    }
+
+    // para cuando se acaba el tiempo: la torre se queda parada y ya no salen bloques
+    public void Detener()
+    {
+        terminada = true;
+        if (bloqueActual != null)
+        {
+            Destroy(bloqueActual.gameObject);
+            bloqueActual = null;
+        }
     }
 
     public void Colapsar()
