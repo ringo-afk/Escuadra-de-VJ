@@ -64,8 +64,8 @@ public class Bloque : MonoBehaviour
         velocidadBalanceo = velocidad;
         tiempoBalanceo = 0f;
 
-        transform.position = new Vector3(centroX - amplitud, y, 0f);
-        transform.rotation = Quaternion.identity;
+        transform.localPosition = new Vector3(centroX - amplitud, y, 0f);
+        transform.localRotation = Quaternion.identity;
         estado = Estado.Balanceando;
     }
 
@@ -86,31 +86,31 @@ public class Bloque : MonoBehaviour
             tiempoBalanceo += Time.deltaTime;
             float x = centroBalanceo - amplitudBalanceo
                 + Mathf.PingPong(tiempoBalanceo * velocidadBalanceo, amplitudBalanceo * 2f);
-            transform.position = new Vector3(x, transform.position.y, 0f);
+            transform.localPosition = new Vector3(x, transform.localPosition.y, 0f);
         }
         else if (estado == Estado.Cayendo)
         {
             velocidadCaida = Mathf.Min(velocidadCaida + gravedad * Time.deltaTime, velocidadMaximaCaida);
-            Vector3 pos = transform.position;
+            Vector3 pos = transform.localPosition;
             pos.y -= velocidadCaida * Time.deltaTime;
 
             if (pos.y <= yDestino)
             {
                 pos.y = yDestino;
-                transform.position = pos;
+                transform.localPosition = pos;
                 estado = Estado.Colocado;
                 alAterrizar?.Invoke(this);
                 return;
             }
-            transform.position = pos;
+            transform.localPosition = pos;
         }
     }
 
     public void MoverX(float x)
     {
-        Vector3 pos = transform.position;
+        Vector3 pos = transform.localPosition;
         pos.x = x;
-        transform.position = pos;
+        transform.localPosition = pos;
     }
 
     // intensidad de 0 a 1, el signo dice hacia qué lado se inclina
@@ -156,13 +156,13 @@ public class Bloque : MonoBehaviour
     private void ProbarBalanceo()
     {
         Configurar(2f, true);
-        EmpezarBalanceo(0f, transform.position.y, 2f, 3f);
+        EmpezarBalanceo(0f, transform.localPosition.y, 2f, 3f);
     }
 
     [ContextMenu("Probar soltar")]
     private void ProbarSoltar()
     {
-        Soltar(transform.position.y - 3f, b => b.Temblar(0.8f));
+        Soltar(transform.localPosition.y - 3f, b => b.Temblar(0.8f));
     }
 
     [ContextMenu("Probar salir volando")]
