@@ -4162,8 +4162,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Cada 3 bloques aparece una pregunta en el panel derecho, con 8 segundos
-    de l\xEDmite."
+  m_text: "Antes de cada bloque hay una pregunta de opci\xF3n m\xFAltiple. Tienes
+    8 segundos para responder."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 98b89c94497e930438d20d678260746a, type: 2}
   m_sharedMaterial: {fileID: 1578854091053485984, guid: 98b89c94497e930438d20d678260746a, type: 2}
@@ -5338,8 +5338,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Lo que sobresale se corta. Si el bloque cae fuera por completo, la torre
-    se cae.
+  m_text: Lo que sobresale se corta. Si lo sueltas chueco, la torre se ladea. Con
+    varios errores seguidos, se cae.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 98b89c94497e930438d20d678260746a, type: 2}
   m_sharedMaterial: {fileID: 1578854091053485984, guid: 98b89c94497e930438d20d678260746a, type: 2}
@@ -5738,8 +5738,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Acierto: +25 pts y bloque m\xE1s ancho. Error: el siguiente bloque se
-    angosta."
+  m_text: "Acierto: bloque ancho y lento, m\xE1s f\xE1cil de colocar. Error: bloque
+    angosto y r\xE1pido, pero a\xFAn lo puedes salvar."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 98b89c94497e930438d20d678260746a, type: 2}
   m_sharedMaterial: {fileID: 1578854091053485984, guid: 98b89c94497e930438d20d678260746a, type: 2}

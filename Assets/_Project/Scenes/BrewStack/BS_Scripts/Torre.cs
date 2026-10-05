@@ -12,7 +12,7 @@ public class Torre : MonoBehaviour
     [SerializeField] private float anchoAcierto = 2f;
     [SerializeField] private float anchoError = 1.4f;
     [SerializeField] private float velocidadAcierto = 2.5f;
-    [SerializeField] private float velocidadError = 4f;
+    [SerializeField] private float velocidadError = 6f;
 
     [Header("Balanceo")]
     [SerializeField] private float amplitudBalanceo = 2.5f;
