@@ -1,7 +1,11 @@
 using System.IO;
+using TMPro;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
+using UnityEngine.UI;
 
 public static class BrewStackGameBuilder
 {
@@ -10,6 +14,9 @@ public static class BrewStackGameBuilder
     private const string RUTA_PREFAB_BLOQUE = CARPETA + "/BS_Prefabs/Bloque.prefab";
     private const string RUTA_SPRITE_BLOQUE = CARPETA + "/BS_Sprites/bloque_blanco.png";
     private const string RUTA_FONDO = CARPETA + "/BS_Sprites/fondo_gradiente_espacial.png";
+    private const string RUTA_BORDE_BOTON = CARPETA + "/BS_Sprites/borde_boton.png";
+    private const string RUTA_FUENTE = CARPETA + "/BS_Fonts/Orbitron-Bold SDF.asset";
+    private const string RUTA_PREGUNTAS = CARPETA + "/BS_Data/preguntas.json";
 
     private const float ANCHO_BASE = 3f;
     private const float ALTO_BASE = 0.5f;
@@ -17,6 +24,10 @@ public static class BrewStackGameBuilder
 
     private static readonly Color colorFondo = new Color(0.04f, 0.07f, 0.16f);
     private static readonly Color colorBase = new Color(0.88f, 0.59f, 0.23f);
+    private static readonly Color colorPanel = new Color(0.024f, 0.043f, 0.094f, 0.84f);
+    private static readonly Color colorBordeCeleste = new Color(0.62f, 0.85f, 1f, 0.35f);
+    private static readonly Color colorTexto = new Color(0.81f, 0.9f, 1f);
+    private static readonly Color colorCeleste = new Color(0.62f, 0.85f, 1f);
 
     [MenuItem("BrewStack/Generar escena de juego")]
     public static void GenerarEscena()
@@ -40,7 +51,12 @@ public static class BrewStackGameBuilder
         CrearCamara();
         CrearBase(spriteBloque);
         Torre torre = CrearTorre(prefabBloque);
-        CrearPruebaFisica(torre);
+
+        Transform canvas = CrearCanvas();
+        CrearEventSystem();
+        TriviaUI trivia = CrearTrivia(canvas, spriteBloque);
+
+        CrearPruebaFisica(torre, trivia);
 
         EditorSceneManager.SaveScene(escena, RUTA_ESCENA);
         AssetDatabase.Refresh();
@@ -159,13 +175,153 @@ public static class BrewStackGameBuilder
         return torre;
     }
 
-    private static void CrearPruebaFisica(Torre torre)
+    private static void CrearPruebaFisica(Torre torre, TriviaUI trivia)
     {
         GameObject obj = new GameObject("PruebaFisica");
         PruebaFisica prueba = obj.AddComponent<PruebaFisica>();
 
         SerializedObject so = new SerializedObject(prueba);
         so.FindProperty("torre").objectReferenceValue = torre;
+        so.FindProperty("trivia").objectReferenceValue = trivia;
         so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static Transform CrearCanvas()
+    {
+        GameObject obj = new GameObject("Canvas");
+        obj.layer = LayerMask.NameToLayer("UI");
+
+        Canvas canvas = obj.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+
+        CanvasScaler scaler = obj.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920f, 1080f);
+        scaler.matchWidthOrHeight = 0.5f;
+
+        obj.AddComponent<GraphicRaycaster>();
+        return obj.transform;
+    }
+
+    private static void CrearEventSystem()
+    {
+        GameObject obj = new GameObject("EventSystem");
+        obj.AddComponent<EventSystem>();
+        InputSystemUIInputModule modulo = obj.AddComponent<InputSystemUIInputModule>();
+        modulo.AssignDefaultActions();
+    }
+
+    private static TriviaUI CrearTrivia(Transform canvas, Sprite spriteBlanco)
+    {
+        TMP_FontAsset fuente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(RUTA_FUENTE);
+        Sprite borde = CargarPrimerSprite(RUTA_BORDE_BOTON);
+
+        // fondo oscuro que tapa el juego mientras se contesta
+        GameObject panel = CrearImagen("PanelTrivia", canvas, colorPanel, null);
+        Estirar(panel, Vector2.zero, Vector2.one);
+
+        GameObject caja = CrearImagen("Caja", panel.transform, colorBordeCeleste, borde);
+        Estirar(caja, new Vector2(0.2f, 0.12f), new Vector2(0.8f, 0.88f));
+
+        TMP_Text pregunta = CrearTexto("TextoPregunta", caja.transform, "Pregunta", 44f, colorTexto, fuente);
+        Estirar(pregunta.gameObject, new Vector2(0.06f, 0.68f), new Vector2(0.94f, 0.94f));
+
+        GameObject listaBotones = new GameObject("Opciones", typeof(RectTransform));
+        listaBotones.transform.SetParent(caja.transform, false);
+        Estirar(listaBotones, new Vector2(0.1f, 0.14f), new Vector2(0.9f, 0.64f));
+        VerticalLayoutGroup layout = listaBotones.AddComponent<VerticalLayoutGroup>();
+        layout.spacing = 18f;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = true;
+
+        Button[] botones = new Button[4];
+        TMP_Text[] textos = new TMP_Text[4];
+        for (int i = 0; i < 4; i++)
+        {
+            GameObject objBoton = CrearImagen("Opcion" + (i + 1), listaBotones.transform, colorBordeCeleste, borde);
+            botones[i] = objBoton.AddComponent<Button>();
+            botones[i].targetGraphic = objBoton.GetComponent<Image>();
+            textos[i] = CrearTexto("Texto", objBoton.transform, "Opción", 32f, colorTexto, fuente);
+            Estirar(textos[i].gameObject, Vector2.zero, Vector2.one);
+            textos[i].rectTransform.offsetMin = new Vector2(24f, 0f);
+            textos[i].rectTransform.offsetMax = new Vector2(-24f, 0f);
+        }
+
+        GameObject fondoBarra = CrearImagen("BarraTiempoFondo", caja.transform, new Color(1f, 1f, 1f, 0.1f), spriteBlanco);
+        Estirar(fondoBarra, new Vector2(0.1f, 0.05f), new Vector2(0.9f, 0.08f));
+        GameObject relleno = CrearImagen("BarraTiempo", fondoBarra.transform, colorCeleste, spriteBlanco);
+        Estirar(relleno, Vector2.zero, Vector2.one);
+
+        GameObject obj = new GameObject("Trivia");
+        BancoPreguntas banco = obj.AddComponent<BancoPreguntas>();
+        SerializedObject soBanco = new SerializedObject(banco);
+        soBanco.FindProperty("archivoPreguntas").objectReferenceValue = AssetDatabase.LoadAssetAtPath<TextAsset>(RUTA_PREGUNTAS);
+        soBanco.ApplyModifiedPropertiesWithoutUndo();
+
+        TriviaUI trivia = obj.AddComponent<TriviaUI>();
+        SerializedObject so = new SerializedObject(trivia);
+        so.FindProperty("banco").objectReferenceValue = banco;
+        so.FindProperty("panel").objectReferenceValue = panel;
+        so.FindProperty("textoPregunta").objectReferenceValue = pregunta;
+        so.FindProperty("barraTiempo").objectReferenceValue = relleno.GetComponent<RectTransform>();
+        so.FindProperty("imagenBarra").objectReferenceValue = relleno.GetComponent<Image>();
+
+        SerializedProperty propBotones = so.FindProperty("botones");
+        SerializedProperty propTextos = so.FindProperty("textosBotones");
+        propBotones.arraySize = 4;
+        propTextos.arraySize = 4;
+        for (int i = 0; i < 4; i++)
+        {
+            propBotones.GetArrayElementAtIndex(i).objectReferenceValue = botones[i];
+            propTextos.GetArrayElementAtIndex(i).objectReferenceValue = textos[i];
+        }
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        return trivia;
+    }
+
+    private static GameObject CrearImagen(string nombre, Transform padre, Color color, Sprite sprite)
+    {
+        GameObject obj = new GameObject(nombre, typeof(RectTransform));
+        obj.layer = LayerMask.NameToLayer("UI");
+        obj.transform.SetParent(padre, false);
+
+        Image img = obj.AddComponent<Image>();
+        img.color = color;
+        img.sprite = sprite;
+        if (sprite != null && sprite.border != Vector4.zero)
+        {
+            img.type = Image.Type.Sliced;
+        }
+        return obj;
+    }
+
+    private static TMP_Text CrearTexto(string nombre, Transform padre, string texto, float tamano, Color color, TMP_FontAsset fuente)
+    {
+        GameObject obj = new GameObject(nombre, typeof(RectTransform));
+        obj.layer = LayerMask.NameToLayer("UI");
+        obj.transform.SetParent(padre, false);
+
+        TextMeshProUGUI tmp = obj.AddComponent<TextMeshProUGUI>();
+        tmp.text = texto;
+        tmp.fontSize = tamano;
+        tmp.color = color;
+        tmp.alignment = TextAlignmentOptions.Center;
+        tmp.textWrappingMode = TextWrappingModes.Normal;
+        tmp.raycastTarget = false;
+        if (fuente != null) tmp.font = fuente;
+        return tmp;
+    }
+
+    // ocupa el área entre las dos esquinas, en porcentaje del padre
+    private static void Estirar(GameObject obj, Vector2 min, Vector2 max)
+    {
+        RectTransform rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = min;
+        rect.anchorMax = max;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
     }
 }
