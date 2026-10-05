@@ -17,6 +17,8 @@ public static class BrewStackGameBuilder
     private const string RUTA_BORDE_BOTON = CARPETA + "/BS_Sprites/borde_boton.png";
     private const string RUTA_FUENTE = CARPETA + "/BS_Fonts/Orbitron-Bold SDF.asset";
     private const string RUTA_PREGUNTAS = CARPETA + "/BS_Data/preguntas.json";
+    private const string RUTA_MENU = CARPETA + "/BS_Scenes/BS_Menu.unity";
+    private const string NOMBRE_ESCENA_JUEGO = "BS_Game";
 
     private const float ANCHO_BASE = 3f;
     private const float ALTO_BASE = 0.5f;
@@ -60,11 +62,119 @@ public static class BrewStackGameBuilder
         TriviaUI trivia = CrearTrivia(canvas, spriteBloque);
         ResultadoFinalUI resultado = CrearResultado(canvas);
 
-        CrearPruebaFisica(torre, trivia, hud, resultado);
+        CrearJuegoManager(torre, trivia, hud, resultado);
 
         EditorSceneManager.SaveScene(escena, RUTA_ESCENA);
         AssetDatabase.Refresh();
         Debug.Log("BrewStack: escena BS_Game generada en " + RUTA_ESCENA);
+    }
+
+    // separado de GenerarEscena porque toca Build Settings, que es compartido con todo el equipo
+    [MenuItem("BrewStack/Registrar BS_Game en el proyecto")]
+    public static void RegistrarEscena()
+    {
+        if (EditorApplication.isPlaying)
+        {
+            Debug.LogWarning("BrewStack: sal de Play antes de registrar la escena");
+            return;
+        }
+        if (!File.Exists(RUTA_ESCENA))
+        {
+            Debug.LogError("BrewStack: no existe " + RUTA_ESCENA + ", primero usa Generar escena de juego");
+            return;
+        }
+
+        bool cambioBuild = AgregarABuildSettings();
+        bool cambioMenu = CambiarEscenaDelMenu();
+
+        if (!cambioBuild && !cambioMenu)
+        {
+            Debug.Log("BrewStack: no se hizo nada, BS_Game ya estaba registrada y BS_Menu ya apuntaba a ella");
+        }
+    }
+
+    private static bool AgregarABuildSettings()
+    {
+        EditorBuildSettingsScene[] escenas = EditorBuildSettings.scenes;
+        foreach (EditorBuildSettingsScene e in escenas)
+        {
+            if (e.path != RUTA_ESCENA) continue;
+
+            if (!e.enabled)
+            {
+                Debug.LogWarning("BrewStack: BS_Game ya está en Build Settings pero desactivada. No la toqué, actívala a mano si hace falta.");
+            }
+            return false;
+        }
+
+        // se agrega al final, las demás se quedan igual y en el mismo orden
+        EditorBuildSettingsScene[] nuevas = new EditorBuildSettingsScene[escenas.Length + 1];
+        escenas.CopyTo(nuevas, 0);
+        nuevas[escenas.Length] = new EditorBuildSettingsScene(RUTA_ESCENA, true);
+        EditorBuildSettings.scenes = nuevas;
+
+        Debug.Log($"BrewStack: se agregó {RUTA_ESCENA} a Build Settings en la posición {escenas.Length}");
+        return true;
+    }
+
+    private static bool CambiarEscenaDelMenu()
+    {
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+        {
+            Debug.LogWarning("BrewStack: se canceló, BS_Menu no se modificó");
+            return false;
+        }
+
+        var menu = EditorSceneManager.GetSceneByPath(RUTA_MENU);
+        bool yaEstabaAbierta = menu.isLoaded;
+
+        // si tiene cambios sin guardar no la toco, para no guardarlos sin querer
+        if (yaEstabaAbierta && menu.isDirty)
+        {
+            Debug.LogError("BrewStack: BS_Menu tiene cambios sin guardar. Guárdala o descártalos y vuelve a intentar.");
+            return false;
+        }
+        if (!yaEstabaAbierta)
+        {
+            menu = EditorSceneManager.OpenScene(RUTA_MENU, OpenSceneMode.Additive);
+        }
+
+        int encontrados = 0;
+        bool cambio = false;
+        foreach (GameObject raiz in menu.GetRootGameObjects())
+        {
+            foreach (MenuManager manager in raiz.GetComponentsInChildren<MenuManager>(true))
+            {
+                encontrados++;
+                SerializedObject so = new SerializedObject(manager);
+                SerializedProperty prop = so.FindProperty("gameSceneName");
+                if (prop.stringValue == NOMBRE_ESCENA_JUEGO) continue;
+
+                string anterior = prop.stringValue;
+                prop.stringValue = NOMBRE_ESCENA_JUEGO;
+                so.ApplyModifiedPropertiesWithoutUndo();
+                cambio = true;
+                Debug.Log($"BrewStack: en BS_Menu, {manager.gameObject.name}.gameSceneName cambió de \"{anterior}\" a \"{NOMBRE_ESCENA_JUEGO}\"");
+            }
+        }
+
+        if (encontrados == 0)
+        {
+            Debug.LogError("BrewStack: no se encontró ningún MenuManager en BS_Menu");
+        }
+
+        if (cambio)
+        {
+            EditorSceneManager.MarkSceneDirty(menu);
+            EditorSceneManager.SaveScene(menu);
+            Debug.Log("BrewStack: se guardó BS_Menu");
+        }
+
+        if (!yaEstabaAbierta)
+        {
+            EditorSceneManager.CloseScene(menu, true);
+        }
+        return cambio;
     }
 
     // cuadro blanco de 1x1 unidad, el color se lo pone cada bloque
@@ -188,12 +298,12 @@ public static class BrewStackGameBuilder
         return torre;
     }
 
-    private static void CrearPruebaFisica(Torre torre, TriviaUI trivia, HUDJuego hud, ResultadoFinalUI resultado)
+    private static void CrearJuegoManager(Torre torre, TriviaUI trivia, HUDJuego hud, ResultadoFinalUI resultado)
     {
-        GameObject obj = new GameObject("PruebaFisica");
-        PruebaFisica prueba = obj.AddComponent<PruebaFisica>();
+        GameObject obj = new GameObject("JuegoManager");
+        JuegoManager juego = obj.AddComponent<JuegoManager>();
 
-        SerializedObject so = new SerializedObject(prueba);
+        SerializedObject so = new SerializedObject(juego);
         so.FindProperty("torre").objectReferenceValue = torre;
         so.FindProperty("trivia").objectReferenceValue = trivia;
         so.FindProperty("hud").objectReferenceValue = hud;

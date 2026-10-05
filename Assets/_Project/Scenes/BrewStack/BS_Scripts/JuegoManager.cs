@@ -1,8 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// script temporal para probar la partida completa. Se reemplaza por JuegoManager en el paso 8
-public class PruebaFisica : MonoBehaviour
+// flujo de la partida: pregunta, bloque, resultado, hasta que la torre cae o se acaba el tiempo
+public class JuegoManager : MonoBehaviour
 {
     private enum Fase { Pregunta, Bloque, Cayendo, Esperando, Terminada }
 

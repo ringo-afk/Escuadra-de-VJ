@@ -624,7 +624,7 @@ MonoBehaviour:
   ultimaPartidaText: {fileID: 1689448661}
   historialContent: {fileID: 354499526}
   historialRowPrefab: {fileID: 6145535905972403467, guid: 79ce5a87176ac2740ac6f25978162c50, type: 3}
-  gameSceneName: Game
+  gameSceneName: BS_Game
   sfxSource: {fileID: 236359926}
   clickSound: {fileID: 8300000, guid: 5806ad6fc42e593469ffd49b0cdf2088, type: 3}
 --- !u!4 &236359924
