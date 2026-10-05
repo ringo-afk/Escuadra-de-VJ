@@ -13,6 +13,7 @@ public static class BrewStackGameBuilder
     private const string RUTA_ESCENA = CARPETA + "/BS_Scenes/BS_Game.unity";
     private const string RUTA_PREFAB_BLOQUE = CARPETA + "/BS_Prefabs/Bloque.prefab";
     private const string RUTA_SPRITE_BLOQUE = CARPETA + "/BS_Sprites/bloque_blanco.png";
+    private const string RUTA_SPRITE_BLOQUE_BORDE = CARPETA + "/BS_Sprites/bloque_borde.png";
     private const string RUTA_SPRITE_BASE = CARPETA + "/BS_Sprites/base_torre.png";
     private const string RUTA_SPRITE_BRILLO = CARPETA + "/BS_Sprites/brillo_suave.png";
     private const string RUTA_ESTRELLA = CARPETA + "/BS_Sprites/punto_estrella_nitida.png";
@@ -52,8 +53,9 @@ public static class BrewStackGameBuilder
         // la escena se crea desde cero cada vez, así no se duplican objetos
         var escena = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
+        // el cuadro blanco se sigue usando en las barras del HUD y la trivia
         Sprite spriteBloque = CrearSpriteBloque();
-        Bloque prefabBloque = CrearPrefabBloque(spriteBloque);
+        Bloque prefabBloque = CrearPrefabBloque(CrearSpriteBloqueBorde());
 
         Camera cam = CrearCamara();
         CrearBase();
@@ -210,20 +212,25 @@ public static class BrewStackGameBuilder
         return AssetDatabase.LoadAssetAtPath<Sprite>(RUTA_SPRITE_BLOQUE);
     }
 
+    // el tamaño real lo pone Bloque.Configurar en el renderer y el collider, la escala se queda en 1
     private static Bloque CrearPrefabBloque(Sprite sprite)
     {
         GameObject obj = new GameObject("Bloque");
         SpriteRenderer render = obj.AddComponent<SpriteRenderer>();
         render.sprite = sprite;
+        render.drawMode = SpriteDrawMode.Sliced;
+        render.size = new Vector2(1f, 0.5f);
 
         Rigidbody2D rb = obj.AddComponent<Rigidbody2D>();
         rb.bodyType = RigidbodyType2D.Kinematic;
-        obj.AddComponent<BoxCollider2D>();
+        BoxCollider2D colisionador = obj.AddComponent<BoxCollider2D>();
+        colisionador.size = render.size;
 
         Bloque bloque = obj.AddComponent<Bloque>();
         SerializedObject so = new SerializedObject(bloque);
         so.FindProperty("render").objectReferenceValue = render;
         so.FindProperty("rb").objectReferenceValue = rb;
+        so.FindProperty("colisionador").objectReferenceValue = colisionador;
         so.ApplyModifiedPropertiesWithoutUndo();
 
         // si ya existe se sobrescribe, Unity conserva su GUID
@@ -366,9 +373,38 @@ public static class BrewStackGameBuilder
                     tex.SetPixel(x, y, c);
                 }
             }
-            GuardarSprite(tex, RUTA_SPRITE_BASE, 32, new Vector4(6, 3, 6, 5));
+            GuardarPng(tex, RUTA_SPRITE_BASE);
         }
+        ConfigurarSprite(RUTA_SPRITE_BASE, 32, new Vector4(6, 3, 6, 5));
         return AssetDatabase.LoadAssetAtPath<Sprite>(RUTA_SPRITE_BASE);
+    }
+
+    // 32x16 px en grises para que el color del bloque lo tiña: orilla clara, degradado adentro y un brillo arriba.
+    // Con 32 px por unidad mide 1 x 0.5, el mismo alto del bloque, así el borde de 4 px nunca se estira
+    private static Sprite CrearSpriteBloqueBorde()
+    {
+        if (!File.Exists(RUTA_SPRITE_BLOQUE_BORDE))
+        {
+            int ancho = 32;
+            int alto = 16;
+            Texture2D tex = new Texture2D(ancho, alto, TextureFormat.RGBA32, false);
+            for (int y = 0; y < alto; y++)
+            {
+                for (int x = 0; x < ancho; x++)
+                {
+                    int distanciaOrilla = Mathf.Min(Mathf.Min(x, ancho - 1 - x), Mathf.Min(y, alto - 1 - y));
+                    float v = Mathf.Lerp(0.55f, 0.8f, y / (alto - 1f));
+                    if (distanciaOrilla == 0) v = 1f;
+                    else if (distanciaOrilla == 1) v = 0.9f;
+                    else if (y == alto - 4) v = 0.97f;
+                    else if (y == alto - 5) v = Mathf.Lerp(v, 1f, 0.4f);
+                    tex.SetPixel(x, y, new Color(v, v, v, 1f));
+                }
+            }
+            GuardarPng(tex, RUTA_SPRITE_BLOQUE_BORDE);
+        }
+        ConfigurarSprite(RUTA_SPRITE_BLOQUE_BORDE, 32, new Vector4(4, 4, 4, 4));
+        return AssetDatabase.LoadAssetAtPath<Sprite>(RUTA_SPRITE_BLOQUE_BORDE);
     }
 
     // mancha blanca redonda que se desvanece hacia afuera, para brillos
@@ -388,17 +424,23 @@ public static class BrewStackGameBuilder
                     tex.SetPixel(x, y, new Color(1f, 1f, 1f, a * a));
                 }
             }
-            GuardarSprite(tex, RUTA_SPRITE_BRILLO, tamano, Vector4.zero);
+            GuardarPng(tex, RUTA_SPRITE_BRILLO);
         }
+        ConfigurarSprite(RUTA_SPRITE_BRILLO, 64, Vector4.zero);
         return AssetDatabase.LoadAssetAtPath<Sprite>(RUTA_SPRITE_BRILLO);
     }
 
-    private static void GuardarSprite(Texture2D tex, string ruta, float pixelesPorUnidad, Vector4 borde)
+    private static void GuardarPng(Texture2D tex, string ruta)
     {
         File.WriteAllBytes(ruta, tex.EncodeToPNG());
         Object.DestroyImmediate(tex);
         AssetDatabase.ImportAsset(ruta);
+    }
 
+    // se aplica cada vez, así un PNG que ya existía también queda bien configurado.
+    // Full Rect hace falta para que el modo Sliced se dibuje bien
+    private static void ConfigurarSprite(string ruta, float pixelesPorUnidad, Vector4 borde)
+    {
         TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(ruta);
         importer.textureType = TextureImporterType.Sprite;
         importer.spriteImportMode = SpriteImportMode.Single;
@@ -406,6 +448,12 @@ public static class BrewStackGameBuilder
         importer.spriteBorder = borde;
         importer.alphaIsTransparency = true;
         importer.mipmapEnabled = false;
+
+        TextureImporterSettings ajustes = new TextureImporterSettings();
+        importer.ReadTextureSettings(ajustes);
+        ajustes.spriteMeshType = SpriteMeshType.FullRect;
+        importer.SetTextureSettings(ajustes);
+
         importer.SaveAndReimport();
     }
 

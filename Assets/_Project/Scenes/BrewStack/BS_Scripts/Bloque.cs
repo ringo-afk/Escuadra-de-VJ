@@ -8,6 +8,7 @@ public class Bloque : MonoBehaviour
     [Header("Referencias")]
     [SerializeField] private SpriteRenderer render;
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private BoxCollider2D colisionador;
 
     [Header("Apariencia")]
     [SerializeField] private Color colorAcierto = new Color(0.62f, 0.85f, 1f);
@@ -34,8 +35,8 @@ public class Bloque : MonoBehaviour
 
     private Estado estado = Estado.Esperando;
     private float ancho = 1f;
-    // la escala real del bloque, el squash siempre regresa a esta
-    private Vector3 escalaBase = Vector3.one;
+    // el tamaño va en el renderer, la escala se queda en 1 y solo la mueve el squash
+    private readonly Vector3 escalaBase = Vector3.one;
     private Coroutine corrutinaTemblor;
 
     private float centroBalanceo;
@@ -54,7 +55,6 @@ public class Bloque : MonoBehaviour
     public void Configurar(float nuevoAncho, bool acierto)
     {
         ancho = nuevoAncho;
-        escalaBase = new Vector3(ancho, alto, 1f);
         transform.localScale = escalaBase;
 
         render.color = acierto ? colorAcierto : colorError;
@@ -62,6 +62,14 @@ public class Bloque : MonoBehaviour
         if (sprite != null)
         {
             render.sprite = sprite;
+        }
+
+        // en Sliced las orillas del sprite no se estiran, así el borde se ve igual en cualquier ancho
+        render.drawMode = SpriteDrawMode.Sliced;
+        render.size = new Vector2(ancho, alto);
+        if (colisionador != null)
+        {
+            colisionador.size = new Vector2(ancho, alto);
         }
     }
 

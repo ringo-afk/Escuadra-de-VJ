@@ -55,7 +55,7 @@ public class EfectoColocacion : MonoBehaviour
         }
     }
 
-    // el destello es un hijo del bloque, así hereda su escala y no hay que tocarla
+    // el destello es un hijo del bloque con su mismo sprite y tamaño, así sigue el squash y el temblor
     private IEnumerator Destello(Bloque bloque)
     {
         SpriteRenderer renderBloque = bloque.GetComponent<SpriteRenderer>();
@@ -64,6 +64,8 @@ public class EfectoColocacion : MonoBehaviour
         obj.transform.SetParent(bloque.transform, false);
         SpriteRenderer render = obj.AddComponent<SpriteRenderer>();
         render.sprite = renderBloque.sprite;
+        render.drawMode = renderBloque.drawMode;
+        render.size = renderBloque.size;
         render.sortingOrder = renderBloque.sortingOrder + 1;
 
         float t = 0f;
