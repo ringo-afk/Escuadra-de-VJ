@@ -11,6 +11,7 @@ public class JuegoManager : MonoBehaviour
     [SerializeField] private TriviaUI trivia;
     [SerializeField] private HUDJuego hud;
     [SerializeField] private ResultadoFinalUI resultado;
+    [SerializeField] private TextosFlotantes textosFlotantes;
 
     [Header("Tiempos")]
     [Range(120f, 300f)]
@@ -125,9 +126,16 @@ public class JuegoManager : MonoBehaviour
 
     private void Aterrizo(Torre.Resultado res, Torre.Calidad calidad, Bloque bloque)
     {
-        if (res == Torre.Resultado.BienPuesto) puntos += puntosBienPuesto;
-        else if (res == Torre.Resultado.MalPuesto) puntos += puntosMalPuesto;
+        int ganados = 0;
+        if (res == Torre.Resultado.BienPuesto) ganados = puntosBienPuesto;
+        else if (res == Torre.Resultado.MalPuesto) ganados = puntosMalPuesto;
+
+        puntos += ganados;
         hud.MostrarPuntos(puntos);
+        if (ganados > 0 && textosFlotantes != null)
+        {
+            textosFlotantes.Mostrar(ganados, bloque.transform.position, res == Torre.Resultado.BienPuesto);
+        }
 
         fase = Fase.Esperando;
         tiempoEspera = pausaEntreBloques;

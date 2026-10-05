@@ -25,11 +25,18 @@ public class Bloque : MonoBehaviour
     [SerializeField] private float anguloTemblor = 8f;
     [SerializeField] private float inclinacionMaxima = 6f;
 
+    [Header("Rebote al aterrizar")]
+    [SerializeField] private float cantidadSquash = 0.15f;
+    [SerializeField] private float duracionSquash = 0.15f;
+
     [Header("Al salir volando")]
     [SerializeField] private float tiempoParaDestruir = 3f;
 
     private Estado estado = Estado.Esperando;
     private float ancho = 1f;
+    // la escala real del bloque, el squash siempre regresa a esta
+    private Vector3 escalaBase = Vector3.one;
+    private Coroutine corrutinaTemblor;
 
     private float centroBalanceo;
     private float amplitudBalanceo;
@@ -47,7 +54,8 @@ public class Bloque : MonoBehaviour
     public void Configurar(float nuevoAncho, bool acierto)
     {
         ancho = nuevoAncho;
-        transform.localScale = new Vector3(ancho, alto, 1f);
+        escalaBase = new Vector3(ancho, alto, 1f);
+        transform.localScale = escalaBase;
 
         render.color = acierto ? colorAcierto : colorError;
         Sprite sprite = acierto ? spriteAcierto : spriteError;
@@ -99,6 +107,7 @@ public class Bloque : MonoBehaviour
                 pos.y = yDestino;
                 transform.localPosition = pos;
                 estado = Estado.Colocado;
+                StartCoroutine(AnimarSquash());
                 alAterrizar?.Invoke(this);
                 return;
             }
@@ -116,8 +125,22 @@ public class Bloque : MonoBehaviour
     // intensidad de 0 a 1, el signo dice hacia qué lado se inclina
     public void Temblar(float intensidad)
     {
-        StopAllCoroutines();
-        StartCoroutine(AnimarTemblor(Mathf.Clamp(intensidad, -1f, 1f)));
+        // solo se para el temblor anterior, el squash sigue para que la escala regrese bien
+        if (corrutinaTemblor != null) StopCoroutine(corrutinaTemblor);
+        corrutinaTemblor = StartCoroutine(AnimarTemblor(Mathf.Clamp(intensidad, -1f, 1f)));
+    }
+
+    private IEnumerator AnimarSquash()
+    {
+        float t = 0f;
+        while (t < duracionSquash)
+        {
+            t += Time.deltaTime;
+            float fuerza = Mathf.Sin(t / duracionSquash * Mathf.PI) * cantidadSquash;
+            transform.localScale = new Vector3(escalaBase.x * (1f + fuerza), escalaBase.y * (1f - fuerza), 1f);
+            yield return null;
+        }
+        transform.localScale = escalaBase;
     }
 
     private IEnumerator AnimarTemblor(float intensidad)
@@ -141,6 +164,7 @@ public class Bloque : MonoBehaviour
     public void ActivarFisica(Vector2 empuje, float giro)
     {
         StopAllCoroutines();
+        transform.localScale = escalaBase;
         estado = Estado.Suelto;
         transform.SetParent(null, true);
 

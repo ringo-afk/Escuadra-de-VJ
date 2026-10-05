@@ -191,4 +191,6 @@ MonoBehaviour:
   duracionTemblor: 0.6
   anguloTemblor: 8
   inclinacionMaxima: 6
+  cantidadSquash: 0.15
+  duracionSquash: 0.15
   tiempoParaDestruir: 3

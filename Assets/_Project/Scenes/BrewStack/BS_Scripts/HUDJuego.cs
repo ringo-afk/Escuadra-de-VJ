@@ -22,7 +22,13 @@ public class HUDJuego : MonoBehaviour
     [SerializeField] private float limitePeligro = 0.3f;
     [SerializeField] private float velocidadBarra = 5f;
 
+    [Header("Pop del puntaje")]
+    [SerializeField] private float escalaPop = 1.3f;
+    [SerializeField] private float duracionPop = 0.2f;
+
     private float estabilidadMostrada = 1f;
+    private int puntosAnteriores;
+    private float tiempoPop = 1f;
 
     private void Update()
     {
@@ -34,10 +40,20 @@ public class HUDJuego : MonoBehaviour
         if (torre.Estabilidad <= limitePeligro) imagenEstabilidad.color = colorPeligro;
         else if (torre.Estabilidad <= limiteRiesgo) imagenEstabilidad.color = colorRiesgo;
         else imagenEstabilidad.color = colorEstable;
+
+        if (tiempoPop < duracionPop)
+        {
+            tiempoPop += Time.deltaTime;
+            float avance = Mathf.Clamp01(tiempoPop / duracionPop);
+            float escala = 1f + (escalaPop - 1f) * Mathf.Sin(avance * Mathf.PI);
+            textoPuntos.rectTransform.localScale = new Vector3(escala, escala, 1f);
+        }
     }
 
     public void MostrarPuntos(int puntos)
     {
+        if (puntos > puntosAnteriores) tiempoPop = 0f;
+        puntosAnteriores = puntos;
         textoPuntos.text = $"Puntos: {puntos}";
     }
 
@@ -50,5 +66,8 @@ public class HUDJuego : MonoBehaviour
     public void Reiniciar()
     {
         estabilidadMostrada = 1f;
+        puntosAnteriores = 0;
+        tiempoPop = duracionPop;
+        textoPuntos.rectTransform.localScale = Vector3.one;
     }
 }

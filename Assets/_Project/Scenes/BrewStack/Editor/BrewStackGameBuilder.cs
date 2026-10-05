@@ -13,7 +13,12 @@ public static class BrewStackGameBuilder
     private const string RUTA_ESCENA = CARPETA + "/BS_Scenes/BS_Game.unity";
     private const string RUTA_PREFAB_BLOQUE = CARPETA + "/BS_Prefabs/Bloque.prefab";
     private const string RUTA_SPRITE_BLOQUE = CARPETA + "/BS_Sprites/bloque_blanco.png";
-    private const string RUTA_FONDO = CARPETA + "/BS_Sprites/fondo_gradiente_espacial.png";
+    private const string RUTA_SPRITE_BASE = CARPETA + "/BS_Sprites/base_torre.png";
+    private const string RUTA_SPRITE_BRILLO = CARPETA + "/BS_Sprites/brillo_suave.png";
+    private const string RUTA_ESTRELLA = CARPETA + "/BS_Sprites/punto_estrella_nitida.png";
+    private const string RUTA_ESTRELLA_FUGAZ = CARPETA + "/BS_Sprites/estrella_fugaz.png";
+    // la misma música que usa BS_Menu, por referencia
+    private const string RUTA_MUSICA = CARPETA + "/BS_Audio/417884__andrewkn__surrealism-ambient-mix.wav";
     private const string RUTA_BORDE_BOTON = CARPETA + "/BS_Sprites/borde_boton.png";
     private const string RUTA_FUENTE = CARPETA + "/BS_Fonts/Orbitron-Bold SDF.asset";
     private const string RUTA_PREGUNTAS = CARPETA + "/BS_Data/preguntas.json";
@@ -51,9 +56,10 @@ public static class BrewStackGameBuilder
         Bloque prefabBloque = CrearPrefabBloque(spriteBloque);
 
         Camera cam = CrearCamara();
-        CrearBase(spriteBloque);
+        CrearBase();
         Torre torre = CrearTorre(prefabBloque);
-        AgregarSeguimientoCamara(cam, torre);
+        AgregarScriptsCamara(cam, torre);
+        CrearFondoEstrellas(cam);
 
         // el orden importa: lo que se crea después queda encima
         Transform canvas = CrearCanvas();
@@ -62,9 +68,11 @@ public static class BrewStackGameBuilder
         TriviaUI trivia = CrearTrivia(canvas, spriteBloque);
         ResultadoFinalUI resultado = CrearResultado(canvas);
 
-        CrearJuegoManager(torre, trivia, hud, resultado);
+        TextosFlotantes textos = CrearTextosFlotantes();
+        CrearJuegoManager(torre, trivia, hud, resultado, textos);
         CrearEfectos(torre);
         CrearSonidos(torre, trivia, resultado);
+        CrearMusica(resultado);
 
         EditorSceneManager.SaveScene(escena, RUTA_ESCENA);
         AssetDatabase.Refresh();
@@ -236,33 +244,64 @@ public static class BrewStackGameBuilder
         cam.clearFlags = CameraClearFlags.SolidColor;
         cam.backgroundColor = colorFondo;
         obj.AddComponent<AudioListener>();
-
-        // el fondo va pegado a la cámara para que la siga cuando suba
-        Sprite fondo = CargarPrimerSprite(RUTA_FONDO);
-        if (fondo == null) return cam;
-
-        GameObject objFondo = new GameObject("Fondo");
-        objFondo.transform.SetParent(obj.transform, false);
-        objFondo.transform.localPosition = new Vector3(0f, 0f, 20f);
-
-        SpriteRenderer render = objFondo.AddComponent<SpriteRenderer>();
-        render.sprite = fondo;
-        render.sortingOrder = -100;
-
-        // que cubra la vista aunque la pantalla sea muy ancha
-        float alto = TAMANO_CAMARA * 2f;
-        float ancho = alto * 3f;
-        Vector2 tamSprite = fondo.bounds.size;
-        objFondo.transform.localScale = new Vector3(ancho / tamSprite.x, alto / tamSprite.y, 1f);
         return cam;
     }
 
-    private static void AgregarSeguimientoCamara(Camera cam, Torre torre)
+    private static void AgregarScriptsCamara(Camera cam, Torre torre)
     {
         CamaraTorre seguimiento = cam.gameObject.AddComponent<CamaraTorre>();
         SerializedObject so = new SerializedObject(seguimiento);
         so.FindProperty("torre").objectReferenceValue = torre;
         so.ApplyModifiedPropertiesWithoutUndo();
+
+        FondoJuego fondo = cam.gameObject.AddComponent<FondoJuego>();
+        SerializedObject soFondo = new SerializedObject(fondo);
+        soFondo.FindProperty("torre").objectReferenceValue = torre;
+        soFondo.FindProperty("colorAbajo").colorValue = colorFondo;
+        soFondo.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    // las estrellas del menú en un canvas pegado a la cámara y detrás de todo,
+    // así se quedan quietas en pantalla como si estuvieran muy lejos
+    private static void CrearFondoEstrellas(Camera cam)
+    {
+        GameObject obj = new GameObject("CanvasFondo");
+        obj.layer = LayerMask.NameToLayer("UI");
+
+        Canvas canvas = obj.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.worldCamera = cam;
+        canvas.planeDistance = 50f;
+        canvas.sortingOrder = -100;
+
+        CanvasScaler scaler = obj.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920f, 1080f);
+        scaler.matchWidthOrHeight = 0.5f;
+
+        GameObject estrellas = new GameObject("Estrellas", typeof(RectTransform));
+        estrellas.layer = obj.layer;
+        estrellas.transform.SetParent(obj.transform, false);
+        Estirar(estrellas, Vector2.zero, Vector2.one);
+        StarField campo = estrellas.AddComponent<StarField>();
+        SerializedObject soCampo = new SerializedObject(campo);
+        soCampo.FindProperty("container").objectReferenceValue = estrellas.GetComponent<RectTransform>();
+        soCampo.FindProperty("starSprite").objectReferenceValue = CargarPrimerSprite(RUTA_ESTRELLA);
+        // mismos valores que en BS_Menu
+        soCampo.FindProperty("cantidadEstrellas").intValue = 40;
+        soCampo.FindProperty("tamañoMinimo").floatValue = 2f;
+        soCampo.FindProperty("tamañoMaximo").floatValue = 5f;
+        soCampo.ApplyModifiedPropertiesWithoutUndo();
+
+        GameObject fugaces = new GameObject("EstrellasFugaces", typeof(RectTransform));
+        fugaces.layer = obj.layer;
+        fugaces.transform.SetParent(obj.transform, false);
+        Estirar(fugaces, Vector2.zero, Vector2.one);
+        ShootingStars fugaz = fugaces.AddComponent<ShootingStars>();
+        SerializedObject soFugaz = new SerializedObject(fugaz);
+        soFugaz.FindProperty("container").objectReferenceValue = fugaces.GetComponent<RectTransform>();
+        soFugaz.FindProperty("streakSprite").objectReferenceValue = CargarPrimerSprite(RUTA_ESTRELLA_FUGAZ);
+        soFugaz.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private static Sprite CargarPrimerSprite(string ruta)
@@ -274,16 +313,100 @@ public static class BrewStackGameBuilder
         return null;
     }
 
-    private static void CrearBase(Sprite sprite)
+    private static void CrearBase()
     {
         GameObject obj = new GameObject("Base");
         obj.transform.position = new Vector3(0f, -ALTO_BASE / 2f, 0f);
-        obj.transform.localScale = new Vector3(ANCHO_BASE, ALTO_BASE, 1f);
 
+        // en modo Sliced el tamaño va en el renderer y no en la escala, así el borde no se estira
         SpriteRenderer render = obj.AddComponent<SpriteRenderer>();
-        render.sprite = sprite;
-        render.color = colorBase;
-        obj.AddComponent<BoxCollider2D>();
+        render.sprite = CrearSpriteBase();
+        render.drawMode = SpriteDrawMode.Sliced;
+        render.size = new Vector2(ANCHO_BASE, ALTO_BASE);
+
+        BoxCollider2D collider = obj.AddComponent<BoxCollider2D>();
+        collider.size = new Vector2(ANCHO_BASE, ALTO_BASE);
+
+        // brillo falso: un sprite suave detrás del borde de arriba
+        GameObject brillo = new GameObject("Brillo");
+        brillo.transform.SetParent(obj.transform, false);
+        brillo.transform.localPosition = new Vector3(0f, ALTO_BASE / 2f, 0f);
+        brillo.transform.localScale = new Vector3(ANCHO_BASE * 1.8f, 1.4f, 1f);
+        SpriteRenderer renderBrillo = brillo.AddComponent<SpriteRenderer>();
+        renderBrillo.sprite = CrearSpriteBrillo();
+        renderBrillo.color = new Color(colorBase.r, colorBase.g, colorBase.b, 0.35f);
+        renderBrillo.sortingOrder = -1;
+    }
+
+    // 48x16 px: relleno azul oscuro con degradado, borde ámbar, filo de arriba brillante y dos luces celestes en las orillas
+    private static Sprite CrearSpriteBase()
+    {
+        if (!File.Exists(RUTA_SPRITE_BASE))
+        {
+            int ancho = 48;
+            int alto = 16;
+            Color ambar = colorBase;
+            Color ambarClaro = new Color(1f, 0.8f, 0.48f);
+            Color arriba = new Color(0.1f, 0.14f, 0.26f);
+            Color abajo = new Color(0.04f, 0.06f, 0.13f);
+
+            Texture2D tex = new Texture2D(ancho, alto, TextureFormat.RGBA32, false);
+            for (int y = 0; y < alto; y++)
+            {
+                for (int x = 0; x < ancho; x++)
+                {
+                    Color c = Color.Lerp(abajo, arriba, y / (alto - 1f));
+                    bool orilla = x == 0 || x == ancho - 1 || y == 0;
+                    if (orilla) c = ambar * 0.8f;
+                    if (y >= alto - 2) c = ambarClaro;
+                    else if (y == alto - 3) c = Color.Lerp(c, ambar, 0.4f);
+                    bool luz = (x == 2 || x == 3 || x == ancho - 3 || x == ancho - 4) && (y == 7 || y == 8);
+                    if (luz) c = colorCeleste;
+                    c.a = 1f;
+                    tex.SetPixel(x, y, c);
+                }
+            }
+            GuardarSprite(tex, RUTA_SPRITE_BASE, 32, new Vector4(6, 3, 6, 5));
+        }
+        return AssetDatabase.LoadAssetAtPath<Sprite>(RUTA_SPRITE_BASE);
+    }
+
+    // mancha blanca redonda que se desvanece hacia afuera, para brillos
+    private static Sprite CrearSpriteBrillo()
+    {
+        if (!File.Exists(RUTA_SPRITE_BRILLO))
+        {
+            int tamano = 64;
+            Texture2D tex = new Texture2D(tamano, tamano, TextureFormat.RGBA32, false);
+            float centro = (tamano - 1) / 2f;
+            for (int y = 0; y < tamano; y++)
+            {
+                for (int x = 0; x < tamano; x++)
+                {
+                    float d = Vector2.Distance(new Vector2(x, y), new Vector2(centro, centro)) / (tamano / 2f);
+                    float a = Mathf.Clamp01(1f - d);
+                    tex.SetPixel(x, y, new Color(1f, 1f, 1f, a * a));
+                }
+            }
+            GuardarSprite(tex, RUTA_SPRITE_BRILLO, tamano, Vector4.zero);
+        }
+        return AssetDatabase.LoadAssetAtPath<Sprite>(RUTA_SPRITE_BRILLO);
+    }
+
+    private static void GuardarSprite(Texture2D tex, string ruta, float pixelesPorUnidad, Vector4 borde)
+    {
+        File.WriteAllBytes(ruta, tex.EncodeToPNG());
+        Object.DestroyImmediate(tex);
+        AssetDatabase.ImportAsset(ruta);
+
+        TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(ruta);
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Single;
+        importer.spritePixelsPerUnit = pixelesPorUnidad;
+        importer.spriteBorder = borde;
+        importer.alphaIsTransparency = true;
+        importer.mipmapEnabled = false;
+        importer.SaveAndReimport();
     }
 
     private static Torre CrearTorre(Bloque prefabBloque)
@@ -300,7 +423,7 @@ public static class BrewStackGameBuilder
         return torre;
     }
 
-    private static void CrearJuegoManager(Torre torre, TriviaUI trivia, HUDJuego hud, ResultadoFinalUI resultado)
+    private static void CrearJuegoManager(Torre torre, TriviaUI trivia, HUDJuego hud, ResultadoFinalUI resultado, TextosFlotantes textos)
     {
         GameObject obj = new GameObject("JuegoManager");
         JuegoManager juego = obj.AddComponent<JuegoManager>();
@@ -310,6 +433,29 @@ public static class BrewStackGameBuilder
         so.FindProperty("trivia").objectReferenceValue = trivia;
         so.FindProperty("hud").objectReferenceValue = hud;
         so.FindProperty("resultado").objectReferenceValue = resultado;
+        so.FindProperty("textosFlotantes").objectReferenceValue = textos;
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static TextosFlotantes CrearTextosFlotantes()
+    {
+        GameObject obj = new GameObject("TextosFlotantes");
+        TextosFlotantes textos = obj.AddComponent<TextosFlotantes>();
+
+        SerializedObject so = new SerializedObject(textos);
+        so.FindProperty("fuente").objectReferenceValue = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(RUTA_FUENTE);
+        so.ApplyModifiedPropertiesWithoutUndo();
+        return textos;
+    }
+
+    private static void CrearMusica(ResultadoFinalUI resultado)
+    {
+        GameObject obj = new GameObject("Musica");
+        MusicaJuego musica = obj.AddComponent<MusicaJuego>();
+
+        SerializedObject so = new SerializedObject(musica);
+        so.FindProperty("resultado").objectReferenceValue = resultado;
+        so.FindProperty("musica").objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(RUTA_MUSICA);
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 
@@ -345,26 +491,27 @@ public static class BrewStackGameBuilder
         hudObj.transform.SetParent(canvas, false);
         Estirar(hudObj, Vector2.zero, Vector2.one);
 
-        GameObject barraSuperior = CrearImagen("BarraSuperior", hudObj.transform, colorPanel, null);
-        Estirar(barraSuperior, new Vector2(0f, 0.91f), Vector2.one);
-        barraSuperior.GetComponent<Image>().raycastTarget = false;
+        Sprite borde = CargarPrimerSprite(RUTA_BORDE_BOTON);
 
-        TMP_Text puntos = CrearTexto("TextoPuntos", barraSuperior.transform, "Puntos: 0", 36f, colorTexto, fuente);
-        Estirar(puntos.gameObject, new Vector2(0.02f, 0f), new Vector2(0.32f, 1f));
-        puntos.alignment = TextAlignmentOptions.Left;
+        // tres paneles arriba y uno abajo de ellos para la estabilidad, como las cajas del menú
+        GameObject panelPuntos = CrearPanelHUD("PanelPuntos", hudObj.transform, new Vector2(0.02f, 0.9f), new Vector2(0.27f, 0.98f), borde);
+        TMP_Text puntos = CrearTexto("TextoPuntos", panelPuntos.transform, "Puntos: 0", 34f, colorTexto, fuente);
+        Estirar(puntos.gameObject, Vector2.zero, Vector2.one);
 
-        TMP_Text altura = CrearTexto("TextoAltura", barraSuperior.transform, "Altura: 0", 36f, colorTexto, fuente);
-        Estirar(altura.gameObject, new Vector2(0.35f, 0f), new Vector2(0.65f, 1f));
+        GameObject panelAltura = CrearPanelHUD("PanelAltura", hudObj.transform, new Vector2(0.375f, 0.9f), new Vector2(0.625f, 0.98f), borde);
+        TMP_Text altura = CrearTexto("TextoAltura", panelAltura.transform, "Altura: 0", 34f, colorTexto, fuente);
+        Estirar(altura.gameObject, Vector2.zero, Vector2.one);
 
-        TMP_Text tiempo = CrearTexto("TextoTiempo", barraSuperior.transform, "Tiempo: 3:00", 36f, colorTexto, fuente);
-        Estirar(tiempo.gameObject, new Vector2(0.68f, 0f), new Vector2(0.98f, 1f));
-        tiempo.alignment = TextAlignmentOptions.Right;
+        GameObject panelTiempo = CrearPanelHUD("PanelTiempo", hudObj.transform, new Vector2(0.73f, 0.9f), new Vector2(0.98f, 0.98f), borde);
+        TMP_Text tiempo = CrearTexto("TextoTiempo", panelTiempo.transform, "Tiempo: 3:00", 34f, colorTexto, fuente);
+        Estirar(tiempo.gameObject, Vector2.zero, Vector2.one);
 
-        TMP_Text etiqueta = CrearTexto("TextoEstabilidad", hudObj.transform, "Estabilidad", 24f, colorTexto, fuente);
-        Estirar(etiqueta.gameObject, new Vector2(0.3f, 0.86f), new Vector2(0.7f, 0.9f));
+        GameObject panelEstabilidad = CrearPanelHUD("PanelEstabilidad", hudObj.transform, new Vector2(0.3f, 0.81f), new Vector2(0.7f, 0.885f), borde);
+        TMP_Text etiqueta = CrearTexto("TextoEstabilidad", panelEstabilidad.transform, "Estabilidad", 22f, colorTexto, fuente);
+        Estirar(etiqueta.gameObject, new Vector2(0.05f, 0.5f), new Vector2(0.95f, 0.95f));
 
-        GameObject fondoBarra = CrearImagen("BarraEstabilidadFondo", hudObj.transform, new Color(1f, 1f, 1f, 0.1f), spriteBlanco);
-        Estirar(fondoBarra, new Vector2(0.3f, 0.835f), new Vector2(0.7f, 0.855f));
+        GameObject fondoBarra = CrearImagen("BarraEstabilidadFondo", panelEstabilidad.transform, new Color(1f, 1f, 1f, 0.1f), spriteBlanco);
+        Estirar(fondoBarra, new Vector2(0.06f, 0.18f), new Vector2(0.94f, 0.4f));
         fondoBarra.GetComponent<Image>().raycastTarget = false;
         GameObject relleno = CrearImagen("BarraEstabilidad", fondoBarra.transform, colorCeleste, spriteBlanco);
         Estirar(relleno, Vector2.zero, Vector2.one);
@@ -380,6 +527,19 @@ public static class BrewStackGameBuilder
         so.FindProperty("imagenEstabilidad").objectReferenceValue = relleno.GetComponent<Image>();
         so.ApplyModifiedPropertiesWithoutUndo();
         return hud;
+    }
+
+    // fondo azul marino semitransparente con el borde celeste del menú encima
+    private static GameObject CrearPanelHUD(string nombre, Transform padre, Vector2 min, Vector2 max, Sprite borde)
+    {
+        GameObject panel = CrearImagen(nombre, padre, colorPanel, null);
+        Estirar(panel, min, max);
+        panel.GetComponent<Image>().raycastTarget = false;
+
+        GameObject marco = CrearImagen("Borde", panel.transform, colorBordeCeleste, borde);
+        Estirar(marco, Vector2.zero, Vector2.one);
+        marco.GetComponent<Image>().raycastTarget = false;
+        return panel;
     }
 
     private static ResultadoFinalUI CrearResultado(Transform canvas)
