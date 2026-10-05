@@ -63,6 +63,8 @@ public static class BrewStackGameBuilder
         ResultadoFinalUI resultado = CrearResultado(canvas);
 
         CrearJuegoManager(torre, trivia, hud, resultado);
+        CrearEfectos(torre);
+        CrearSonidos(torre, trivia, resultado);
 
         EditorSceneManager.SaveScene(escena, RUTA_ESCENA);
         AssetDatabase.Refresh();
@@ -307,6 +309,29 @@ public static class BrewStackGameBuilder
         so.FindProperty("torre").objectReferenceValue = torre;
         so.FindProperty("trivia").objectReferenceValue = trivia;
         so.FindProperty("hud").objectReferenceValue = hud;
+        so.FindProperty("resultado").objectReferenceValue = resultado;
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static void CrearEfectos(Torre torre)
+    {
+        GameObject obj = new GameObject("Efectos");
+        EfectoColocacion efecto = obj.AddComponent<EfectoColocacion>();
+
+        SerializedObject so = new SerializedObject(efecto);
+        so.FindProperty("torre").objectReferenceValue = torre;
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    // los clips se dejan vacíos para que se generen por código, se pueden arrastrar después
+    private static void CrearSonidos(Torre torre, TriviaUI trivia, ResultadoFinalUI resultado)
+    {
+        GameObject obj = new GameObject("Sonidos");
+        SonidosJuego sonidos = obj.AddComponent<SonidosJuego>();
+
+        SerializedObject so = new SerializedObject(sonidos);
+        so.FindProperty("torre").objectReferenceValue = torre;
+        so.FindProperty("trivia").objectReferenceValue = trivia;
         so.FindProperty("resultado").objectReferenceValue = resultado;
         so.ApplyModifiedPropertiesWithoutUndo();
     }

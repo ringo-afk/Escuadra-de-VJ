@@ -4,6 +4,7 @@ using UnityEngine;
 public class Torre : MonoBehaviour
 {
     public enum Resultado { BienPuesto, MalPuesto, SeCayo }
+    public enum Calidad { Perfecto, Casi, Normal }
 
     [Header("Referencias")]
     [SerializeField] private Bloque prefabBloque;
@@ -25,6 +26,10 @@ public class Torre : MonoBehaviour
     [SerializeField] private float toleranciaBienPuesto = 0.15f;
     [SerializeField] private float desfaseSinApoyo = 0.5f;
 
+    [Header("Calidad de colocación, solo para efectos (en anchos del bloque de abajo)")]
+    [SerializeField] private float umbralPerfecto = 0.05f;
+    [SerializeField] private float umbralCasi = 0.10f;
+
     [Header("Estabilidad")]
     [SerializeField] private float umbralDesfase = 1f;
     [SerializeField] private int maxMalPuestosSeguidos = 3;
@@ -41,7 +46,8 @@ public class Torre : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool mostrarLogs = true;
 
-    public event System.Action<Resultado> AlAterrizar;
+    // el bloque se manda para los efectos, si se cayó la calidad siempre es Normal
+    public event System.Action<Resultado, Calidad, Bloque> AlAterrizar;
     public event System.Action AlColapsar;
     public event System.Action AlLlegarAlturaMaxima;
 
@@ -154,13 +160,20 @@ public class Torre : MonoBehaviour
             Agregar(b);
         }
 
+        Calidad calidad = Calidad.Normal;
+        if (resultado != Resultado.SeCayo)
+        {
+            if (distancia <= umbralPerfecto) calidad = Calidad.Perfecto;
+            else if (distancia <= umbralCasi) calidad = Calidad.Casi;
+        }
+
         if (mostrarLogs)
         {
-            Debug.Log($"Torre: {resultado}, desfase {desfase:F2}, acumulado {desfaseAcumulado:F2}, " +
+            Debug.Log($"Torre: {resultado} ({calidad}), desfase {desfase:F2}, acumulado {desfaseAcumulado:F2}, " +
                       $"estabilidad {Estabilidad:F2}, mal puestos seguidos {malPuestosSeguidos}, altura {Altura}");
         }
 
-        AlAterrizar?.Invoke(resultado);
+        AlAterrizar?.Invoke(resultado, calidad, b);
 
         if (Mathf.Abs(desfaseAcumulado) >= umbralDesfase || malPuestosSeguidos >= maxMalPuestosSeguidos)
         {

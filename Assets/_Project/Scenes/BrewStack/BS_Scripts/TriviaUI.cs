@@ -34,6 +34,8 @@ public class TriviaUI : MonoBehaviour
     [SerializeField] private float avisoPocoTiempo = 0.3f;
 
     public event System.Action<bool> AlResponder;
+    // en el momento de contestar, AlResponder llega después de la pausa
+    public event System.Action<bool> AlMarcarRespuesta;
 
     private Pregunta preguntaActual;
     private int[] orden;
@@ -137,6 +139,7 @@ public class TriviaUI : MonoBehaviour
             }
         }
 
+        AlMarcarRespuesta?.Invoke(acierto);
         StartCoroutine(TerminarPregunta(acierto));
     }
 

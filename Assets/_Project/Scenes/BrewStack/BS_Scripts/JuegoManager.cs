@@ -123,7 +123,7 @@ public class JuegoManager : MonoBehaviour
         fase = Fase.Bloque;
     }
 
-    private void Aterrizo(Torre.Resultado res)
+    private void Aterrizo(Torre.Resultado res, Torre.Calidad calidad, Bloque bloque)
     {
         if (res == Torre.Resultado.BienPuesto) puntos += puntosBienPuesto;
         else if (res == Torre.Resultado.MalPuesto) puntos += puntosMalPuesto;

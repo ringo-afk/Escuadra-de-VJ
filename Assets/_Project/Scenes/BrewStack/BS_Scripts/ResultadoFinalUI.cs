@@ -20,6 +20,7 @@ public class ResultadoFinalUI : MonoBehaviour
     [SerializeField] private string escenaMenu = "BS_Menu";
 
     public event System.Action AlJugarDeNuevo;
+    public event System.Action AlMostrar;
 
     private bool yaGuardado;
 
@@ -48,6 +49,7 @@ public class ResultadoFinalUI : MonoBehaviour
         textoAciertos.text = $"Aciertos: {Mathf.RoundToInt(porcentajeAciertos * 100f)}%";
         textoRecord.SetActive(esRecord);
         panel.SetActive(true);
+        AlMostrar?.Invoke();
     }
 
     public void Ocultar()
