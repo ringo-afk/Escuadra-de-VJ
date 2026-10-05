@@ -1,0 +1,125 @@
+{
+  "nota": "PREGUNTAS DE PRUEBA. No son las preguntas reales de la empresa, solo sirven para probar el juego. Reemplazar antes de entregar.",
+  "preguntas": [
+    {
+      "id": "prueba-01",
+      "categoria": "valores",
+      "dificultad": 1,
+      "texto": "(Prueba) Si un compañero necesita ayuda con una tarea urgente, lo mejor es:",
+      "opciones": ["Ofrecer ayuda si puedes", "Ignorarlo", "Decirle que no es tu problema", "Esperar a que termine solo"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-02",
+      "categoria": "cultura",
+      "dificultad": 1,
+      "texto": "(Prueba) Llegar puntual a las reuniones demuestra:",
+      "opciones": ["Respeto por el tiempo de los demás", "Que no tienes trabajo", "Nada importante", "Prisa"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-03",
+      "categoria": "procesos",
+      "dificultad": 1,
+      "texto": "(Prueba) Si detectas un error en un reporte, debes:",
+      "opciones": ["Avisar al responsable", "Ocultarlo", "Borrar el reporte", "Esperar a que alguien más lo vea"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-04",
+      "categoria": "valores",
+      "dificultad": 1,
+      "texto": "(Prueba) ¿Cuál de estas actitudes ayuda más al trabajo en equipo?",
+      "opciones": ["Comunicación clara", "Trabajar siempre aislado", "No compartir información", "Evitar las reuniones"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-05",
+      "categoria": "cultura",
+      "dificultad": 1,
+      "texto": "(Prueba) Un ambiente de trabajo sano se basa en:",
+      "opciones": ["Respeto", "Competencia sin reglas", "Chismes", "Silencio total"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-06",
+      "categoria": "procesos",
+      "dificultad": 2,
+      "texto": "(Prueba) Antes de pedir vacaciones, normalmente se recomienda:",
+      "opciones": ["Avisar con anticipación a tu líder", "Irte sin avisar", "Avisar el mismo día", "Pedírselas a un compañero"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-07",
+      "categoria": "valores",
+      "dificultad": 2,
+      "texto": "(Prueba) Si cometes un error que afecta a otro equipo, lo correcto es:",
+      "opciones": ["Reconocerlo y proponer una solución", "Culpar a otra persona", "No decir nada", "Cambiar de tema"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-08",
+      "categoria": "cultura",
+      "dificultad": 2,
+      "texto": "(Prueba) La retroalimentación entre compañeros sirve para:",
+      "opciones": ["Mejorar el trabajo", "Criticar a las personas", "Perder el tiempo", "Competir"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-09",
+      "categoria": "procesos",
+      "dificultad": 2,
+      "texto": "(Prueba) Si recibes un correo sospechoso que pide tu contraseña, debes:",
+      "opciones": ["Reportarlo al área de sistemas", "Responder con tu contraseña", "Reenviarlo a todos", "Abrir los archivos adjuntos"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-10",
+      "categoria": "valores",
+      "dificultad": 2,
+      "texto": "(Prueba) Tratar igual a todas las personas sin importar su puesto se relaciona con:",
+      "opciones": ["Inclusión", "Jerarquía", "Velocidad", "Ahorro"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-11",
+      "categoria": "procesos",
+      "dificultad": 3,
+      "texto": "(Prueba) En un proyecto, ¿qué documento define qué se va a entregar y qué no?",
+      "opciones": ["El alcance", "La lista de asistencia", "El organigrama", "El calendario de cumpleaños"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-12",
+      "categoria": "cultura",
+      "dificultad": 3,
+      "texto": "(Prueba) ¿Qué significa que una empresa tenga una política de puertas abiertas?",
+      "opciones": ["Que puedes hablar con cualquier líder", "Que la oficina no tiene puertas", "Que no hay horario", "Que cualquiera puede entrar al edificio"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-13",
+      "categoria": "procesos",
+      "dificultad": 3,
+      "texto": "(Prueba) La información confidencial de un cliente se puede compartir:",
+      "opciones": ["Solo con quien la necesita para su trabajo", "En redes sociales", "Con amigos y familia", "Con cualquier compañero"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-14",
+      "categoria": "valores",
+      "dificultad": 3,
+      "texto": "(Prueba) Cumplir lo que prometes aunque nadie te esté revisando se llama:",
+      "opciones": ["Integridad", "Suerte", "Burocracia", "Costumbre"],
+      "correcta": 0
+    },
+    {
+      "id": "prueba-15",
+      "categoria": "cultura",
+      "dificultad": 3,
+      "texto": "(Prueba) ¿Cuál es el objetivo principal de un proceso de inducción?",
+      "opciones": ["Integrar al nuevo colaborador", "Evaluar su salario", "Repartir tareas pendientes", "Organizar una fiesta"],
+      "correcta": 0
+    }
+  ]
+}
