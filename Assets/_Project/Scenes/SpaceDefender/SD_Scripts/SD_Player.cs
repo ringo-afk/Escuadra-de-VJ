@@ -9,7 +9,6 @@ public class SD_Player : MonoBehaviour
     AudioSource sfx;
     public AudioClip[] soundEffects;
     public float energia = 100f;
-    public float energiaMax = 100f;    
     public bool alive;
     
 
