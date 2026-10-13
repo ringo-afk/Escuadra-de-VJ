@@ -9,7 +9,10 @@ public class SD_Player : MonoBehaviour
     AudioSource sfx;
     public AudioClip[] soundEffects;
     public float energia = 100f;
+    public float energiaMax = 100f;
     public bool alive;
+    public SD_TriviaController triviaController;
+    public SD_PauseController pauseController;
     
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -23,9 +26,18 @@ public class SD_Player : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {        
         if(alive)
         {
+            if (Time.timeScale == 0f ||
+                (triviaController != null &&
+                triviaController.BlocksGameplayInput) ||
+                (pauseController != null &&
+                pauseController.BlocksGameplayInput))
+            {
+                return;
+            }
+
             // Movement
             float movX = Input.GetAxisRaw("Horizontal");
             float movY = Input.GetAxisRaw("Vertical");
@@ -78,6 +90,19 @@ public class SD_Player : MonoBehaviour
             body.linearVelocity = Vector2.zero;
             // anim.Play("JugadorMuerte");
         }
+    }
+    public void Heal(float amount)
+    {
+        if (!alive || amount <= 0f)
+            return;
+
+        energia = Mathf.Clamp(
+            energia + amount,
+            0f,
+            energiaMax
+        );
+
+        Debug.Log($"Vida actual: {energia}/{energiaMax}");
     }
 
 }

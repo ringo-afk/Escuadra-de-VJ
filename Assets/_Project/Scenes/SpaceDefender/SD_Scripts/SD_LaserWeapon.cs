@@ -10,6 +10,8 @@ public class SD_LaserWeapon : MonoBehaviour
     public SpriteRenderer gunSprite;
     public Transform firePoint;
     public SD_LaserBullet bulletPrefab;
+    public SD_TriviaController triviaController;
+    public SD_PauseController pauseController;
 
     [Header("Posición")]
     public Vector2 pivotOffset = new Vector2(0f, -0.2f);
@@ -41,6 +43,15 @@ public class SD_LaserWeapon : MonoBehaviour
 
     void LateUpdate()
     {
+        if (Time.timeScale == 0f ||
+            (triviaController != null &&
+            triviaController.BlocksGameplayInput) ||
+            (pauseController != null &&
+            pauseController.BlocksGameplayInput))
+        {
+            return;
+        }
+        
         if (player == null || aimCamera == null)
             return;
 
@@ -127,7 +138,7 @@ public class SD_LaserWeapon : MonoBehaviour
         CurrentAmmo--;
         nextShotTime = Time.time + shotInterval;
     }
-    
+
     public void TryReload()
     {
         // Evitar recargas simultáneas o recargar estando muerto.

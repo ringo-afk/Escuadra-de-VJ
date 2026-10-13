@@ -16,6 +16,7 @@ public class SD_AlienEnemy : MonoBehaviour
     [Header("Referencias")]
     public SD_Player player;
     public SpriteRenderer visual;
+    public SD_TriviaController triviaController;
 
     [Header("Estadísticas")]
     public float moveSpeed = 2f;
@@ -74,6 +75,9 @@ public class SD_AlienEnemy : MonoBehaviour
 
     void TryAttack(Collider2D other)
     {
+        if (Time.timeScale == 0f)
+            return;
+            
         if (dead || Time.time < nextAttackTime)
             return;
 
@@ -118,7 +122,11 @@ public class SD_AlienEnemy : MonoBehaviour
 
         if (type == AlienType.Purple)
         {
-            Debug.Log("Alien morado eliminado: solicitar trivia.");
+            if (triviaController != null)
+            {
+                triviaController.RequestTrivia();
+            }
+
             onPurpleDeath.Invoke();
         }
 

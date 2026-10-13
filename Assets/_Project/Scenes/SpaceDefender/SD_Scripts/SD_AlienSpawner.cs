@@ -1,71 +1,80 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SD_AlienSpawner : MonoBehaviour
 {
-    [Header("Referencias")]
-    public SD_Player player;
-    public SD_AlienEnemy[] enemyPrefabs;
+    [Header("Prefabs")]
+    public SD_AlienEnemy greenPrefab;
+    public SD_AlienEnemy redPrefab;
+    public SD_AlienEnemy purplePrefab;
+
+    [Header("Puntos de aparición")]
     public Transform[] spawnPoints;
 
-    [Header("Spawn")]
-    public float spawnInterval = 2f;
-
-    public int maxEnemies = 10;
-
-    private float nextSpawnTime;
-
-    private readonly List<SD_AlienEnemy> activeEnemies =
-        new List<SD_AlienEnemy>();
-
-    void Start()
+    [Header("Trivia")]
+    public SD_TriviaController triviaController;
+    
+    public bool IsConfigured()
     {
-        nextSpawnTime = Time.time + spawnInterval;
-    }
-
-    void Update()
-    {
-        activeEnemies.RemoveAll(enemy => enemy == null);
-
-        if (player == null || !player.alive)
-            return;
-
-        if (enemyPrefabs == null || enemyPrefabs.Length == 0)
-            return;
+        if (greenPrefab == null ||
+            redPrefab == null ||
+            purplePrefab == null)
+        {
+            return false;
+        }
 
         if (spawnPoints == null || spawnPoints.Length == 0)
-            return;
+            return false;
 
-        if (activeEnemies.Count >= maxEnemies)
-            return;
+        foreach (Transform point in spawnPoints)
+        {
+            if (point == null)
+                return false;
+        }
 
-        if (Time.time < nextSpawnTime)
-            return;
-
-        SpawnEnemy();
-
-        nextSpawnTime =
-            Time.time + Mathf.Max(0.1f, spawnInterval);
+        return true;
     }
 
-    void SpawnEnemy()
+    public SD_AlienEnemy Spawn(
+        SD_Player player,
+        int greenWeight,
+        int redWeight,
+        int purpleWeight)
     {
-        SD_AlienEnemy prefab =
-            enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
+        int totalWeight =
+            greenWeight + redWeight + purpleWeight;
+
+        if (totalWeight <= 0)
+            return null;
+
+        int randomValue = Random.Range(0, totalWeight);
+
+        SD_AlienEnemy selectedPrefab;
+
+        if (randomValue < greenWeight)
+        {
+            selectedPrefab = greenPrefab;
+        }
+        else if (randomValue < greenWeight + redWeight)
+        {
+            selectedPrefab = redPrefab;
+        }
+        else
+        {
+            selectedPrefab = purplePrefab;
+        }
 
         Transform point =
             spawnPoints[Random.Range(0, spawnPoints.Length)];
 
-        if (prefab == null || point == null)
-            return;
-
         SD_AlienEnemy enemy = Instantiate(
-            prefab,
+            selectedPrefab,
             point.position,
             Quaternion.identity
         );
 
         enemy.Initialize(player);
-        activeEnemies.Add(enemy);
+        enemy.triviaController = triviaController;
+        
+        return enemy;
     }
 }
