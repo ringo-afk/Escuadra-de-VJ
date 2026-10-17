@@ -24,6 +24,9 @@ public class JuegoManager : MonoBehaviour
     [SerializeField] private int puntosMalPuesto = 5;
     [SerializeField] private float factorBono = 0.5f;
 
+    // el nivel es la dificultad de las preguntas, solo sube durante la partida
+    public event System.Action<int> AlCambiarNivel;
+
     private Fase fase;
     private float tiempoEspera;
     private float tiempoRestante;
@@ -31,6 +34,9 @@ public class JuegoManager : MonoBehaviour
     private int preguntasContestadas;
     private int aciertos;
     private string motivoFinal;
+    private int nivel;
+
+    public int Nivel => nivel;
 
     private void OnEnable()
     {
@@ -67,8 +73,10 @@ public class JuegoManager : MonoBehaviour
         puntos = 0;
         preguntasContestadas = 0;
         aciertos = 0;
+        nivel = trivia.DificultadParaAltura(torre.Altura);
         hud.MostrarPuntos(puntos);
         hud.MostrarTiempo(tiempoRestante);
+        hud.MostrarNivel(nivel, false);
 
         SiguientePregunta();
     }
@@ -135,6 +143,14 @@ public class JuegoManager : MonoBehaviour
         if (ganados > 0 && textosFlotantes != null)
         {
             textosFlotantes.Mostrar(ganados, bloque.transform.position, res == Torre.Resultado.BienPuesto);
+        }
+
+        int nuevoNivel = trivia.DificultadParaAltura(torre.Altura);
+        if (nuevoNivel != nivel)
+        {
+            nivel = nuevoNivel;
+            hud.MostrarNivel(nivel, true);
+            AlCambiarNivel?.Invoke(nivel);
         }
 
         fase = Fase.Esperando;

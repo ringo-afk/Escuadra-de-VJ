@@ -71,6 +71,7 @@ public static class BrewStackGameBuilder
         CrearEventSystem();
         HUDJuego hud = CrearHUD(canvas, torre, spriteBloque);
         TriviaUI trivia = CrearTrivia(canvas, spriteBloque);
+        CrearAvisoNivel(canvas, hud);
         ResultadoFinalUI resultado = CrearResultado(canvas);
 
         TextosFlotantes textos = CrearTextosFlotantes();
@@ -774,6 +775,10 @@ public static class BrewStackGameBuilder
         TMP_Text etiqueta = CrearTexto("TextoEstabilidad", panelEstabilidad.transform, "Estabilidad", 22f, colorTexto, fuente);
         Estirar(etiqueta.gameObject, new Vector2(0.05f, 0.5f), new Vector2(0.95f, 0.95f));
 
+        GameObject panelNivel = CrearPanelHUD("PanelNivel", hudObj.transform, new Vector2(0.02f, 0.81f), new Vector2(0.16f, 0.885f), borde);
+        TMP_Text nivel = CrearTexto("TextoNivel", panelNivel.transform, "Nivel 1", 30f, colorTexto, fuente);
+        Estirar(nivel.gameObject, Vector2.zero, Vector2.one);
+
         GameObject fondoBarra = CrearImagen("BarraEstabilidadFondo", panelEstabilidad.transform, new Color(1f, 1f, 1f, 0.1f), spriteBlanco);
         Estirar(fondoBarra, new Vector2(0.06f, 0.18f), new Vector2(0.94f, 0.4f));
         fondoBarra.GetComponent<Image>().raycastTarget = false;
@@ -789,8 +794,22 @@ public static class BrewStackGameBuilder
         so.FindProperty("textoTiempo").objectReferenceValue = tiempo;
         so.FindProperty("barraEstabilidad").objectReferenceValue = relleno.GetComponent<RectTransform>();
         so.FindProperty("imagenEstabilidad").objectReferenceValue = relleno.GetComponent<Image>();
+        so.FindProperty("textoNivel").objectReferenceValue = nivel;
         so.ApplyModifiedPropertiesWithoutUndo();
         return hud;
+    }
+
+    // va aparte y después de la trivia para que se vea encima de la pregunta, en la franja de abajo
+    private static void CrearAvisoNivel(Transform canvas, HUDJuego hud)
+    {
+        TMP_FontAsset fuente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(RUTA_FUENTE);
+        TMP_Text aviso = CrearTexto("TextoAvisoNivel", canvas, "¡Nivel 2!", 44f, colorBase, fuente);
+        Estirar(aviso.gameObject, new Vector2(0.1f, 0.015f), new Vector2(0.9f, 0.11f));
+        aviso.gameObject.SetActive(false);
+
+        SerializedObject so = new SerializedObject(hud);
+        so.FindProperty("textoAvisoNivel").objectReferenceValue = aviso;
+        so.ApplyModifiedPropertiesWithoutUndo();
     }
 
     // fondo azul marino semitransparente con el borde celeste del menú encima
