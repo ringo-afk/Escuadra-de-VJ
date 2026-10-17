@@ -55,6 +55,7 @@ public class SonidosJuego : MonoBehaviour
     private int ultimoTicPartida;
 
     public float UmbralTension => umbralTension;
+    private float Volumen => volumenGeneral * OpcionesAudio.Efectos;
 
     private void Awake()
     {
@@ -119,7 +120,7 @@ public class SonidosJuego : MonoBehaviour
             // suena una vez al cruzar el umbral, no en bucle
             tensionArmada = false;
             fuenteTension.clip = clipTension;
-            fuenteTension.volume = volumenGeneral;
+            fuenteTension.volume = Volumen;
             fuenteTension.Play();
         }
         else if (!enPeligro)
@@ -140,7 +141,7 @@ public class SonidosJuego : MonoBehaviour
             if (segundo != ultimoTicPregunta)
             {
                 ultimoTicPregunta = segundo;
-                if (segundo <= segundosTicPregunta) fuenteEfectos.PlayOneShot(clipTic, volumenGeneral);
+                if (segundo <= segundosTicPregunta) fuenteEfectos.PlayOneShot(clipTic, Volumen);
             }
         }
 
@@ -150,7 +151,7 @@ public class SonidosJuego : MonoBehaviour
             if (segundo != ultimoTicPartida)
             {
                 ultimoTicPartida = segundo;
-                if (segundo <= segundosTicPartida && segundo > 0) fuenteTic.PlayOneShot(clipTic, volumenGeneral);
+                if (segundo <= segundosTicPartida && segundo > 0) fuenteTic.PlayOneShot(clipTic, Volumen);
             }
         }
     }
@@ -159,12 +160,12 @@ public class SonidosJuego : MonoBehaviour
     {
         // si se cayó no pegó en la torre, por eso no lleva golpe
         AudioClip clip = res == Torre.Resultado.SeCayo ? clipCaida : clipGolpe;
-        fuenteEfectos.PlayOneShot(clip, volumenGeneral);
+        fuenteEfectos.PlayOneShot(clip, Volumen);
 
         if (calidad == Torre.Calidad.Perfecto)
         {
             fuentePerfecto.pitch = 1f + pasoTono * Mathf.Min(combo, maxPasos);
-            fuentePerfecto.PlayOneShot(clipPerfecto, volumenGeneral);
+            fuentePerfecto.PlayOneShot(clipPerfecto, Volumen);
             combo++;
         }
         else
@@ -175,14 +176,14 @@ public class SonidosJuego : MonoBehaviour
 
     private void Respondio(bool acierto)
     {
-        fuenteEfectos.PlayOneShot(acierto ? clipAcierto : clipError, volumenGeneral);
+        fuenteEfectos.PlayOneShot(acierto ? clipAcierto : clipError, Volumen);
     }
 
     private void MostroResultado()
     {
         combo = 0;
         fuenteTension.Stop();
-        fuenteEfectos.PlayOneShot(clipJingle, volumenGeneral);
+        fuenteEfectos.PlayOneShot(clipJingle, Volumen);
 
         // el récord suena cuando termina el jingle
         if (resultado.EsRecord) Invoke(nameof(SonarRecord), esperaRecord);
@@ -190,33 +191,33 @@ public class SonidosJuego : MonoBehaviour
 
     private void SonarRecord()
     {
-        fuenteEfectos.PlayOneShot(clipRecord, volumenGeneral);
+        fuenteEfectos.PlayOneShot(clipRecord, Volumen);
     }
 
     private void Solto()
     {
-        fuenteEfectos.PlayOneShot(clipSoltar, volumenGeneral);
+        fuenteEfectos.PlayOneShot(clipSoltar, Volumen);
     }
 
     private void Colapso()
     {
         fuenteTension.Stop();
-        fuenteEfectos.PlayOneShot(clipColapso, volumenGeneral);
+        fuenteEfectos.PlayOneShot(clipColapso, Volumen);
     }
 
     private void LlegoAlturaMaxima()
     {
-        fuenteEfectos.PlayOneShot(clipAlturaMaxima, volumenGeneral);
+        fuenteEfectos.PlayOneShot(clipAlturaMaxima, Volumen);
     }
 
     private void MostroPregunta()
     {
-        fuenteEfectos.PlayOneShot(clipPregunta, volumenGeneral);
+        fuenteEfectos.PlayOneShot(clipPregunta, Volumen);
     }
 
     private void CambioNivel(int nivel)
     {
-        fuenteEfectos.PlayOneShot(clipNivel, volumenGeneral);
+        fuenteEfectos.PlayOneShot(clipNivel, Volumen);
     }
 
     // sonidos de reemplazo, sencillos pero suficientes para probar

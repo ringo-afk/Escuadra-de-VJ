@@ -27,6 +27,8 @@ public static class BrewStackGameBuilder
     private const string RUTA_MENU = CARPETA + "/BS_Scenes/BS_Menu.unity";
     private const string RUTA_LOGO_BREWSTACK = CARPETA + "/BS_Sprites/logo_brewstack.png";
     private const string RUTA_LOGO_ESLABON = CARPETA + "/BS_Sprites/logo_eslabon.png";
+    private const string CARPETA_AUDIO = CARPETA + "/BS_Audio";
+    private const float CALIDAD_AUDIO = 0.5f;
     private const string NOMBRE_ESCENA_JUEGO = "BS_Game";
 
     private const float ANCHO_BASE = 3f;
@@ -77,8 +79,9 @@ public static class BrewStackGameBuilder
         TextosFlotantes textos = CrearTextosFlotantes();
         JuegoManager juego = CrearJuegoManager(torre, trivia, hud, resultado, textos);
         CrearEfectos(torre);
-        CrearSonidos(torre, trivia, resultado, juego);
-        CrearMusica(resultado);
+        SonidosJuego sonidos = CrearSonidos(torre, trivia, resultado, juego);
+        MusicaJuego musica = CrearMusica(resultado, torre, juego, sonidos);
+        ConfigurarAudios();
 
         EditorSceneManager.SaveScene(escena, RUTA_ESCENA);
         AssetDatabase.Refresh();
@@ -235,7 +238,10 @@ public static class BrewStackGameBuilder
             SerializedObject so = new SerializedObject(manager);
             ActualizarInstrucciones(so, manager);
             ActualizarLogos(so);
+            ActualizarOpciones(so, manager);
+            ActualizarMusicaMenu(so, manager);
             so.ApplyModifiedPropertiesWithoutUndo();
+            ConfigurarAudios();
 
             // al final, para que también lo tengan los botones que se agregaron arriba
             foreach (GameObject raiz in menu.GetRootGameObjects())
@@ -357,6 +363,121 @@ public static class BrewStackGameBuilder
         if (eslabon != null && fondo != null) eslabon.transform.SetSiblingIndex(fondo.GetSiblingIndex() + 1);
     }
 
+    // otro botón a lo alto ya no cabe en el menú, por eso Opciones va junto a Salir en una fila
+    private static void ActualizarOpciones(SerializedObject so, MenuManager manager)
+    {
+        Transform principal = ((GameObject)so.FindProperty("mainMenuPanel").objectReferenceValue).transform;
+        Transform historial = ((GameObject)so.FindProperty("historialPanel").objectReferenceValue).transform;
+        Transform canvas = principal.parent;
+
+        Transform fila = principal.Find("FilaInferior");
+        if (fila == null)
+        {
+            GameObject obj = new GameObject("FilaInferior", typeof(RectTransform));
+            obj.layer = LayerMask.NameToLayer("UI");
+            obj.transform.SetParent(principal, false);
+            HorizontalLayoutGroup layout = obj.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = 12f;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = true;
+            obj.AddComponent<LayoutElement>().preferredHeight = 64f;
+            fila = obj.transform;
+        }
+        fila.SetAsLastSibling();
+
+        Transform salir = principal.Find("SalirButton");
+        if (salir != null) salir.SetParent(fila, false);
+        else salir = fila.Find("SalirButton");
+
+        Button opciones = BuscarODuplicar(fila, "OpcionesButton", principal.Find("HistorialButton"));
+        opciones.GetComponentInChildren<TMP_Text>(true).text = "Opciones";
+        CambiarClic(opciones, manager.MostrarOpciones);
+        opciones.transform.SetAsFirstSibling();
+        if (salir != null) salir.SetAsLastSibling();
+
+        // copia del panel de historial para que se vea igual, sin la lista
+        Transform panel = canvas.Find("OpcionesPanel");
+        if (panel == null)
+        {
+            panel = Object.Instantiate(historial.gameObject, canvas).transform;
+            panel.name = "OpcionesPanel";
+            Transform contenido = panel.Find("HistorialContent");
+            if (contenido != null) Object.DestroyImmediate(contenido.gameObject);
+        }
+        panel.SetSiblingIndex(historial.GetSiblingIndex() + 1);
+        panel.gameObject.SetActive(false);
+        panel.Find("TitleText").GetComponent<TMP_Text>().text = "OPCIONES";
+
+        Sprite blanco = CrearSpriteBloque();
+        TMP_FontAsset fuente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(RUTA_FUENTE);
+        Slider musica = FilaSlider(panel, "FilaMusica", "Música", blanco, fuente);
+        Slider efectos = FilaSlider(panel, "FilaEfectos", "Efectos", blanco, fuente);
+
+        Transform volver = panel.Find("VolverButton");
+        Button silencio = BuscarODuplicar(panel, "SilencioButton", volver);
+        // el clic lo pone PanelOpciones al iniciar, la copia traía el de Volver
+        CambiarClic(silencio, null);
+        CambiarClic(volver.GetComponent<Button>(), manager.MostrarMainMenu);
+
+        musica.transform.parent.SetAsLastSibling();
+        efectos.transform.parent.SetAsLastSibling();
+        silencio.transform.SetAsLastSibling();
+        volver.SetAsLastSibling();
+
+        PanelOpciones componente = panel.GetComponent<PanelOpciones>();
+        if (componente == null) componente = panel.gameObject.AddComponent<PanelOpciones>();
+        ConectarOpciones(componente, musica, efectos, silencio);
+        so.FindProperty("opcionesPanel").objectReferenceValue = panel.gameObject;
+    }
+
+    private static Slider FilaSlider(Transform panel, string nombre, string etiqueta, Sprite blanco, TMP_FontAsset fuente)
+    {
+        Transform fila = panel.Find(nombre);
+        if (fila == null)
+        {
+            GameObject obj = new GameObject(nombre, typeof(RectTransform));
+            obj.layer = LayerMask.NameToLayer("UI");
+            obj.transform.SetParent(panel, false);
+            obj.AddComponent<LayoutElement>().preferredHeight = 60f;
+
+            TMP_Text texto = CrearTexto("Etiqueta", obj.transform, etiqueta, 24f, colorTexto, fuente);
+            Estirar(texto.gameObject, new Vector2(0.06f, 0f), new Vector2(0.36f, 1f));
+            texto.alignment = TextAlignmentOptions.Left;
+
+            Slider nuevo = CrearSlider("Slider", obj.transform, blanco);
+            Estirar(nuevo.gameObject, new Vector2(0.4f, 0.15f), new Vector2(0.94f, 0.85f));
+            fila = obj.transform;
+        }
+        return fila.GetComponentInChildren<Slider>(true);
+    }
+
+    // hoy la música del menú es un AudioSource con Play On Awake, ahora la arranca MusicaMenu con fade
+    private static void ActualizarMusicaMenu(SerializedObject so, MenuManager manager)
+    {
+        AudioSource efectos = (AudioSource)so.FindProperty("sfxSource").objectReferenceValue;
+        AudioSource fuente = null;
+        foreach (AudioSource a in manager.GetComponents<AudioSource>())
+        {
+            if (a != efectos) fuente = a;
+        }
+        if (fuente == null) fuente = manager.gameObject.AddComponent<AudioSource>();
+
+        fuente.playOnAwake = false;
+        fuente.loop = true;
+        AudioClip tema = BuscarMusica("musica_menu", "se queda la música ambiental de antes");
+        if (tema != null) fuente.clip = tema;
+        else if (fuente.clip == null) fuente.clip = AssetDatabase.LoadAssetAtPath<AudioClip>(RUTA_MUSICA);
+
+        MusicaMenu musica = manager.GetComponent<MusicaMenu>();
+        if (musica == null) musica = manager.gameObject.AddComponent<MusicaMenu>();
+        SerializedObject soMusica = new SerializedObject(musica);
+        soMusica.FindProperty("fuente").objectReferenceValue = fuente;
+        soMusica.ApplyModifiedPropertiesWithoutUndo();
+        so.FindProperty("musicaMenu").objectReferenceValue = musica;
+    }
+
     private static GameObject PonerLogo(string ruta, string nombre, Transform padre, Vector2 ancla, Vector2 pivote, Vector2 posicion, float tamano)
     {
         Transform existente = padre.Find(nombre);
@@ -383,6 +504,27 @@ public static class BrewStackGameBuilder
         return obj;
     }
 
+    // la música larga pesa mucho en el build Web, con Vorbis a media calidad se oye igual y pesa mucho menos
+    private static void ConfigurarAudios()
+    {
+        foreach (string guid in AssetDatabase.FindAssets("t:AudioClip", new[] { CARPETA_AUDIO }))
+        {
+            string ruta = AssetDatabase.GUIDToAssetPath(guid);
+            AudioImporter importer = (AudioImporter)AssetImporter.GetAtPath(ruta);
+            AudioImporterSampleSettings ajustes = importer.defaultSampleSettings;
+            bool listo = ajustes.compressionFormat == AudioCompressionFormat.Vorbis && Mathf.Approximately(ajustes.quality, CALIDAD_AUDIO);
+            if (listo && !importer.ContainsSampleSettingsOverride("WebGL")) continue;
+
+            ajustes.compressionFormat = AudioCompressionFormat.Vorbis;
+            ajustes.quality = CALIDAD_AUDIO;
+            importer.defaultSampleSettings = ajustes;
+            // si alguien puso otro formato solo para Web, se quita para que use el de arriba
+            importer.ClearSampleSettingOverride("WebGL");
+            importer.SaveAndReimport();
+            Debug.Log("BrewStack: " + ruta + " quedó en Vorbis al " + Mathf.RoundToInt(CALIDAD_AUDIO * 100f) + "%");
+        }
+    }
+
     // lee el valor que trae el script por defecto, el builder no cambia estos campos
     private static float LeerCampo<T>(string campo) where T : Component
     {
@@ -406,13 +548,14 @@ public static class BrewStackGameBuilder
         return existente.GetComponent<Button>();
     }
 
+    // con accion en null solo quita lo que tenía
     private static void CambiarClic(Button boton, UnityEngine.Events.UnityAction accion)
     {
         while (boton.onClick.GetPersistentEventCount() > 0)
         {
             UnityEventTools.RemovePersistentListener(boton.onClick, 0);
         }
-        UnityEventTools.AddPersistentListener(boton.onClick, accion);
+        if (accion != null) UnityEventTools.AddPersistentListener(boton.onClick, accion);
     }
 
     // cuadro blanco de 1x1 unidad, el color se lo pone cada bloque
@@ -723,14 +866,85 @@ public static class BrewStackGameBuilder
         return textos;
     }
 
-    private static void CrearMusica(ResultadoFinalUI resultado)
+    private static MusicaJuego CrearMusica(ResultadoFinalUI resultado, Torre torre, JuegoManager juego, SonidosJuego sonidos)
     {
         GameObject obj = new GameObject("Musica");
         MusicaJuego musica = obj.AddComponent<MusicaJuego>();
 
+        AudioClip temaJuego = BuscarMusica("musica_juego", "se usa la música ambiental de antes");
+        if (temaJuego == null) temaJuego = AssetDatabase.LoadAssetAtPath<AudioClip>(RUTA_MUSICA);
+
         SerializedObject so = new SerializedObject(musica);
         so.FindProperty("resultado").objectReferenceValue = resultado;
-        so.FindProperty("musica").objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(RUTA_MUSICA);
+        so.FindProperty("musica").objectReferenceValue = temaJuego;
+        so.FindProperty("musicaTension").objectReferenceValue = BuscarMusica("musica_tension", "la música no cambia con la tensión");
+        so.FindProperty("musicaResultado").objectReferenceValue = BuscarMusica("musica_resultado", "en el resultado sigue la música del juego");
+        so.FindProperty("torre").objectReferenceValue = torre;
+        so.FindProperty("juego").objectReferenceValue = juego;
+        so.FindProperty("sonidos").objectReferenceValue = sonidos;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        SerializedObject soResultado = new SerializedObject(resultado);
+        soResultado.FindProperty("musica").objectReferenceValue = musica;
+        soResultado.ApplyModifiedPropertiesWithoutUndo();
+        return musica;
+    }
+
+    // la extensión puede ser cualquiera (mp3, ogg, wav), se busca por nombre dentro de BS_Audio
+    private static AudioClip BuscarMusica(string nombre, string queHace)
+    {
+        foreach (string guid in AssetDatabase.FindAssets(nombre + " t:AudioClip", new[] { CARPETA_AUDIO }))
+        {
+            string ruta = AssetDatabase.GUIDToAssetPath(guid);
+            if (Path.GetFileNameWithoutExtension(ruta) == nombre) return AssetDatabase.LoadAssetAtPath<AudioClip>(ruta);
+        }
+        Debug.LogWarning($"BrewStack: falta {nombre} en {CARPETA_AUDIO}, {queHace}");
+        return null;
+    }
+
+    // slider de 0 a 1 con fondo, relleno y manija, el tamaño lo pone quien lo llama
+    private static Slider CrearSlider(string nombre, Transform padre, Sprite spriteBlanco)
+    {
+        GameObject obj = new GameObject(nombre, typeof(RectTransform));
+        obj.layer = LayerMask.NameToLayer("UI");
+        obj.transform.SetParent(padre, false);
+
+        GameObject fondo = CrearImagen("Fondo", obj.transform, new Color(1f, 1f, 1f, 0.12f), spriteBlanco);
+        Estirar(fondo, new Vector2(0f, 0.35f), new Vector2(1f, 0.65f));
+
+        GameObject areaRelleno = new GameObject("AreaRelleno", typeof(RectTransform));
+        areaRelleno.transform.SetParent(obj.transform, false);
+        Estirar(areaRelleno, new Vector2(0f, 0.35f), new Vector2(1f, 0.65f));
+        GameObject relleno = CrearImagen("Relleno", areaRelleno.transform, colorCeleste, spriteBlanco);
+        Estirar(relleno, Vector2.zero, Vector2.one);
+        relleno.GetComponent<Image>().raycastTarget = false;
+
+        GameObject areaManija = new GameObject("AreaManija", typeof(RectTransform));
+        areaManija.transform.SetParent(obj.transform, false);
+        Estirar(areaManija, Vector2.zero, Vector2.one);
+        GameObject manija = CrearImagen("Manija", areaManija.transform, colorTexto, spriteBlanco);
+        RectTransform rectManija = manija.GetComponent<RectTransform>();
+        rectManija.anchorMin = Vector2.zero;
+        rectManija.anchorMax = new Vector2(0f, 1f);
+        rectManija.sizeDelta = new Vector2(20f, 0f);
+
+        Slider slider = obj.AddComponent<Slider>();
+        slider.fillRect = relleno.GetComponent<RectTransform>();
+        slider.handleRect = rectManija;
+        slider.targetGraphic = manija.GetComponent<Image>();
+        slider.minValue = 0f;
+        slider.maxValue = 1f;
+        slider.value = 0.8f;
+        return slider;
+    }
+
+    private static void ConectarOpciones(PanelOpciones opciones, Slider musica, Slider efectos, Button silencio)
+    {
+        SerializedObject so = new SerializedObject(opciones);
+        so.FindProperty("sliderMusica").objectReferenceValue = musica;
+        so.FindProperty("sliderEfectos").objectReferenceValue = efectos;
+        so.FindProperty("botonSilencio").objectReferenceValue = silencio;
+        so.FindProperty("textoSilencio").objectReferenceValue = silencio.GetComponentInChildren<TMP_Text>(true);
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 

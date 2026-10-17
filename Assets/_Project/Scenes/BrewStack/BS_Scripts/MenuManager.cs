@@ -29,6 +29,10 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject[] paginasComoSeJuega;
     [SerializeField] private TMP_Text textoBotonPagina;
 
+    [Header("Opciones y música")]
+    [SerializeField] private GameObject opcionesPanel;
+    [SerializeField] private MusicaMenu musicaMenu;
+
     private int paginaActual;
 
     private const string KEY_MEJOR_PUNTAJE = "MejorPuntaje";
@@ -45,7 +49,7 @@ public class MenuManager : MonoBehaviour
     {
         if (sfxSource != null && clickSound != null)
         {
-            sfxSource.PlayOneShot(clickSound);
+            sfxSource.PlayOneShot(clickSound, OpcionesAudio.Efectos);
         }
     }
 
@@ -56,6 +60,7 @@ public class MenuManager : MonoBehaviour
         mainMenuPanel.SetActive(true);
         comoSeJuegaPanel.SetActive(false);
         historialPanel.SetActive(false);
+        if (opcionesPanel != null) opcionesPanel.SetActive(false);
     }
 
     public void MostrarComoSeJuega()
@@ -64,7 +69,17 @@ public class MenuManager : MonoBehaviour
         mainMenuPanel.SetActive(false);
         comoSeJuegaPanel.SetActive(true);
         historialPanel.SetActive(false);
+        if (opcionesPanel != null) opcionesPanel.SetActive(false);
         MostrarPagina(0);
+    }
+
+    public void MostrarOpciones()
+    {
+        ReproducirClick();
+        mainMenuPanel.SetActive(false);
+        comoSeJuegaPanel.SetActive(false);
+        historialPanel.SetActive(false);
+        opcionesPanel.SetActive(true);
     }
 
     public void CambiarPaginaComoSeJuega()
@@ -94,13 +109,16 @@ public class MenuManager : MonoBehaviour
         mainMenuPanel.SetActive(false);
         comoSeJuegaPanel.SetActive(false);
         historialPanel.SetActive(true);
+        if (opcionesPanel != null) opcionesPanel.SetActive(false);
         PoblarHistorial();
     }
 
     public void Jugar()
     {
         ReproducirClick();
-        SceneManager.LoadScene(gameSceneName);
+        // la música baja antes de cambiar de escena para que no se corte
+        if (musicaMenu != null) musicaMenu.SalirA(gameSceneName);
+        else SceneManager.LoadScene(gameSceneName);
     }
 
     public void Salir()

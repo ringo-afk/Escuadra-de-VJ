@@ -18,6 +18,7 @@ public class ResultadoFinalUI : MonoBehaviour
     [Header("Configuración")]
     [SerializeField] private string modo = "Clásico";
     [SerializeField] private string escenaMenu = "BS_Menu";
+    [SerializeField] private MusicaJuego musica;
 
     public event System.Action AlJugarDeNuevo;
     public event System.Action AlMostrar;
@@ -68,6 +69,7 @@ public class ResultadoFinalUI : MonoBehaviour
 
     private void Volver()
     {
-        SceneManager.LoadScene(escenaMenu);
+        if (musica != null) musica.SalirA(escenaMenu);
+        else SceneManager.LoadScene(escenaMenu);
     }
 }
