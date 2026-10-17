@@ -19,6 +19,7 @@ public class ResultadoFinalUI : MonoBehaviour
     [SerializeField] private string modo = "Clásico";
     [SerializeField] private string escenaMenu = "BS_Menu";
     [SerializeField] private MusicaJuego musica;
+    [SerializeField] private string escenaMinijuegos = "MenuMinijuegos";
 
     public event System.Action AlJugarDeNuevo;
     public event System.Action AlMostrar;
@@ -30,9 +31,32 @@ public class ResultadoFinalUI : MonoBehaviour
 
     private void Awake()
     {
-        botonJugarDeNuevo.onClick.AddListener(JugarDeNuevo);
+        if (EsUrlDelPortal(Application.absoluteURL)) ConfigurarParaPortal();
+        else botonJugarDeNuevo.onClick.AddListener(JugarDeNuevo);
+
         botonVolver.onClick.AddListener(Volver);
         panel.SetActive(false);
+    }
+
+    // el portal abre el juego con ?usuario= en la URL, en el editor la URL viene vacía
+    private static bool EsUrlDelPortal(string url)
+    {
+        return url.Contains("?usuario=") || url.Contains("&usuario=");
+    }
+
+    // en el kiosco solo se juega una partida por turno, en vez de jugar de nuevo se regresa a los minijuegos
+    private void ConfigurarParaPortal()
+    {
+        botonJugarDeNuevo.onClick.RemoveListener(JugarDeNuevo);
+        botonJugarDeNuevo.onClick.AddListener(IrAMinijuegos);
+        TMP_Text texto = botonJugarDeNuevo.GetComponentInChildren<TMP_Text>(true);
+        if (texto != null) texto.text = "Volver a minijuegos";
+    }
+
+    private void IrAMinijuegos()
+    {
+        if (musica != null) musica.SalirA(escenaMinijuegos);
+        else SceneManager.LoadScene(escenaMinijuegos);
     }
 
     public void Mostrar(string motivo, int altura, int puntosBase, int bono, int total, float porcentajeAciertos)
