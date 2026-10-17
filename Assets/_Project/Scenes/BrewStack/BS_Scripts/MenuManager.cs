@@ -25,6 +25,12 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private AudioSource sfxSource;
     [SerializeField] private AudioClip clickSound;
 
+    [Header("Cómo se juega")]
+    [SerializeField] private GameObject[] paginasComoSeJuega;
+    [SerializeField] private TMP_Text textoBotonPagina;
+
+    private int paginaActual;
+
     private const string KEY_MEJOR_PUNTAJE = "MejorPuntaje";
     private const string KEY_ULTIMA_PARTIDA = "UltimaPartida";
     private const string KEY_HISTORIAL = "HistorialJson";
@@ -58,6 +64,28 @@ public class MenuManager : MonoBehaviour
         mainMenuPanel.SetActive(false);
         comoSeJuegaPanel.SetActive(true);
         historialPanel.SetActive(false);
+        MostrarPagina(0);
+    }
+
+    public void CambiarPaginaComoSeJuega()
+    {
+        ReproducirClick();
+        MostrarPagina((paginaActual + 1) % paginasComoSeJuega.Length);
+    }
+
+    private void MostrarPagina(int pagina)
+    {
+        if (paginasComoSeJuega == null || paginasComoSeJuega.Length == 0) return;
+
+        paginaActual = pagina;
+        for (int i = 0; i < paginasComoSeJuega.Length; i++)
+        {
+            paginasComoSeJuega[i].SetActive(i == pagina);
+        }
+        if (textoBotonPagina != null)
+        {
+            textoBotonPagina.text = pagina < paginasComoSeJuega.Length - 1 ? "Siguiente" : "Anterior";
+        }
     }
 
     public void MostrarHistorial()

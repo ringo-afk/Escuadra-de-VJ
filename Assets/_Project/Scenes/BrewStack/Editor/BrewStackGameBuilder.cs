@@ -1,6 +1,7 @@
 using System.IO;
 using TMPro;
 using UnityEditor;
+using UnityEditor.Events;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -187,6 +188,177 @@ public static class BrewStackGameBuilder
             EditorSceneManager.CloseScene(menu, true);
         }
         return cambio;
+    }
+
+    // agrega a BS_Menu lo que le falta, busca todo por nombre para que correrlo otra vez no duplique nada
+    [MenuItem("BrewStack/Actualizar menú")]
+    public static void ActualizarMenu()
+    {
+        if (EditorApplication.isPlaying)
+        {
+            Debug.LogWarning("BrewStack: sal de Play antes de actualizar el menú");
+            return;
+        }
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+
+        var menu = EditorSceneManager.GetSceneByPath(RUTA_MENU);
+        bool yaEstabaAbierta = menu.isLoaded;
+        if (yaEstabaAbierta && menu.isDirty)
+        {
+            Debug.LogError("BrewStack: BS_Menu tiene cambios sin guardar. Guárdala o descártalos y vuelve a intentar.");
+            return;
+        }
+        if (!yaEstabaAbierta)
+        {
+            menu = EditorSceneManager.OpenScene(RUTA_MENU, OpenSceneMode.Additive);
+        }
+
+        // los objetos nuevos se crean en la escena activa, por eso se cambia mientras tanto
+        var escenaActiva = EditorSceneManager.GetActiveScene();
+        EditorSceneManager.SetActiveScene(menu);
+
+        MenuManager manager = null;
+        foreach (GameObject raiz in menu.GetRootGameObjects())
+        {
+            if (manager == null) manager = raiz.GetComponentInChildren<MenuManager>(true);
+        }
+
+        if (manager == null)
+        {
+            Debug.LogError("BrewStack: no se encontró ningún MenuManager en BS_Menu");
+        }
+        else
+        {
+            SerializedObject so = new SerializedObject(manager);
+            ActualizarInstrucciones(so, manager);
+            so.ApplyModifiedPropertiesWithoutUndo();
+
+            EditorSceneManager.MarkSceneDirty(menu);
+            EditorSceneManager.SaveScene(menu);
+            Debug.Log("BrewStack: se actualizó y guardó BS_Menu");
+        }
+
+        if (escenaActiva.IsValid() && escenaActiva != menu) EditorSceneManager.SetActiveScene(escenaActiva);
+        if (!yaEstabaAbierta)
+        {
+            EditorSceneManager.CloseScene(menu, true);
+        }
+    }
+
+    // las tarjetas toman los números de los scripts, si cambian solo hay que volver a correr el menú
+    private static void ActualizarInstrucciones(SerializedObject so, MenuManager manager)
+    {
+        Transform panel = ((GameObject)so.FindProperty("comoSeJuegaPanel").objectReferenceValue).transform;
+        Transform grid1 = panel.Find("InstruccionesGrid");
+        if (grid1 == null)
+        {
+            Debug.LogError("BrewStack: no se encontró InstruccionesGrid en el panel Cómo se juega");
+            return;
+        }
+
+        int minutos = Mathf.RoundToInt(LeerCampo<JuegoManager>("tiempoSesion") / 60f);
+        int segundosPregunta = Mathf.RoundToInt(LeerCampo<TriviaUI>("tiempoPregunta"));
+        int bien = Mathf.RoundToInt(LeerCampo<JuegoManager>("puntosBienPuesto"));
+        int mal = Mathf.RoundToInt(LeerCampo<JuegoManager>("puntosMalPuesto"));
+        int bono = Mathf.RoundToInt(LeerCampo<JuegoManager>("factorBono") * 100f);
+        int malSeguidos = Mathf.RoundToInt(LeerCampo<Torre>("maxMalPuestosSeguidos"));
+        int nivel2 = Mathf.RoundToInt(LeerCampo<TriviaUI>("alturaDificultad2"));
+        int nivel3 = Mathf.RoundToInt(LeerCampo<TriviaUI>("alturaDificultad3"));
+        int alturaMaxima = Mathf.RoundToInt(LeerCampo<Torre>("alturaMaxima"));
+
+        string[] textos =
+        {
+            $"Tienes {minutos} minutos. El bloque va de lado a lado: haz clic o presiona espacio para soltarlo.",
+            $"Antes de cada bloque hay una pregunta y tienes {segundosPregunta} segundos. Si aciertas, el bloque sale ancho y lento. Si fallas, angosto y rápido.",
+            $"Bien puesto: +{bien} puntos. Mal puesto: +{mal} puntos y la torre se inclina.",
+            "Si más de la mitad del bloque queda fuera de la torre, se cae y no suma puntos.",
+            $"La torre colapsa con {malSeguidos} bloques mal puestos o caídos seguidos, o si se inclina demasiado.",
+            $"Al final ganas un bono de hasta {bono}% de tus puntos, según tu porcentaje de aciertos.",
+            $"Las preguntas suben de nivel: nivel 2 a los {nivel2} bloques y nivel 3 a los {nivel3} bloques.",
+            $"La altura máxima es de {alturaMaxima} bloques. Si la alcanzas, la partida termina."
+        };
+
+        // no caben las 8 tarjetas juntas, la segunda página es una copia de la primera
+        Transform grid2 = panel.Find("InstruccionesGrid2");
+        if (grid2 == null)
+        {
+            grid2 = Object.Instantiate(grid1.gameObject, panel).transform;
+            grid2.name = "InstruccionesGrid2";
+            for (int i = 0; i < grid2.childCount; i++) grid2.GetChild(i).name = "Instruccion" + (i + 5);
+        }
+        grid2.SetSiblingIndex(grid1.GetSiblingIndex() + 1);
+
+        Transform[] grids = { grid1, grid2 };
+        for (int g = 0; g < grids.Length; g++)
+        {
+            GridLayoutGroup layout = grids[g].GetComponent<GridLayoutGroup>();
+            layout.cellSize = new Vector2(420f, 120f);
+            LayoutElement elemento = grids[g].GetComponent<LayoutElement>();
+            if (elemento != null) elemento.preferredHeight = layout.cellSize.y * 2f + layout.spacing.y;
+
+            for (int i = 0; i < 4; i++)
+            {
+                Transform tarjeta = grids[g].Find("Instruccion" + (g * 4 + i + 1));
+                TMP_Text texto = tarjeta != null ? tarjeta.GetComponentInChildren<TMP_Text>(true) : null;
+                if (texto == null)
+                {
+                    Debug.LogError("BrewStack: falta la tarjeta Instruccion" + (g * 4 + i + 1));
+                    continue;
+                }
+                texto.text = textos[g * 4 + i];
+                texto.enableAutoSizing = true;
+                texto.fontSizeMin = 16f;
+                texto.fontSizeMax = 22f;
+            }
+        }
+        grid1.gameObject.SetActive(true);
+        grid2.gameObject.SetActive(false);
+
+        Transform volver = panel.Find("VolverButton");
+        Button pagina = BuscarODuplicar(panel, "PaginaButton", volver);
+        pagina.transform.SetAsLastSibling();
+        volver.SetAsLastSibling();
+        TMP_Text textoPagina = pagina.GetComponentInChildren<TMP_Text>(true);
+        textoPagina.text = "Siguiente";
+        CambiarClic(pagina, manager.CambiarPaginaComoSeJuega);
+
+        SerializedProperty paginas = so.FindProperty("paginasComoSeJuega");
+        paginas.arraySize = 2;
+        paginas.GetArrayElementAtIndex(0).objectReferenceValue = grid1.gameObject;
+        paginas.GetArrayElementAtIndex(1).objectReferenceValue = grid2.gameObject;
+        so.FindProperty("textoBotonPagina").objectReferenceValue = textoPagina;
+    }
+
+    // lee el valor que trae el script por defecto, el builder no cambia estos campos
+    private static float LeerCampo<T>(string campo) where T : Component
+    {
+        GameObject temp = new GameObject("Temp");
+        temp.hideFlags = HideFlags.HideAndDontSave;
+        SerializedProperty prop = new SerializedObject(temp.AddComponent<T>()).FindProperty(campo);
+        float valor = prop.propertyType == SerializedPropertyType.Integer ? prop.intValue : prop.floatValue;
+        Object.DestroyImmediate(temp);
+        return valor;
+    }
+
+    // copia un botón que ya existe para que se vea igual que los del menú
+    private static Button BuscarODuplicar(Transform padre, string nombre, Transform original)
+    {
+        Transform existente = padre.Find(nombre);
+        if (existente == null)
+        {
+            existente = Object.Instantiate(original.gameObject, padre).transform;
+            existente.name = nombre;
+        }
+        return existente.GetComponent<Button>();
+    }
+
+    private static void CambiarClic(Button boton, UnityEngine.Events.UnityAction accion)
+    {
+        while (boton.onClick.GetPersistentEventCount() > 0)
+        {
+            UnityEventTools.RemovePersistentListener(boton.onClick, 0);
+        }
+        UnityEventTools.AddPersistentListener(boton.onClick, accion);
     }
 
     // cuadro blanco de 1x1 unidad, el color se lo pone cada bloque
