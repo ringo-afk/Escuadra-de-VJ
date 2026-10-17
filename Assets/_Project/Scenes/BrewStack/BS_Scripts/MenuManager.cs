@@ -123,7 +123,12 @@ public class MenuManager : MonoBehaviour
 
     public void Salir()
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        // en Web Application.Quit no hace nada, se regresa al menú de minijuegos
+        SceneManager.LoadScene("MenuMinijuegos");
+#else
         Application.Quit();
+#endif
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif

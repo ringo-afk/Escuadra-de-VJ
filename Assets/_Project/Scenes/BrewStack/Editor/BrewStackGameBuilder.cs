@@ -81,7 +81,12 @@ public static class BrewStackGameBuilder
         CrearEfectos(torre);
         SonidosJuego sonidos = CrearSonidos(torre, trivia, resultado, juego);
         MusicaJuego musica = CrearMusica(resultado, torre, juego, sonidos);
+        PausaJuego pausa = CrearPausa(canvas, resultado, musica, spriteBloque);
         ConfigurarAudios();
+
+        SerializedObject soJuego = new SerializedObject(juego);
+        soJuego.FindProperty("pausa").objectReferenceValue = pausa;
+        soJuego.ApplyModifiedPropertiesWithoutUndo();
 
         EditorSceneManager.SaveScene(escena, RUTA_ESCENA);
         AssetDatabase.Refresh();
@@ -1099,6 +1104,89 @@ public static class BrewStackGameBuilder
         so.FindProperty("botonVolver").objectReferenceValue = volver;
         so.ApplyModifiedPropertiesWithoutUndo();
         return resultado;
+    }
+
+    // se crea al final del canvas: el botón queda encima de la trivia y el panel encima de todo
+    private static PausaJuego CrearPausa(Transform canvas, ResultadoFinalUI resultado, MusicaJuego musica, Sprite spriteBlanco)
+    {
+        TMP_FontAsset fuente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(RUTA_FUENTE);
+        Sprite borde = CargarPrimerSprite(RUTA_BORDE_BOTON);
+
+        Button pausar = CrearBoton("BotonPausa", canvas, "Pausa", borde, fuente);
+        Estirar(pausar.gameObject, new Vector2(0.86f, 0.81f), new Vector2(0.98f, 0.885f));
+        // como los paneles del HUD: fondo oscuro y el borde encima, para que se lea sobre los bloques
+        Image imagenPausa = pausar.GetComponent<Image>();
+        imagenPausa.sprite = null;
+        imagenPausa.type = Image.Type.Simple;
+        imagenPausa.color = colorPanel;
+        GameObject marco = CrearImagen("Borde", pausar.transform, colorBordeCeleste, borde);
+        Estirar(marco, Vector2.zero, Vector2.one);
+        marco.GetComponent<Image>().raycastTarget = false;
+        marco.transform.SetAsFirstSibling();
+
+        GameObject panel = CrearImagen("PanelPausa", canvas, colorPanel, null);
+        Estirar(panel, Vector2.zero, Vector2.one);
+
+        GameObject caja = CrearImagen("Caja", panel.transform, colorBordeCeleste, borde);
+        Estirar(caja, new Vector2(0.28f, 0.12f), new Vector2(0.72f, 0.88f));
+
+        TMP_Text titulo = CrearTexto("Titulo", caja.transform, "Pausa", 64f, colorCeleste, fuente);
+        Estirar(titulo.gameObject, new Vector2(0.05f, 0.8f), new Vector2(0.95f, 0.95f));
+
+        GameObject botones = new GameObject("Botones", typeof(RectTransform));
+        botones.transform.SetParent(caja.transform, false);
+        Estirar(botones, new Vector2(0.1f, 0.08f), new Vector2(0.9f, 0.75f));
+
+        Button continuar = CrearBoton("BotonContinuar", botones.transform, "Continuar", borde, fuente);
+        Estirar(continuar.gameObject, new Vector2(0f, 0.78f), new Vector2(1f, 1f));
+        Button opciones = CrearBoton("BotonOpciones", botones.transform, "Opciones", borde, fuente);
+        Estirar(opciones.gameObject, new Vector2(0f, 0.52f), new Vector2(1f, 0.74f));
+        Button menu = CrearBoton("BotonMenu", botones.transform, "Volver al menú de Brew Stack", borde, fuente);
+        Estirar(menu.gameObject, new Vector2(0f, 0.26f), new Vector2(1f, 0.48f));
+        Button minijuegos = CrearBoton("BotonMinijuegos", botones.transform, "Salir a minijuegos", borde, fuente);
+        Estirar(minijuegos.gameObject, new Vector2(0f, 0f), new Vector2(1f, 0.22f));
+
+        // los mismos controles que el panel de opciones del menú
+        GameObject panelOpciones = new GameObject("Opciones", typeof(RectTransform));
+        panelOpciones.transform.SetParent(caja.transform, false);
+        Estirar(panelOpciones, new Vector2(0.1f, 0.08f), new Vector2(0.9f, 0.75f));
+
+        TMP_Text textoMusica = CrearTexto("TextoMusica", panelOpciones.transform, "Música", 30f, colorTexto, fuente);
+        Estirar(textoMusica.gameObject, new Vector2(0f, 0.78f), new Vector2(0.35f, 1f));
+        textoMusica.alignment = TextAlignmentOptions.Left;
+        Slider sliderMusica = CrearSlider("SliderMusica", panelOpciones.transform, spriteBlanco);
+        Estirar(sliderMusica.gameObject, new Vector2(0.4f, 0.8f), new Vector2(1f, 0.98f));
+
+        TMP_Text textoEfectos = CrearTexto("TextoEfectos", panelOpciones.transform, "Efectos", 30f, colorTexto, fuente);
+        Estirar(textoEfectos.gameObject, new Vector2(0f, 0.52f), new Vector2(0.35f, 0.74f));
+        textoEfectos.alignment = TextAlignmentOptions.Left;
+        Slider sliderEfectos = CrearSlider("SliderEfectos", panelOpciones.transform, spriteBlanco);
+        Estirar(sliderEfectos.gameObject, new Vector2(0.4f, 0.54f), new Vector2(1f, 0.72f));
+
+        Button silencio = CrearBoton("BotonSilencio", panelOpciones.transform, "Silenciar", borde, fuente);
+        Estirar(silencio.gameObject, new Vector2(0f, 0.26f), new Vector2(1f, 0.48f));
+        Button volverOpciones = CrearBoton("BotonVolverOpciones", panelOpciones.transform, "Volver", borde, fuente);
+        Estirar(volverOpciones.gameObject, new Vector2(0f, 0f), new Vector2(1f, 0.22f));
+
+        ConectarOpciones(panelOpciones.AddComponent<PanelOpciones>(), sliderMusica, sliderEfectos, silencio);
+        panelOpciones.SetActive(false);
+
+        GameObject obj = new GameObject("Pausa");
+        PausaJuego pausa = obj.AddComponent<PausaJuego>();
+        SerializedObject so = new SerializedObject(pausa);
+        so.FindProperty("panel").objectReferenceValue = panel;
+        so.FindProperty("panelBotones").objectReferenceValue = botones;
+        so.FindProperty("panelOpciones").objectReferenceValue = panelOpciones;
+        so.FindProperty("botonPausa").objectReferenceValue = pausar;
+        so.FindProperty("botonContinuar").objectReferenceValue = continuar;
+        so.FindProperty("botonOpciones").objectReferenceValue = opciones;
+        so.FindProperty("botonVolverOpciones").objectReferenceValue = volverOpciones;
+        so.FindProperty("botonMenu").objectReferenceValue = menu;
+        so.FindProperty("botonMinijuegos").objectReferenceValue = minijuegos;
+        so.FindProperty("resultado").objectReferenceValue = resultado;
+        so.FindProperty("musica").objectReferenceValue = musica;
+        so.ApplyModifiedPropertiesWithoutUndo();
+        return pausa;
     }
 
     private static Button CrearBoton(string nombre, Transform padre, string texto, Sprite borde, TMP_FontAsset fuente)

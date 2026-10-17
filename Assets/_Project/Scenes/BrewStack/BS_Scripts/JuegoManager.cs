@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 // flujo de la partida: pregunta, bloque, resultado, hasta que la torre cae o se acaba el tiempo
@@ -12,6 +13,7 @@ public class JuegoManager : MonoBehaviour
     [SerializeField] private HUDJuego hud;
     [SerializeField] private ResultadoFinalUI resultado;
     [SerializeField] private TextosFlotantes textosFlotantes;
+    [SerializeField] private PausaJuego pausa;
 
     [Header("Tiempos")]
     [Range(120f, 300f)]
@@ -86,6 +88,7 @@ public class JuegoManager : MonoBehaviour
     private void Update()
     {
         if (fase == Fase.Terminada) return;
+        if (pausa != null && pausa.EnPausa) return;
 
         tiempoRestante -= Time.deltaTime;
         hud.MostrarTiempo(tiempoRestante);
@@ -108,7 +111,9 @@ public class JuegoManager : MonoBehaviour
 
         Keyboard teclado = Keyboard.current;
         Mouse mouse = Mouse.current;
-        bool clic = mouse != null && mouse.leftButton.wasPressedThisFrame;
+        // el clic sobre un botón, como el de pausa, no suelta el bloque
+        bool sobreUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+        bool clic = mouse != null && mouse.leftButton.wasPressedThisFrame && !sobreUI;
         bool espacio = teclado != null && teclado.spaceKey.wasPressedThisFrame;
         if (clic || espacio)
         {
