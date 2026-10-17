@@ -134,6 +134,9 @@ public class SD_LaserWeapon : MonoBehaviour
         );
 
         bullet.Launch(shotDirection, bulletSpeed);
+        SD_AudioManager.Instance?.Play(
+            SD_AudioManager.Sound.Laser
+        );
 
         CurrentAmmo--;
         nextShotTime = Time.time + shotInterval;
@@ -155,6 +158,9 @@ public class SD_LaserWeapon : MonoBehaviour
     private IEnumerator Reload()
     {
         IsReloading = true;
+        SD_AudioManager.Instance?.Play(
+            SD_AudioManager.Sound.Reload
+        );
 
         Debug.Log("Recargando...");
 

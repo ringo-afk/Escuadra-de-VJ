@@ -77,6 +77,10 @@ public class SD_Player : MonoBehaviour
         if (!alive)
             return;
 
+        SD_AudioManager.Instance?.Play(
+            SD_AudioManager.Sound.Damage
+        );
+
         energia -= cantidad;
 
         if (energia < 0)
@@ -96,11 +100,20 @@ public class SD_Player : MonoBehaviour
         if (!alive || amount <= 0f)
             return;
 
+        float previousHealth = energia;
+
         energia = Mathf.Clamp(
             energia + amount,
             0f,
             energiaMax
         );
+
+        if (energia > previousHealth)
+        {
+            SD_AudioManager.Instance?.Play(
+                SD_AudioManager.Sound.Healing
+            );
+        }
 
         Debug.Log($"Vida actual: {energia}/{energiaMax}");
     }

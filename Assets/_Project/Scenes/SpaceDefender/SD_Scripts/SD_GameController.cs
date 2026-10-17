@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class SD_GameController : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class SD_GameController : MonoBehaviour
 
         [Min(0)]
         public int purpleWeight;
+        [Range(0, 2)]
+        public int maxPurpleEnemies = 2;
     }
 
     [Header("Referencias")]
@@ -41,6 +44,7 @@ public class SD_GameController : MonoBehaviour
     [Header("Límite de aliens vivos")]
     [Min(1)]
     public int maxAliveEnemies = 10;
+    private int purpleSpawnedThisWave;
 
     [Header("Oleadas")]
     public WaveSettings[] waves =
@@ -66,21 +70,33 @@ public class SD_GameController : MonoBehaviour
         new WaveSettings
         {
             waveName = "Tercera oleada",
-            totalEnemies = 30,
-            greenWeight = 40,
-            redWeight = 40,
-            purpleWeight = 20
+            totalEnemies = 25,
+            greenWeight = 45,
+            redWeight = 45,
+            purpleWeight = 10
         },
 
         new WaveSettings
         {
-            waveName = "Oleada final",
-            totalEnemies = 40,
+            waveName = "Cuarta Oleada",
+            totalEnemies = 30,
             greenWeight = 25,
             redWeight = 55,
             purpleWeight = 20
+        },
+        
+        new WaveSettings
+        {
+            waveName = "Oleada final",
+            totalEnemies = 35,
+            greenWeight = 20,
+            redWeight = 60,
+            purpleWeight = 20
         }
+
+
     };
+    public int CompletedWaves { get; private set; }
 
     [Header("Eventos")]
     public UnityEvent onVictory = new UnityEvent();
@@ -104,6 +120,9 @@ public class SD_GameController : MonoBehaviour
 
     void Start()
     {
+        SD_RunResults.Reset();
+        CompletedWaves = 0;
+
         if (!ValidateConfiguration())
         {
             enabled = false;
@@ -120,12 +139,7 @@ public class SD_GameController : MonoBehaviour
 
         if (player == null || !player.alive)
         {
-            GameFinished = true;
-
-            StopAllCoroutines();
-
-            Debug.Log("Derrota.");
-            onDefeat.Invoke();
+            FinishGame(false);
         }
     }
 
@@ -188,9 +202,13 @@ public class SD_GameController : MonoBehaviour
 
             CurrentWave = i + 1;
             SpawnedThisWave = 0;
+            purpleSpawnedThisWave = 0;
 
             Debug.Log(
                 $"{wave.waveName}: {wave.totalEnemies} aliens."
+            );
+            SD_AudioManager.Instance?.Play(
+                SD_AudioManager.Sound.NewRound
             );
 
             // Crear solamente el total establecido para esta oleada.
@@ -215,11 +233,18 @@ public class SD_GameController : MonoBehaviour
                     continue;
                 }
 
+                int purpleLimit = Mathf.Clamp(wave.maxPurpleEnemies, 0, 2);
+
+                int currentPurpleWeight =
+                    purpleSpawnedThisWave < purpleLimit
+                        ? wave.purpleWeight
+                        : 0;
+
                 SD_AlienEnemy enemy = spawner.Spawn(
                     player,
                     wave.greenWeight,
                     wave.redWeight,
-                    wave.purpleWeight
+                    currentPurpleWeight
                 );
 
                 if (enemy == null)
@@ -234,6 +259,14 @@ public class SD_GameController : MonoBehaviour
 
                 activeEnemies.Add(enemy);
                 SpawnedThisWave++;
+                if (enemy.type == SD_AlienEnemy.AlienType.Purple)
+                {
+                    purpleSpawnedThisWave++;
+
+                    Debug.Log(
+                        $"Morados generados: {purpleSpawnedThisWave}/{purpleLimit}"
+                    );
+                }
 
                 yield return new WaitForSeconds(
                     Mathf.Max(0.1f, spawnInterval)
@@ -252,28 +285,67 @@ public class SD_GameController : MonoBehaviour
             if (player == null || !player.alive)
                 yield break;
 
+            CompletedWaves++;
             Debug.Log($"{wave.waveName} completada.");
+
+            SD_AudioManager.Instance?.Play(
+                SD_AudioManager.Sound.RoundComplete
+            );
 
             // Descanso antes de la siguiente, excepto tras la final.
             if (i < waves.Length - 1)
             {
-                yield return new WaitForSeconds(
-                    Mathf.Max(0f, timeBetweenWaves)
-                );
+                SD_AudioManager audio = SD_AudioManager.Instance;
+
+                if (audio != null && audio.roundComplete != null)
+                {
+                    yield return new WaitForSeconds(
+                        audio.roundComplete.length
+                    );
+                }
             }
         }
 
         if (player == null || !player.alive)
             yield break;
 
-        GameFinished = true;
-
-        Debug.Log("¡Victoria! Completaste las cuatro oleadas.");
-        onVictory.Invoke();
+        FinishGame(true);
     }
 
     void RemoveDeadEnemies()
     {
         activeEnemies.RemoveAll(enemy => enemy == null);
+    }
+    void FinishGame(bool victory)
+    {
+        if (GameFinished)
+            return;
+
+        GameFinished = true;
+        StopAllCoroutines();
+
+        float remainingHealth = player != null
+            ? Mathf.Clamp(player.energia, 0f, player.energiaMax)
+            : 0f;
+
+        SD_RunResults.Save(
+            victory,
+            CompletedWaves,
+            waves.Length,
+            remainingHealth
+        );
+
+        if (victory)
+        {
+            onVictory.Invoke();
+        }
+        else
+        {
+            onDefeat.Invoke();
+        }
+
+        Time.timeScale = 1f;
+
+        SceneManager.LoadScene("SD_Aftermath");
     }
 }

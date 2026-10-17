@@ -207,6 +207,10 @@ public class SD_TriviaController : MonoBehaviour
         if (index == currentQuestion.correctIndex)
         {
             float previousHealth = player.energia;
+
+            SD_AudioManager.Instance?.Play(
+                SD_AudioManager.Sound.Correct
+            );
             player.Heal(healingReward);
 
             float recovered = player.energia - previousHealth;
@@ -217,6 +221,10 @@ public class SD_TriviaController : MonoBehaviour
         }
         else
         {
+            SD_AudioManager.Instance?.Play(
+                SD_AudioManager.Sound.Incorrect
+            );
+            
             feedbackText.text =
                 "Respuesta incorrecta.\n" +
                 "La respuesta correcta es: " +

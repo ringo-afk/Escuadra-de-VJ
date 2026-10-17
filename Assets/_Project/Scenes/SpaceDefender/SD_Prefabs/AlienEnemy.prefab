@@ -123,10 +123,13 @@ MonoBehaviour:
   type: 0
   player: {fileID: 0}
   visual: {fileID: 3017703222067273484}
+  triviaController: {fileID: 0}
   moveSpeed: 4
   maxHealth: 60
   contactDamage: 10
   attackInterval: 1
+  alienAnimator: {fileID: 6048509540293805973}
+  deathAnimation: {fileID: 7400000, guid: c0c07f091d2ca224691e435cb7010213, type: 2}
   onPurpleDeath:
     m_PersistentCalls:
       m_Calls: []

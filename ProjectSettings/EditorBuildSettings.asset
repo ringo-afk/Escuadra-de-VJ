@@ -44,5 +44,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/SpaceDefender/SD_Scenes/SD_Gameplay.unity
     guid: 0427c2f280ef8f84bb2f5098c56b78a6
+  - enabled: 1
+    path: Assets/_Project/Scenes/SpaceDefender/SD_Scenes/SD_Aftermath.unity
+    guid: d9987035efc71bf44876558ec37ce366
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

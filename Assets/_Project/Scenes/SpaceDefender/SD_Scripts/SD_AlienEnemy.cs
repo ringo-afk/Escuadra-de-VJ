@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using System.Collections;
 
 public class SD_AlienEnemy : MonoBehaviour
 {
@@ -24,6 +25,10 @@ public class SD_AlienEnemy : MonoBehaviour
     public float contactDamage = 10f;
     public float attackInterval = 1f;
 
+    [Header("Animación de muerte")]
+    public Animator alienAnimator;
+    public AnimationClip deathAnimation;
+
     [Header("Evento del alien morado")]
     public UnityEvent onPurpleDeath = new UnityEvent();
 
@@ -31,6 +36,8 @@ public class SD_AlienEnemy : MonoBehaviour
     private float currentHealth;
     private float nextAttackTime;
     private bool dead;
+
+
 
     void Awake()
     {
@@ -100,6 +107,10 @@ public class SD_AlienEnemy : MonoBehaviour
 
         currentHealth -= damage;
 
+        SD_AudioManager.Instance?.Play(
+            SD_AudioManager.Sound.AlienDamage
+        );
+
         Debug.Log(
             $"{name} recibió {damage} de daño. Vida restante: {currentHealth}"
         );
@@ -117,9 +128,37 @@ public class SD_AlienEnemy : MonoBehaviour
 
         dead = true;
 
+        // Detener movimiento y desactivar contacto.
         body.linearVelocity = Vector2.zero;
         GetComponent<BoxCollider2D>().enabled = false;
 
+        StartCoroutine(DeathSequence());
+    }
+
+    IEnumerator DeathSequence()
+    {
+        if (alienAnimator != null && deathAnimation != null)
+        {
+            int deathState =
+                Animator.StringToHash("Base Layer.SD_AlienDeath");
+
+            if (alienAnimator.HasState(0, deathState))
+            {
+                alienAnimator.Play(deathState, 0, 0f);
+
+                yield return new WaitForSeconds(
+                    deathAnimation.length
+                );
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "No existe Base Layer.SD_AlienDeath en el Animator."
+                );
+            }
+        }
+
+        // Abrir la trivia después de terminar la animación.
         if (type == AlienType.Purple)
         {
             if (triviaController != null)
