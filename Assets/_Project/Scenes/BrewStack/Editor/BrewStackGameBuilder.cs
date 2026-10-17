@@ -27,6 +27,13 @@ public static class BrewStackGameBuilder
     private const string RUTA_MENU = CARPETA + "/BS_Scenes/BS_Menu.unity";
     private const string RUTA_LOGO_BREWSTACK = CARPETA + "/BS_Sprites/logo_brewstack.png";
     private const string RUTA_LOGO_ESLABON = CARPETA + "/BS_Sprites/logo_eslabon.png";
+    private const string RUTA_PREFAB_HISTORIAL = CARPETA + "/BS_Prefabs/HistorialRow.prefab";
+    private static readonly string[] COLUMNAS_HISTORIAL = { "FechaText", "ModoText", "AlturaText", "PuntosText" };
+    private const float ALTO_FILA_HISTORIAL = 40f;
+    private const float ALTO_SCROLL_HISTORIAL = 380f;
+    private const float ANCHO_BARRA = 12f;
+    private const int MARGEN_HISTORIAL = 24;
+    private const int RELLENO_FILA = 16;
     private const string CARPETA_AUDIO = CARPETA + "/BS_Audio";
     private const float CALIDAD_AUDIO = 0.5f;
     private const string NOMBRE_ESCENA_JUEGO = "BS_Game";
@@ -244,6 +251,7 @@ public static class BrewStackGameBuilder
             ActualizarInstrucciones(so, manager);
             ActualizarLogos(so);
             ActualizarOpciones(so, manager);
+            ActualizarHistorial(so);
             ActualizarMusicaMenu(so, manager);
             so.ApplyModifiedPropertiesWithoutUndo();
             ConfigurarAudios();
@@ -408,8 +416,11 @@ public static class BrewStackGameBuilder
         {
             panel = Object.Instantiate(historial.gameObject, canvas).transform;
             panel.name = "OpcionesPanel";
-            Transform contenido = panel.Find("HistorialContent");
-            if (contenido != null) Object.DestroyImmediate(contenido.gameObject);
+            foreach (string sobra in new[] { "HistorialContent", "EncabezadoHistorial", "HistorialScroll" })
+            {
+                Transform hijo = panel.Find(sobra);
+                if (hijo != null) Object.DestroyImmediate(hijo.gameObject);
+            }
         }
         panel.SetSiblingIndex(historial.GetSiblingIndex() + 1);
         panel.gameObject.SetActive(false);
@@ -435,6 +446,157 @@ public static class BrewStackGameBuilder
         if (componente == null) componente = panel.gameObject.AddComponent<PanelOpciones>();
         ConectarOpciones(componente, musica, efectos, silencio);
         so.FindProperty("opcionesPanel").objectReferenceValue = panel.gameObject;
+    }
+
+    // el encabezado va fuera de HistorialContent porque PoblarHistorial borra todo lo que hay adentro
+    private static void ActualizarHistorial(SerializedObject so)
+    {
+        Transform panel = ((GameObject)so.FindProperty("historialPanel").objectReferenceValue).transform;
+        RectTransform contenido = (RectTransform)so.FindProperty("historialContent").objectReferenceValue;
+        HistorialRow prefabFila = (HistorialRow)so.FindProperty("historialRowPrefab").objectReferenceValue;
+        TMP_FontAsset fuente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(RUTA_FUENTE);
+        ArreglarFilaHistorial(fuente);
+
+        // alto fijo con scroll, así el panel no crece aunque haya muchas partidas
+        Transform scroll = panel.Find("HistorialScroll");
+        if (scroll == null)
+        {
+            GameObject obj = new GameObject("HistorialScroll", typeof(RectTransform));
+            obj.layer = LayerMask.NameToLayer("UI");
+            obj.transform.SetParent(panel, false);
+            obj.AddComponent<LayoutElement>();
+            obj.AddComponent<ScrollRect>();
+
+            GameObject vista = CrearImagen("Viewport", obj.transform, new Color(1f, 1f, 1f, 0f), null);
+            vista.AddComponent<RectMask2D>();
+            CrearBarraVertical(obj.transform, CrearSpriteBloque());
+            scroll = obj.transform;
+        }
+        scroll.GetComponent<LayoutElement>().preferredHeight = ALTO_SCROLL_HISTORIAL;
+
+        // el viewport deja libre el espacio de la barra aunque no se vea, para que las columnas no se muevan
+        RectTransform viewport = (RectTransform)scroll.Find("Viewport");
+        Estirar(viewport.gameObject, Vector2.zero, Vector2.one);
+        viewport.offsetMax = new Vector2(-(ANCHO_BARRA + 6f), 0f);
+
+        contenido.SetParent(viewport, false);
+        contenido.anchorMin = new Vector2(0f, 1f);
+        contenido.anchorMax = new Vector2(1f, 1f);
+        contenido.pivot = new Vector2(0.5f, 1f);
+        contenido.anchoredPosition = Vector2.zero;
+        contenido.sizeDelta = new Vector2(0f, contenido.sizeDelta.y);
+        VerticalLayoutGroup layout = contenido.GetComponent<VerticalLayoutGroup>();
+        layout.padding = new RectOffset(MARGEN_HISTORIAL, MARGEN_HISTORIAL, 4, 4);
+        layout.spacing = 6f;
+        layout.childAlignment = TextAnchor.UpperCenter;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = false;
+
+        ScrollRect scrollRect = scroll.GetComponent<ScrollRect>();
+        scrollRect.content = contenido;
+        scrollRect.viewport = viewport;
+        scrollRect.horizontal = false;
+        scrollRect.vertical = true;
+        scrollRect.movementType = ScrollRect.MovementType.Clamped;
+        scrollRect.scrollSensitivity = 30f;
+        scrollRect.verticalScrollbar = scroll.GetComponentInChildren<Scrollbar>(true);
+        scrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
+
+        // la misma fila del prefab, así las columnas quedan alineadas con las partidas
+        Transform encabezado = panel.Find("EncabezadoHistorial");
+        if (encabezado == null)
+        {
+            encabezado = ((GameObject)PrefabUtility.InstantiatePrefab(prefabFila.gameObject, panel)).transform;
+            encabezado.name = "EncabezadoHistorial";
+        }
+        string[] titulos = { "Fecha", "Modo", "Altura", "Puntos" };
+        for (int i = 0; i < COLUMNAS_HISTORIAL.Length; i++)
+        {
+            TMP_Text texto = encabezado.Find(COLUMNAS_HISTORIAL[i]).GetComponent<TMP_Text>();
+            texto.text = titulos[i];
+            texto.color = colorCeleste;
+        }
+        encabezado.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+        // el encabezado mide lo mismo que el panel, las filas son más angostas por el margen y la barra
+        encabezado.GetComponent<HorizontalLayoutGroup>().padding =
+            new RectOffset(MARGEN_HISTORIAL + RELLENO_FILA, MARGEN_HISTORIAL + RELLENO_FILA + (int)ANCHO_BARRA + 6, 0, 0);
+
+        Transform titulo = panel.Find("TitleText");
+        titulo.SetAsFirstSibling();
+        encabezado.SetSiblingIndex(1);
+        scroll.SetSiblingIndex(2);
+        panel.Find("VolverButton").SetAsLastSibling();
+    }
+
+    // las filas no controlaban el tamaño de sus textos (200x50 cada uno), por eso se salían del panel y quedaban arriba
+    private static void ArreglarFilaHistorial(TMP_FontAsset fuente)
+    {
+        GameObject raiz = PrefabUtility.LoadPrefabContents(RUTA_PREFAB_HISTORIAL);
+
+        RectTransform rect = raiz.GetComponent<RectTransform>();
+        rect.sizeDelta = new Vector2(rect.sizeDelta.x, ALTO_FILA_HISTORIAL);
+        LayoutElement elemento = raiz.GetComponent<LayoutElement>();
+        if (elemento == null) elemento = raiz.AddComponent<LayoutElement>();
+        elemento.minHeight = ALTO_FILA_HISTORIAL;
+        elemento.preferredHeight = ALTO_FILA_HISTORIAL;
+
+        HorizontalLayoutGroup layout = raiz.GetComponent<HorizontalLayoutGroup>();
+        layout.padding = new RectOffset(RELLENO_FILA, RELLENO_FILA, 0, 0);
+        layout.spacing = 12f;
+        layout.childAlignment = TextAnchor.MiddleCenter;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = false;
+        layout.childForceExpandHeight = true;
+
+        // con ancho preferido en cero, cada columna toma su parte del ancho según el peso
+        float[] pesos = { 1.2f, 1.5f, 1f, 1f };
+        for (int i = 0; i < COLUMNAS_HISTORIAL.Length; i++)
+        {
+            Transform columna = raiz.transform.Find(COLUMNAS_HISTORIAL[i]);
+            LayoutElement e = columna.GetComponent<LayoutElement>();
+            e.minWidth = 0f;
+            e.preferredWidth = 0f;
+            e.flexibleWidth = pesos[i];
+
+            TMP_Text texto = columna.GetComponent<TMP_Text>();
+            if (fuente != null) texto.font = fuente;
+            texto.fontSize = 22f;
+            texto.enableAutoSizing = true;
+            texto.fontSizeMin = 14f;
+            texto.fontSizeMax = 22f;
+            texto.alignment = TextAlignmentOptions.Center;
+            texto.textWrappingMode = TextWrappingModes.NoWrap;
+            texto.overflowMode = TextOverflowModes.Ellipsis;
+        }
+
+        PrefabUtility.SaveAsPrefabAsset(raiz, RUTA_PREFAB_HISTORIAL);
+        PrefabUtility.UnloadPrefabContents(raiz);
+    }
+
+    private static Scrollbar CrearBarraVertical(Transform padre, Sprite blanco)
+    {
+        GameObject obj = CrearImagen("BarraVertical", padre, new Color(1f, 1f, 1f, 0.08f), blanco);
+        RectTransform rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(1f, 0f);
+        rect.anchorMax = new Vector2(1f, 1f);
+        rect.pivot = new Vector2(1f, 0.5f);
+        rect.anchoredPosition = Vector2.zero;
+        rect.sizeDelta = new Vector2(ANCHO_BARRA, 0f);
+
+        GameObject area = new GameObject("Area", typeof(RectTransform));
+        area.transform.SetParent(obj.transform, false);
+        Estirar(area, Vector2.zero, Vector2.one);
+        GameObject manija = CrearImagen("Manija", area.transform, new Color(colorCeleste.r, colorCeleste.g, colorCeleste.b, 0.6f), blanco);
+        Estirar(manija, Vector2.zero, Vector2.one);
+
+        Scrollbar barra = obj.AddComponent<Scrollbar>();
+        barra.handleRect = manija.GetComponent<RectTransform>();
+        barra.targetGraphic = manija.GetComponent<Image>();
+        barra.direction = Scrollbar.Direction.BottomToTop;
+        return barra;
     }
 
     private static Slider FilaSlider(Transform panel, string nombre, string etiqueta, Sprite blanco, TMP_FontAsset fuente)
