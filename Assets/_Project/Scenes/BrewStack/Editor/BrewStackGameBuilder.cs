@@ -19,8 +19,8 @@ public static class BrewStackGameBuilder
     private const string RUTA_SPRITE_BRILLO = CARPETA + "/BS_Sprites/brillo_suave.png";
     private const string RUTA_ESTRELLA = CARPETA + "/BS_Sprites/punto_estrella_nitida.png";
     private const string RUTA_ESTRELLA_FUGAZ = CARPETA + "/BS_Sprites/estrella_fugaz.png";
-    // la misma música que usa BS_Menu, por referencia
-    private const string RUTA_MUSICA = CARPETA + "/BS_Audio/417884__andrewkn__surrealism-ambient-mix.wav";
+    // si falta algún tema se usa la música del menú, que era la ambiental de antes
+    private const string RUTA_MUSICA = CARPETA + "/BS_Audio/musica_menu.wav";
     private const string RUTA_BORDE_BOTON = CARPETA + "/BS_Sprites/borde_boton.png";
     private const string RUTA_FUENTE = CARPETA + "/BS_Fonts/Orbitron-Bold SDF.asset";
     private const string RUTA_PREGUNTAS = CARPETA + "/BS_Data/preguntas.json";
