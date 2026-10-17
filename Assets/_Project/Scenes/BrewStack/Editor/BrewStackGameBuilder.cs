@@ -25,6 +25,8 @@ public static class BrewStackGameBuilder
     private const string RUTA_FUENTE = CARPETA + "/BS_Fonts/Orbitron-Bold SDF.asset";
     private const string RUTA_PREGUNTAS = CARPETA + "/BS_Data/preguntas.json";
     private const string RUTA_MENU = CARPETA + "/BS_Scenes/BS_Menu.unity";
+    private const string RUTA_LOGO_BREWSTACK = CARPETA + "/BS_Sprites/logo_brewstack.png";
+    private const string RUTA_LOGO_ESLABON = CARPETA + "/BS_Sprites/logo_eslabon.png";
     private const string NOMBRE_ESCENA_JUEGO = "BS_Game";
 
     private const float ANCHO_BASE = 3f;
@@ -231,6 +233,7 @@ public static class BrewStackGameBuilder
         {
             SerializedObject so = new SerializedObject(manager);
             ActualizarInstrucciones(so, manager);
+            ActualizarLogos(so);
             so.ApplyModifiedPropertiesWithoutUndo();
 
             EditorSceneManager.MarkSceneDirty(menu);
@@ -327,6 +330,47 @@ public static class BrewStackGameBuilder
         paginas.GetArrayElementAtIndex(0).objectReferenceValue = grid1.gameObject;
         paginas.GetArrayElementAtIndex(1).objectReferenceValue = grid2.gameObject;
         so.FindProperty("textoBotonPagina").objectReferenceValue = textoPagina;
+    }
+
+    private static void ActualizarLogos(SerializedObject so)
+    {
+        Transform principal = ((GameObject)so.FindProperty("mainMenuPanel").objectReferenceValue).transform;
+        Transform titulo = principal.Find("TitleText");
+        Transform canvas = principal.parent;
+
+        // a la izquierda del título, como hijo para que se mueva con él
+        PonerLogo(RUTA_LOGO_BREWSTACK, "LogoBrewStack", titulo, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-24f, 0f), 220f);
+
+        // abajo a la derecha, justo después del fondo para que los paneles queden encima
+        GameObject eslabon = PonerLogo(RUTA_LOGO_ESLABON, "LogoEslabon", canvas, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), 160f);
+        Transform fondo = canvas.Find("Background");
+        if (eslabon != null && fondo != null) eslabon.transform.SetSiblingIndex(fondo.GetSiblingIndex() + 1);
+    }
+
+    private static GameObject PonerLogo(string ruta, string nombre, Transform padre, Vector2 ancla, Vector2 pivote, Vector2 posicion, float tamano)
+    {
+        Transform existente = padre.Find(nombre);
+        if (!File.Exists(ruta))
+        {
+            Debug.LogWarning($"BrewStack: no existe {ruta}, el menú se generó sin ese logo");
+            if (existente != null) Object.DestroyImmediate(existente.gameObject);
+            return null;
+        }
+
+        ConfigurarSprite(ruta, 100, Vector4.zero);
+        GameObject obj = existente != null ? existente.gameObject : CrearImagen(nombre, padre, Color.white, null);
+        Image img = obj.GetComponent<Image>();
+        img.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(ruta);
+        img.preserveAspect = true;
+        img.raycastTarget = false;
+
+        RectTransform rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = ancla;
+        rect.anchorMax = ancla;
+        rect.pivot = pivote;
+        rect.anchoredPosition = posicion;
+        rect.sizeDelta = new Vector2(tamano, tamano);
+        return obj;
     }
 
     // lee el valor que trae el script por defecto, el builder no cambia estos campos
