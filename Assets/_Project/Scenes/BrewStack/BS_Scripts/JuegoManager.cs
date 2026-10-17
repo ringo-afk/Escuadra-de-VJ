@@ -37,6 +37,8 @@ public class JuegoManager : MonoBehaviour
     private int nivel;
 
     public int Nivel => nivel;
+    public float TiempoRestante => tiempoRestante;
+    public bool Terminada => fase == Fase.Terminada;
 
     private void OnEnable()
     {

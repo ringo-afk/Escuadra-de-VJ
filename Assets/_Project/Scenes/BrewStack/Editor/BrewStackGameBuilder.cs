@@ -75,9 +75,9 @@ public static class BrewStackGameBuilder
         ResultadoFinalUI resultado = CrearResultado(canvas);
 
         TextosFlotantes textos = CrearTextosFlotantes();
-        CrearJuegoManager(torre, trivia, hud, resultado, textos);
+        JuegoManager juego = CrearJuegoManager(torre, trivia, hud, resultado, textos);
         CrearEfectos(torre);
-        CrearSonidos(torre, trivia, resultado);
+        CrearSonidos(torre, trivia, resultado, juego);
         CrearMusica(resultado);
 
         EditorSceneManager.SaveScene(escena, RUTA_ESCENA);
@@ -236,6 +236,15 @@ public static class BrewStackGameBuilder
             ActualizarInstrucciones(so, manager);
             ActualizarLogos(so);
             so.ApplyModifiedPropertiesWithoutUndo();
+
+            // al final, para que también lo tengan los botones que se agregaron arriba
+            foreach (GameObject raiz in menu.GetRootGameObjects())
+            {
+                foreach (Button boton in raiz.GetComponentsInChildren<Button>(true))
+                {
+                    if (boton.GetComponent<EscalaAlPasar>() == null) boton.gameObject.AddComponent<EscalaAlPasar>();
+                }
+            }
 
             EditorSceneManager.MarkSceneDirty(menu);
             EditorSceneManager.SaveScene(menu);
@@ -688,7 +697,7 @@ public static class BrewStackGameBuilder
         return torre;
     }
 
-    private static void CrearJuegoManager(Torre torre, TriviaUI trivia, HUDJuego hud, ResultadoFinalUI resultado, TextosFlotantes textos)
+    private static JuegoManager CrearJuegoManager(Torre torre, TriviaUI trivia, HUDJuego hud, ResultadoFinalUI resultado, TextosFlotantes textos)
     {
         GameObject obj = new GameObject("JuegoManager");
         JuegoManager juego = obj.AddComponent<JuegoManager>();
@@ -700,6 +709,7 @@ public static class BrewStackGameBuilder
         so.FindProperty("resultado").objectReferenceValue = resultado;
         so.FindProperty("textosFlotantes").objectReferenceValue = textos;
         so.ApplyModifiedPropertiesWithoutUndo();
+        return juego;
     }
 
     private static TextosFlotantes CrearTextosFlotantes()
@@ -735,7 +745,7 @@ public static class BrewStackGameBuilder
     }
 
     // los clips se dejan vacíos para que se generen por código, se pueden arrastrar después
-    private static void CrearSonidos(Torre torre, TriviaUI trivia, ResultadoFinalUI resultado)
+    private static SonidosJuego CrearSonidos(Torre torre, TriviaUI trivia, ResultadoFinalUI resultado, JuegoManager juego)
     {
         GameObject obj = new GameObject("Sonidos");
         SonidosJuego sonidos = obj.AddComponent<SonidosJuego>();
@@ -744,7 +754,9 @@ public static class BrewStackGameBuilder
         so.FindProperty("torre").objectReferenceValue = torre;
         so.FindProperty("trivia").objectReferenceValue = trivia;
         so.FindProperty("resultado").objectReferenceValue = resultado;
+        so.FindProperty("juego").objectReferenceValue = juego;
         so.ApplyModifiedPropertiesWithoutUndo();
+        return sonidos;
     }
 
     private static HUDJuego CrearHUD(Transform canvas, Torre torre, Sprite spriteBlanco)
@@ -880,6 +892,7 @@ public static class BrewStackGameBuilder
         GameObject obj = CrearImagen(nombre, padre, colorBordeCeleste, borde);
         Button boton = obj.AddComponent<Button>();
         boton.targetGraphic = obj.GetComponent<Image>();
+        obj.AddComponent<EscalaAlPasar>();
 
         TMP_Text tmp = CrearTexto("Texto", obj.transform, texto, 32f, colorTexto, fuente);
         Estirar(tmp.gameObject, Vector2.zero, Vector2.one);
@@ -943,6 +956,7 @@ public static class BrewStackGameBuilder
             GameObject objBoton = CrearImagen("Opcion" + (i + 1), listaBotones.transform, colorBordeCeleste, borde);
             botones[i] = objBoton.AddComponent<Button>();
             botones[i].targetGraphic = objBoton.GetComponent<Image>();
+            objBoton.AddComponent<EscalaAlPasar>();
             textos[i] = CrearTexto("Texto", objBoton.transform, "Opción", 32f, colorTexto, fuente);
             Estirar(textos[i].gameObject, Vector2.zero, Vector2.one);
             textos[i].rectTransform.offsetMin = new Vector2(24f, 0f);

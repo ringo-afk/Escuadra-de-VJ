@@ -344,6 +344,7 @@ GameObject:
   - component: {fileID: 109645424}
   - component: {fileID: 109645423}
   - component: {fileID: 109645422}
+  - component: {fileID: 109645426}
   m_Layer: 5
   m_Name: PaginaButton
   m_TagString: Untagged
@@ -486,6 +487,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 109645420}
   m_CullTransparentMesh: 1
+--- !u!114 &109645426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 109645420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f99e0a43aec0e894d891ca484ee12b28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscalaAlPasar
+  escalaEncima: 1.06
+  velocidad: 12
 --- !u!1 &118877832
 GameObject:
   m_ObjectHideFlags: 0
@@ -829,6 +844,7 @@ GameObject:
   - component: {fileID: 179111026}
   - component: {fileID: 179111025}
   - component: {fileID: 179111024}
+  - component: {fileID: 179111028}
   m_Layer: 5
   m_Name: VolverButton
   m_TagString: Untagged
@@ -971,6 +987,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 179111022}
   m_CullTransparentMesh: 1
+--- !u!114 &179111028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 179111022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f99e0a43aec0e894d891ca484ee12b28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscalaAlPasar
+  escalaEncima: 1.06
+  velocidad: 12
 --- !u!1 &236359922
 GameObject:
   m_ObjectHideFlags: 0
@@ -1238,6 +1268,7 @@ GameObject:
   - component: {fileID: 245789820}
   - component: {fileID: 245789819}
   - component: {fileID: 245789822}
+  - component: {fileID: 245789823}
   m_Layer: 5
   m_Name: SalirButton
   m_TagString: Untagged
@@ -1380,6 +1411,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &245789823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 245789817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f99e0a43aec0e894d891ca484ee12b28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscalaAlPasar
+  escalaEncima: 1.06
+  velocidad: 12
 --- !u!1 &274492246
 GameObject:
   m_ObjectHideFlags: 0
@@ -1845,6 +1890,7 @@ GameObject:
   - component: {fileID: 590376445}
   - component: {fileID: 590376444}
   - component: {fileID: 590376443}
+  - component: {fileID: 590376447}
   m_Layer: 5
   m_Name: VolverButton
   m_TagString: Untagged
@@ -1987,6 +2033,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 590376441}
   m_CullTransparentMesh: 1
+--- !u!114 &590376447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 590376441}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f99e0a43aec0e894d891ca484ee12b28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscalaAlPasar
+  escalaEncima: 1.06
+  velocidad: 12
 --- !u!1 &609770174
 GameObject:
   m_ObjectHideFlags: 0
@@ -2661,6 +2721,7 @@ GameObject:
   - component: {fileID: 749352864}
   - component: {fileID: 749352863}
   - component: {fileID: 749352866}
+  - component: {fileID: 749352867}
   m_Layer: 5
   m_Name: JugarButton
   m_TagString: Untagged
@@ -2802,6 +2863,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &749352867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 749352861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f99e0a43aec0e894d891ca484ee12b28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscalaAlPasar
+  escalaEncima: 1.06
+  velocidad: 12
 --- !u!1 &774563612
 GameObject:
   m_ObjectHideFlags: 0
@@ -5224,6 +5299,7 @@ GameObject:
   - component: {fileID: 1569120432}
   - component: {fileID: 1569120431}
   - component: {fileID: 1569120434}
+  - component: {fileID: 1569120435}
   m_Layer: 5
   m_Name: ComoSeJuegaButton
   m_TagString: Untagged
@@ -5366,6 +5442,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1569120435
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1569120429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f99e0a43aec0e894d891ca484ee12b28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscalaAlPasar
+  escalaEncima: 1.06
+  velocidad: 12
 --- !u!1 &1585015696
 GameObject:
   m_ObjectHideFlags: 0
@@ -5813,6 +5903,7 @@ GameObject:
   - component: {fileID: 1853636101}
   - component: {fileID: 1853636100}
   - component: {fileID: 1853636103}
+  - component: {fileID: 1853636104}
   m_Layer: 5
   m_Name: HistorialButton
   m_TagString: Untagged
@@ -5955,6 +6046,20 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &1853636104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1853636098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f99e0a43aec0e894d891ca484ee12b28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EscalaAlPasar
+  escalaEncima: 1.06
+  velocidad: 12
 --- !u!1 &1895431921
 GameObject:
   m_ObjectHideFlags: 0

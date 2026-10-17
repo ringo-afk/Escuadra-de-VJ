@@ -23,6 +23,9 @@ public class ResultadoFinalUI : MonoBehaviour
     public event System.Action AlMostrar;
 
     private bool yaGuardado;
+    private bool esRecord;
+
+    public bool EsRecord => esRecord;
 
     private void Awake()
     {
@@ -39,7 +42,7 @@ public class ResultadoFinalUI : MonoBehaviour
 
         // el récord se revisa antes de guardar, porque GuardarResultado lo actualiza
         int mejorAnterior = PlayerPrefs.GetInt("MejorPuntaje", 0);
-        bool esRecord = total > mejorAnterior;
+        esRecord = total > mejorAnterior;
 
         MenuManager.GuardarResultado(modo, altura, total);
 
