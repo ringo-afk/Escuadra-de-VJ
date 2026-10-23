@@ -1324,7 +1324,8 @@ public static class BrewStackGameBuilder
         marco.GetComponent<Image>().raycastTarget = false;
         marco.transform.SetAsFirstSibling();
 
-        GameObject panel = CrearImagen("PanelPausa", canvas, colorPanel, null);
+        // fondo sólido: si se pausa durante una pregunta no se debe ver, para no pensarla con el reloj detenido
+        GameObject panel = CrearImagen("PanelPausa", canvas, colorFondo, null);
         Estirar(panel, Vector2.zero, Vector2.one);
 
         GameObject caja = CrearImagen("Caja", panel.transform, colorBordeCeleste, borde);
