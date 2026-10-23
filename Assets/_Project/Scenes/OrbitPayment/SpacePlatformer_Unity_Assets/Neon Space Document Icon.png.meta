@@ -1,0 +1,1079 @@
+fileFormatVersion: 2
+guid: 5b0b51c6622514cdea123ba2b43049f9
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -1852022072552550579
+    second: Neon Space Document Icon_0
+  - first:
+      213: 1429521293623995496
+    second: Neon Space Document Icon_1
+  - first:
+      213: 894582176390258218
+    second: Neon Space Document Icon_2
+  - first:
+      213: 3731454601988007444
+    second: Neon Space Document Icon_3
+  - first:
+      213: -176518217861201848
+    second: Neon Space Document Icon_4
+  - first:
+      213: 5899267875642431253
+    second: Neon Space Document Icon_5
+  - first:
+      213: 8980572010192683280
+    second: Neon Space Document Icon_6
+  - first:
+      213: 2772398730277042289
+    second: Neon Space Document Icon_7
+  - first:
+      213: 5080519469976948403
+    second: Neon Space Document Icon_8
+  - first:
+      213: -2985980150051384238
+    second: Neon Space Document Icon_9
+  - first:
+      213: -7634402385865835048
+    second: Neon Space Document Icon_10
+  - first:
+      213: -1370835390901100447
+    second: Neon Space Document Icon_11
+  - first:
+      213: -6723069417148261282
+    second: Neon Space Document Icon_12
+  - first:
+      213: 746235231315763671
+    second: Neon Space Document Icon_13
+  - first:
+      213: 6421514772739311884
+    second: Neon Space Document Icon_14
+  - first:
+      213: -5575365566334797729
+    second: Neon Space Document Icon_15
+  - first:
+      213: -7367014636789995120
+    second: Neon Space Document Icon_16
+  - first:
+      213: 1975728053061249353
+    second: Neon Space Document Icon_17
+  - first:
+      213: -9134639984778159303
+    second: Neon Space Document Icon_18
+  - first:
+      213: 8712345025119072363
+    second: Neon Space Document Icon_19
+  - first:
+      213: -4712511951677733703
+    second: Neon Space Document Icon_20
+  - first:
+      213: 2256790348536323464
+    second: Neon Space Document Icon_21
+  - first:
+      213: -2439526626814208719
+    second: Neon Space Document Icon_22
+  - first:
+      213: 8130441265504821102
+    second: Neon Space Document Icon_23
+  - first:
+      213: -8511133925858168519
+    second: Neon Space Document Icon_24
+  - first:
+      213: 128660235625613355
+    second: Neon Space Document Icon_25
+  - first:
+      213: -1451048507795090631
+    second: Neon Space Document Icon_26
+  - first:
+      213: -8547062553635766878
+    second: Neon Space Document Icon_27
+  - first:
+      213: -7639602827456209270
+    second: Neon Space Document Icon_28
+  - first:
+      213: 910883171853707725
+    second: Neon Space Document Icon_29
+  - first:
+      213: 4707231852087437381
+    second: Neon Space Document Icon_30
+  - first:
+      213: 8273721219347025682
+    second: Neon Space Document Icon_31
+  - first:
+      213: -8758034688509292479
+    second: Neon Space Document Icon_32
+  - first:
+      213: -3452177990720587746
+    second: Neon Space Document Icon_33
+  - first:
+      213: 6452047969896482653
+    second: Neon Space Document Icon_34
+  - first:
+      213: -3741275365728558539
+    second: Neon Space Document Icon_35
+  - first:
+      213: 3388594253237037498
+    second: Neon Space Document Icon_36
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Neon Space Document Icon_0
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 0
+        width: 1059
+        height: 1207
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4f8259ccbb4c46e0800000000000000
+      internalID: -1852022072552550579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_1
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 1194
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86ca059ea0ea6d310800000000000000
+      internalID: 1429521293623995496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_2
+      rect:
+        serializedVersion: 2
+        x: 575
+        y: 1179
+        width: 69
+        height: 38
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2e132eefb13a6c00800000000000000
+      internalID: 894582176390258218
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_3
+      rect:
+        serializedVersion: 2
+        x: 713
+        y: 1194
+        width: 81
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 416edfeb03ac8c330800000000000000
+      internalID: 3731454601988007444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_4
+      rect:
+        serializedVersion: 2
+        x: 495
+        y: 1136
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8408ff7bd91ec8df0800000000000000
+      internalID: -176518217861201848
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_5
+      rect:
+        serializedVersion: 2
+        x: 577
+        y: 1144
+        width: 13
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5175a8290e86ed150800000000000000
+      internalID: 5899267875642431253
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_6
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 1022
+        width: 55
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 011c95389a661ac70800000000000000
+      internalID: 8980572010192683280
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_7
+      rect:
+        serializedVersion: 2
+        x: 136
+        y: 984
+        width: 27
+        height: 46
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 17838e5d4f9897620800000000000000
+      internalID: 2772398730277042289
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_8
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 505
+        width: 147
+        height: 440
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3be8e6a4a81a18640800000000000000
+      internalID: 5080519469976948403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_9
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 425
+        width: 13
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 254d1d9bfdaaf86d0800000000000000
+      internalID: -2985980150051384238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_10
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 344
+        width: 21
+        height: 29
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8dd72169a772d0690800000000000000
+      internalID: -7634402385865835048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_11
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 360
+        width: 17
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1606ec79970d9fce0800000000000000
+      internalID: -1370835390901100447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_12
+      rect:
+        serializedVersion: 2
+        x: 18
+        y: 241
+        width: 59
+        height: 82
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e5cd5964cfbd2b2a0800000000000000
+      internalID: -6723069417148261282
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_13
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 225
+        width: 15
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d125793df82b5a00800000000000000
+      internalID: 746235231315763671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_14
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 170
+        width: 37
+        height: 65
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c09cc05c9adcd1950800000000000000
+      internalID: 6421514772739311884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_15
+      rect:
+        serializedVersion: 2
+        x: 220
+        y: 98
+        width: 19
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f587ba59e8250a2b0800000000000000
+      internalID: -5575365566334797729
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_16
+      rect:
+        serializedVersion: 2
+        x: 368
+        y: 102
+        width: 18
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 099670f483b13c990800000000000000
+      internalID: -7367014636789995120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_17
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 61
+        width: 10
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9496d7742323b6b10800000000000000
+      internalID: 1975728053061249353
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_18
+      rect:
+        serializedVersion: 2
+        x: 326
+        y: 67
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93bd73cc45d3b3180800000000000000
+      internalID: -9134639984778159303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_19
+      rect:
+        serializedVersion: 2
+        x: 331
+        y: 68
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b603ddee3a778e870800000000000000
+      internalID: 8712345025119072363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_20
+      rect:
+        serializedVersion: 2
+        x: 358
+        y: 72
+        width: 32
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b44770195bc99eb0800000000000000
+      internalID: -4712511951677733703
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_21
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 74
+        width: 29
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88d99017ddab15f10800000000000000
+      internalID: 2256790348536323464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_22
+      rect:
+        serializedVersion: 2
+        x: 482
+        y: 64
+        width: 14
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 135d1a4457f052ed0800000000000000
+      internalID: -2439526626814208719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_23
+      rect:
+        serializedVersion: 2
+        x: 553
+        y: 61
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6f9799014125d070800000000000000
+      internalID: 8130441265504821102
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_24
+      rect:
+        serializedVersion: 2
+        x: 1106
+        y: 72
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 931b271d9c062e980800000000000000
+      internalID: -8511133925858168519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_25
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 49
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b28ce297dc719c100800000000000000
+      internalID: 128660235625613355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_26
+      rect:
+        serializedVersion: 2
+        x: 320
+        y: 29
+        width: 28
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9335305f117dcdbe0800000000000000
+      internalID: -1451048507795090631
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_27
+      rect:
+        serializedVersion: 2
+        x: 401
+        y: 55
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ad3f7944ebb26980800000000000000
+      internalID: -8547062553635766878
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_28
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 51
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8e176c64bdaaf590800000000000000
+      internalID: -7639602827456209270
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_29
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 33
+        width: 33
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc9a8323b6b14ac00800000000000000
+      internalID: 910883171853707725
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_30
+      rect:
+        serializedVersion: 2
+        x: 447
+        y: 34
+        width: 37
+        height: 37
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5486313fd62735140800000000000000
+      internalID: 4707231852087437381
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_31
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 30
+        width: 13
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21f8ac9ec9922d270800000000000000
+      internalID: 8273721219347025682
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_32
+      rect:
+        serializedVersion: 2
+        x: 535
+        y: 37
+        width: 11
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 140dad45ad5357680800000000000000
+      internalID: -8758034688509292479
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_33
+      rect:
+        serializedVersion: 2
+        x: 577
+        y: 33
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e187da968666710d0800000000000000
+      internalID: -3452177990720587746
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_34
+      rect:
+        serializedVersion: 2
+        x: 593
+        y: 31
+        width: 15
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d57c577b1774a8950800000000000000
+      internalID: 6452047969896482653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_35
+      rect:
+        serializedVersion: 2
+        x: 663
+        y: 9
+        width: 25
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53264d280e1541cc0800000000000000
+      internalID: -3741275365728558539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Neon Space Document Icon_36
+      rect:
+        serializedVersion: 2
+        x: 731
+        y: 17
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab9af101584b60f20800000000000000
+      internalID: 3388594253237037498
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Neon Space Document Icon_0: -1852022072552550579
+      Neon Space Document Icon_1: 1429521293623995496
+      Neon Space Document Icon_10: -7634402385865835048
+      Neon Space Document Icon_11: -1370835390901100447
+      Neon Space Document Icon_12: -6723069417148261282
+      Neon Space Document Icon_13: 746235231315763671
+      Neon Space Document Icon_14: 6421514772739311884
+      Neon Space Document Icon_15: -5575365566334797729
+      Neon Space Document Icon_16: -7367014636789995120
+      Neon Space Document Icon_17: 1975728053061249353
+      Neon Space Document Icon_18: -9134639984778159303
+      Neon Space Document Icon_19: 8712345025119072363
+      Neon Space Document Icon_2: 894582176390258218
+      Neon Space Document Icon_20: -4712511951677733703
+      Neon Space Document Icon_21: 2256790348536323464
+      Neon Space Document Icon_22: -2439526626814208719
+      Neon Space Document Icon_23: 8130441265504821102
+      Neon Space Document Icon_24: -8511133925858168519
+      Neon Space Document Icon_25: 128660235625613355
+      Neon Space Document Icon_26: -1451048507795090631
+      Neon Space Document Icon_27: -8547062553635766878
+      Neon Space Document Icon_28: -7639602827456209270
+      Neon Space Document Icon_29: 910883171853707725
+      Neon Space Document Icon_3: 3731454601988007444
+      Neon Space Document Icon_30: 4707231852087437381
+      Neon Space Document Icon_31: 8273721219347025682
+      Neon Space Document Icon_32: -8758034688509292479
+      Neon Space Document Icon_33: -3452177990720587746
+      Neon Space Document Icon_34: 6452047969896482653
+      Neon Space Document Icon_35: -3741275365728558539
+      Neon Space Document Icon_36: 3388594253237037498
+      Neon Space Document Icon_4: -176518217861201848
+      Neon Space Document Icon_5: 5899267875642431253
+      Neon Space Document Icon_6: 8980572010192683280
+      Neon Space Document Icon_7: 2772398730277042289
+      Neon Space Document Icon_8: 5080519469976948403
+      Neon Space Document Icon_9: -2985980150051384238
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

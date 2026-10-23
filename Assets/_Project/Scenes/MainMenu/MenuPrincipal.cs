@@ -16,31 +16,31 @@ public class MenuPrincipal : MonoBehaviour
     public void ToAtlasExpress()
     {
         // Atlas Express
-        SceneManager.LoadScene("AE_Menu");
+        SceneManager.LoadScene("MainMenuAE");
     }
     
     public void ToBrewStack()
     {
         // Brew Stack
-        SceneManager.LoadScene("BS_Menu");
+        SceneManager.LoadScene("MainMenuBS");
     }
 
     public void ToHeadBreaker()
     {
         // Head Breaker
-        SceneManager.LoadScene("HB_MainMenu");
+        SceneManager.LoadScene("MainMenuHB");
     }
     
     public void ToSpaceDefender()
     {
         // Space Defender
-        SceneManager.LoadScene("SD_MainMenu");
+        SceneManager.LoadScene("MainMenuSD");
     }
     
     public void ToOrbitPayment()
     {
         // Orbit Payment
-        SceneManager.LoadScene("OP_MainMenu");
+        SceneManager.LoadScene("MainMenuOP");
     }
 
 

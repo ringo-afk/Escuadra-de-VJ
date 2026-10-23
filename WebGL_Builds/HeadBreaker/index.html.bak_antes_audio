@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=no">
+  <title>PuzzleKiosko</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #0f1a3a; }
+    #unity-canvas { display: block; width: 100%; height: 100%; background: #0f1a3a; outline: none; }
+    #carga {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+      font: 600 18px Inter, system-ui, -apple-system, "Segoe UI", sans-serif; color: #ede6d6;
+    }
+    #barra { width: min(360px, 60%); height: 8px; border-radius: 99px; background: rgba(255, 255, 255, 0.15); overflow: hidden; }
+    #relleno { width: 0; height: 100%; background: #ffc040; transition: width 0.2s; }
+    #error { display: none; max-width: 80%; text-align: center; color: #ffb4a8; font-size: 15px; }
+  </style>
+</head>
+<body>
+  <canvas id="unity-canvas" tabindex="-1"></canvas>
+  <div id="carga">
+    <div>Cargando PuzzleKiosko…</div>
+    <div id="barra"><div id="relleno"></div></div>
+    <div id="error"></div>
+  </div>
+
+  <script>
+    var buildUrl = "Build";
+    var config = {
+      arguments: [],
+      dataUrl: buildUrl + "/headbreaker.data.unityweb",
+      frameworkUrl: buildUrl + "/headbreaker.framework.js.unityweb",
+      codeUrl: buildUrl + "/headbreaker.wasm.unityweb",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "DefaultCompany",
+      productName: "PuzzleKiosko",
+      productVersion: "1.0",
+      showBanner: function (msg, type) {
+        if (type === "error") {
+          var e = document.getElementById("error");
+          e.textContent = msg;
+          e.style.display = "block";
+        } else {
+          console.warn(msg);
+        }
+      }
+    };
+
+    var canvas = document.getElementById("unity-canvas");
+    var script = document.createElement("script");
+    script.src = buildUrl + "/headbreaker.loader.js";
+    script.onload = function () {
+      createUnityInstance(canvas, config, function (progreso) {
+        document.getElementById("relleno").style.width = (100 * progreso) + "%";
+      }).then(function () {
+        document.getElementById("carga").style.display = "none";
+        canvas.focus();
+      }).catch(function (mensaje) {
+        var e = document.getElementById("error");
+        e.textContent = "No se pudo cargar el juego: " + mensaje;
+        e.style.display = "block";
+      });
+    };
+    document.body.appendChild(script);
+  </script>
+</body>
+</html>

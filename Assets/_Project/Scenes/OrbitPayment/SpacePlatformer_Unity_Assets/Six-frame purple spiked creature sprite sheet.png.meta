@@ -1,0 +1,351 @@
+fileFormatVersion: 2
+guid: 462192148250445e7ac29ef742d37a2e
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2393354069571168769
+    second: Six-frame purple spiked creature sprite sheet_0
+  - first:
+      213: -5752858283315074086
+    second: Six-frame purple spiked creature sprite sheet_1
+  - first:
+      213: -4900646023586603944
+    second: Six-frame purple spiked creature sprite sheet_2
+  - first:
+      213: -5364181796012594625
+    second: Six-frame purple spiked creature sprite sheet_3
+  - first:
+      213: -2392937296905285502
+    second: Six-frame purple spiked creature sprite sheet_4
+  - first:
+      213: 462447578675838644
+    second: Six-frame purple spiked creature sprite sheet_5
+  - first:
+      213: -3502512452830809650
+    second: Six-frame purple spiked creature sprite sheet_6
+  - first:
+      213: -3661595717807652092
+    second: Six-frame purple spiked creature sprite sheet_7
+  - first:
+      213: -1960063577161747579
+    second: Six-frame purple spiked creature sprite sheet_8
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Six-frame purple spiked creature sprite sheet_0
+      rect:
+        serializedVersion: 2
+        x: 375
+        y: 167
+        width: 325
+        height: 245
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ff5997d772919ced0800000000000000
+      internalID: -2393354069571168769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Six-frame purple spiked creature sprite sheet_1
+      rect:
+        serializedVersion: 2
+        x: 750
+        y: 586
+        width: 66
+        height: 36
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adb67db0fddb920b0800000000000000
+      internalID: -5752858283315074086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Six-frame purple spiked creature sprite sheet_2
+      rect:
+        serializedVersion: 2
+        x: 985
+        y: 614
+        width: 14
+        height: 10
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85c903208686dfbb0800000000000000
+      internalID: -4900646023586603944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Six-frame purple spiked creature sprite sheet_3
+      rect:
+        serializedVersion: 2
+        x: 1085
+        y: 167
+        width: 333
+        height: 293
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f3a6d02c3199e85b0800000000000000
+      internalID: -5364181796012594625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Six-frame purple spiked creature sprite sheet_4
+      rect:
+        serializedVersion: 2
+        x: 1449
+        y: 167
+        width: 330
+        height: 280
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2805d20f4349aced0800000000000000
+      internalID: -2392937296905285502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Six-frame purple spiked creature sprite sheet_5
+      rect:
+        serializedVersion: 2
+        x: 1841
+        y: 167
+        width: 305
+        height: 254
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4be76366f91fa6600800000000000000
+      internalID: 462447578675838644
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Six-frame purple spiked creature sprite sheet_6
+      rect:
+        serializedVersion: 2
+        x: 747
+        y: 166
+        width: 318
+        height: 276
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec133a33b73946fc0800000000000000
+      internalID: -3502512452830809650
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Six-frame purple spiked creature sprite sheet_7
+      rect:
+        serializedVersion: 2
+        x: 1609
+        y: 437
+        width: 12
+        height: 8
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 403cbf838166f2dc0800000000000000
+      internalID: -3661595717807652092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Six-frame purple spiked creature sprite sheet_8
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 167
+        width: 336
+        height: 237
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 583b71abf847cc4e0800000000000000
+      internalID: -1960063577161747579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 472886e3504014fb89156a3acee32c15
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Six-frame purple spiked creature sprite sheet_0: -2393354069571168769
+      Six-frame purple spiked creature sprite sheet_1: -5752858283315074086
+      Six-frame purple spiked creature sprite sheet_2: -4900646023586603944
+      Six-frame purple spiked creature sprite sheet_3: -5364181796012594625
+      Six-frame purple spiked creature sprite sheet_4: -2392937296905285502
+      Six-frame purple spiked creature sprite sheet_5: 462447578675838644
+      Six-frame purple spiked creature sprite sheet_6: -3502512452830809650
+      Six-frame purple spiked creature sprite sheet_7: -3661595717807652092
+      Six-frame purple spiked creature sprite sheet_8: -1960063577161747579
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
