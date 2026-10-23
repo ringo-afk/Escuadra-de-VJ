@@ -111,6 +111,12 @@ public class PausaJuego : MonoBehaviour
 
     private void IrAMinijuegos()
     {
+        if (BrewKiosko.EnPortal)
+        {
+            saliendo = true;
+            BrewKiosko.Obtener().Cerrar();
+            return;
+        }
         Salir(escenaMinijuegos);
     }
 

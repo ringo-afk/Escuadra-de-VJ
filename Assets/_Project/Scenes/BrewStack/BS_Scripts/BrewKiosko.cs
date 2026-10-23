@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -74,6 +75,14 @@ class BrewError
     public string error;
 }
 
+[Serializable]
+class BrewAvisoPartida
+{
+    public int monedas;
+    public int puntaje;
+    public bool record;
+}
+
 public class BrewKiosko : MonoBehaviour
 {
     private const string Juego = "BREWSTACK";
@@ -108,6 +117,29 @@ public class BrewKiosko : MonoBehaviour
 
     public bool Listo => triviaResuelta && inicioResuelto;
     public bool Bloqueado => bloqueado;
+
+    // el portal abre el juego dentro de un iframe con ?usuario= en la URL
+    public static bool EnPortal =>
+        Application.platform == RuntimePlatform.WebGLPlayer && LeerUsuarioDeUrl(Application.absoluteURL) > 0;
+
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [DllImport("__Internal")]
+    private static extern void BS_AvisarPortal(string tipo, string datos);
+#endif
+
+    private static void AvisarPortal(string tipo, string datos)
+    {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        BS_AvisarPortal(tipo, datos);
+#endif
+    }
+
+    // si hay partida abierta se guarda antes de pedirle al portal que quite el juego
+    public void Cerrar()
+    {
+        if (corrida) Finalizar(puntaje, false, () => AvisarPortal("cerrar", "{}"));
+        else AvisarPortal("cerrar", "{}");
+    }
 
     public static BrewKiosko Obtener()
     {
@@ -229,6 +261,7 @@ public class BrewKiosko : MonoBehaviour
                 inicioResuelto = true;
                 MostrarAviso(respuesta.mensaje, 5f);
                 VaciarPendientes();
+                AvisarPortal("turno", "{}");
             },
             (mensaje, codigo) =>
             {
@@ -268,10 +301,13 @@ public class BrewKiosko : MonoBehaviour
         EnviarRespuesta(id, correcta);
     }
 
-    public void Finalizar(int puntajeFinal, bool completada)
+    public void Finalizar(int puntajeFinal, bool completada, Action alTerminar = null)
     {
         if (!corrida)
+        {
+            alTerminar?.Invoke();
             return;
+        }
 
         corrida = false;
 
@@ -290,8 +326,23 @@ public class BrewKiosko : MonoBehaviour
 
         StartCoroutine(Enviar<BrewPartidaResp>("POST", "/api/partidas",
             JsonUtility.ToJson(cuerpo),
-            respuesta => MostrarAviso(cuerpo.puntaje + " puntos · +" + respuesta.monedas_ganadas + " monedas", 8f),
-            (mensaje, codigo) => MostrarAviso("No se pudo guardar la partida: " + mensaje, 8f)));
+            respuesta =>
+            {
+                MostrarAviso(cuerpo.puntaje + " puntos · +" + respuesta.monedas_ganadas + " monedas", 8f);
+                BrewAvisoPartida datos = new BrewAvisoPartida
+                {
+                    monedas = respuesta.monedas_ganadas,
+                    puntaje = cuerpo.puntaje,
+                    record = respuesta.nuevo_record == 1
+                };
+                AvisarPortal("partida", JsonUtility.ToJson(datos));
+                alTerminar?.Invoke();
+            },
+            (mensaje, codigo) =>
+            {
+                MostrarAviso("No se pudo guardar la partida: " + mensaje, 8f);
+                alTerminar?.Invoke();
+            }));
     }
 
     private void VaciarPendientes()

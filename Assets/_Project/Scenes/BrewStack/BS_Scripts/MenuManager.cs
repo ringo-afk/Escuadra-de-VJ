@@ -124,8 +124,9 @@ public class MenuManager : MonoBehaviour
     public void Salir()
     {
 #if UNITY_WEBGL && !UNITY_EDITOR
-        // en Web Application.Quit no hace nada, se regresa al menú de minijuegos
-        SceneManager.LoadScene("MenuMinijuegos");
+        // en Web Application.Quit no hace nada: en el portal se cierra el juego, fuera de él se va al menú de minijuegos
+        if (BrewKiosko.EnPortal) BrewKiosko.Obtener().Cerrar();
+        else SceneManager.LoadScene("MenuMinijuegos");
 #else
         Application.Quit();
 #endif
