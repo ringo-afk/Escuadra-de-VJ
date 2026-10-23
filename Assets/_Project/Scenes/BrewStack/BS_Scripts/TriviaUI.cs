@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -36,6 +36,7 @@ public class TriviaUI : MonoBehaviour
     public event System.Action<bool> AlResponder;
     // en el momento de contestar, AlResponder llega después de la pausa
     public event System.Action<bool> AlMarcarRespuesta;
+    public event System.Action AlMostrarPregunta;
 
     private Pregunta preguntaActual;
     private int[] orden;
@@ -44,6 +45,8 @@ public class TriviaUI : MonoBehaviour
     private bool activa;
 
     public bool Activa => activa;
+    public bool EsperandoRespuesta => esperandoRespuesta;
+    public float TiempoRestante => tiempoRestante;
 
     private void Awake()
     {
@@ -96,6 +99,7 @@ public class TriviaUI : MonoBehaviour
         activa = true;
         panel.SetActive(true);
         ActualizarBarra();
+        AlMostrarPregunta?.Invoke();
     }
 
     private void Update()

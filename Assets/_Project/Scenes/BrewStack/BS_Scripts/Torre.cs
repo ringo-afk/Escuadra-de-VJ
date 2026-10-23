@@ -50,6 +50,7 @@ public class Torre : MonoBehaviour
     public event System.Action<Resultado, Calidad, Bloque> AlAterrizar;
     public event System.Action AlColapsar;
     public event System.Action AlLlegarAlturaMaxima;
+    public event System.Action AlSoltar;
 
     private readonly List<Bloque> bloques = new List<Bloque>();
     private Transform pivote;
@@ -124,6 +125,7 @@ public class Torre : MonoBehaviour
 
         float yFinal = bloques.Count * bloqueActual.Alto + bloqueActual.Alto / 2f;
         bloqueActual.Soltar(yFinal, Aterrizo);
+        AlSoltar?.Invoke();
     }
 
     private void Aterrizo(Bloque b)
