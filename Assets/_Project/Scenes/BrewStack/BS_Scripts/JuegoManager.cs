@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -37,6 +38,8 @@ public class JuegoManager : MonoBehaviour
     private int aciertos;
     private string motivoFinal;
     private int nivel;
+    private bool preparado;
+    private bool completada;
 
     public int Nivel => nivel;
     public float TiempoRestante => tiempoRestante;
@@ -48,7 +51,7 @@ public class JuegoManager : MonoBehaviour
         torre.AlAterrizar += Aterrizo;
         torre.AlColapsar += Colapso;
         torre.AlLlegarAlturaMaxima += LlegoAlturaMaxima;
-        resultado.AlJugarDeNuevo += EmpezarPartida;
+        resultado.AlJugarDeNuevo += Reiniciar;
     }
 
     private void OnDisable()
@@ -57,17 +60,42 @@ public class JuegoManager : MonoBehaviour
         torre.AlAterrizar -= Aterrizo;
         torre.AlColapsar -= Colapso;
         torre.AlLlegarAlturaMaxima -= LlegoAlturaMaxima;
-        resultado.AlJugarDeNuevo -= EmpezarPartida;
+        resultado.AlJugarDeNuevo -= Reiniciar;
     }
 
     private void Start()
     {
+        StartCoroutine(Preparar());
+    }
+
+    private void Reiniciar()
+    {
+        StartCoroutine(Preparar());
+    }
+
+    private IEnumerator Preparar()
+    {
+        preparado = false;
+        BrewKiosko kiosko = BrewKiosko.Obtener();
+        kiosko.IniciarPartida();
+
+        float espera = 0f;
+        while (!kiosko.Listo && espera < 8f)
+        {
+            espera += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        if (kiosko.Bloqueado) yield break;
+
         EmpezarPartida();
     }
 
     private void EmpezarPartida()
     {
         CancelInvoke();
+        preparado = true;
+        completada = false;
         resultado.Ocultar();
         trivia.Cancelar();
         torre.Reiniciar();
@@ -87,7 +115,7 @@ public class JuegoManager : MonoBehaviour
 
     private void Update()
     {
-        if (fase == Fase.Terminada) return;
+        if (!preparado || fase == Fase.Terminada) return;
         if (pausa != null && pausa.EnPausa) return;
 
         tiempoRestante -= Time.deltaTime;
@@ -147,6 +175,7 @@ public class JuegoManager : MonoBehaviour
 
         puntos += ganados;
         hud.MostrarPuntos(puntos);
+        BrewKiosko.Obtener().Puntaje(puntos);
         if (ganados > 0 && textosFlotantes != null)
         {
             textosFlotantes.Mostrar(ganados, bloque.transform.position, res == Torre.Resultado.BienPuesto);
@@ -171,6 +200,7 @@ public class JuegoManager : MonoBehaviour
 
     private void LlegoAlturaMaxima()
     {
+        completada = true;
         TerminarPartida("Llegaste a la altura máxima", esperaAntesDelResultado);
     }
 
@@ -188,6 +218,7 @@ public class JuegoManager : MonoBehaviour
     {
         float porcentaje = preguntasContestadas > 0 ? (float)aciertos / preguntasContestadas : 0f;
         int bono = Mathf.RoundToInt(puntos * porcentaje * factorBono);
+        BrewKiosko.Obtener().Finalizar(puntos + bono, completada);
         resultado.Mostrar(motivoFinal, torre.AlturaAlcanzada, puntos, bono, puntos + bono, porcentaje);
     }
 }

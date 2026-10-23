@@ -129,6 +129,7 @@ public class TriviaUI : MonoBehaviour
         esperandoRespuesta = false;
 
         bool acierto = boton >= 0 && orden[boton] == preguntaActual.correcta;
+        BrewKiosko.Obtener().Respuesta(preguntaActual.id, acierto);
 
         for (int i = 0; i < orden.Length; i++)
         {

@@ -36,6 +36,42 @@ public class BancoPreguntas : MonoBehaviour
         Cargar();
     }
 
+    private void Start()
+    {
+        BrewKiosko.Obtener().PedirTrivia(CargarDeServidor);
+    }
+
+    private void CargarDeServidor(Pregunta[] recibidas)
+    {
+        if (recibidas == null || recibidas.Length == 0) return;
+
+        Dictionary<int, List<Pregunta>> nuevas = new Dictionary<int, List<Pregunta>>();
+        int cuenta = 0;
+
+        foreach (Pregunta p in recibidas)
+        {
+            if (!EsValida(p)) continue;
+
+            if (!nuevas.ContainsKey(p.dificultad)) nuevas[p.dificultad] = new List<Pregunta>();
+            nuevas[p.dificultad].Add(p);
+            cuenta++;
+        }
+
+        if (cuenta == 0) return;
+
+        todas.Clear();
+        pendientes.Clear();
+        foreach (KeyValuePair<int, List<Pregunta>> par in nuevas)
+        {
+            todas[par.Key] = par.Value;
+            pendientes[par.Key] = new List<Pregunta>();
+        }
+
+        total = cuenta;
+        ultimaPregunta = null;
+        Debug.Log($"BancoPreguntas: {cuenta} preguntas cargadas del kiosco");
+    }
+
     private void Cargar()
     {
         todas.Clear();
