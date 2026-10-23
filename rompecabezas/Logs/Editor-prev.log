@@ -1,23 +1,23 @@
 [Licensing::Module] Trying to connect to existing licensing client channel...
 Built from '6000.5/staging' branch; Version is '6000.5.8f1 (5cb7df797b7d) revision 6076383'; Using compiler version '194234433'; Build Type 'Release'
-[Licensing::IpcConnector] Successfully connected to: "LicenseClient-rouch" at "2026-10-01T01:33:55.5090869Z"
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-rouch" at "2026-10-03T00:12:18.7070519Z"
 OS: 'Windows 11  (10.0.26200) Core' Language: 'en' Physical Memory: 32656 MB
 BatchMode: 0, IsHumanControllingUs: 1, StartBugReporterOnCrash: 1, Is64bit: 1
 System  architecture: x64
 Process architecture: x64
-Date: 2026-10-01T01:33:55Z
-[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 8156, path: "C:/Program Files/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.exe")
+Date: 2026-10-03T00:12:18Z
+[Licensing::Client] Code 10 while verifying Licensing Client signature (process Id: 27432, path: "C:/Program Files/Unity Hub/UnityLicensingClient_V1/Unity.Licensing.Client.exe")
 [Licensing::Module] LicensingClient has failed validation; ignoring
 [Licensing::Client] Handshaking with LicensingClient:
   Version:                 1.18.3+d7ffd15
-  Session Id:              0e192539d90c4842acff498fca37afcc
-  Correlation Id:          3770e63bdc8deac2ddb40685ce2127b6
-  External correlation Id: 6595958800830553387
+  Session Id:              fd6c18c46b174a429a20d76ba562422f
+  Correlation Id:          4916ea6e138ed116fce7e5a9a36d9e96
+  External correlation Id: 4097804485303760529
   Machine Id:              m1qeZnm7sDzaOkMRI9JbU4xs/j8=
-[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-rouch" (connect: 0.00s, validation: 0.00s, handshake: 0.06s)
-[Licensing::IpcConnector] Successfully connected to: "LicenseClient-rouch-notifications" at "2026-10-01T01:33:55.5757078Z"
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-rouch" (connect: 0.00s, validation: 0.00s, handshake: 0.14s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-rouch-notifications" at "2026-10-03T00:12:18.8499368Z"
 [Licensing::Client] Successfully updated the access token
-[Licensing::Module] Successfully updated the access token EYf1q5m5oP...
+[Licensing::Module] Successfully updated the access token 3gKuYPEX8U...
 [Licensing::Client] Successfully resolved entitlement details
 [Licensing::Module] License group:
   Id: 4674159921533-UnityPersXXXX
@@ -26,7 +26,7 @@ Date: 2026-10-01T01:33:55Z
   Expiration: Unlimited
 [Licensing::Client] Successfully updated license, isAsync: True, time: 0.01
 [Licensing::Client] Successfully resolved entitlement details
-[Licensing::Module] Licensing Background thread has ended after 0.09s
+[Licensing::Module] Licensing Background thread has ended after 0.17s
 
 COMMAND LINE ARGUMENTS:
 C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Unity.exe
@@ -40,9 +40,9 @@ production
 -licensingIpc
 LicenseClient-rouch
 -hubSessionId
-6bc3a4ea-a7e8-4f08-b7f1-7c49e3279100
+ba2487d2-1110-437e-a2e6-3559ebff5bea
 -accessToken
-EYf1q5m5oPY1ae2evLyLxIzJr69myHKeaeK863Bp7J8004f
+3gKuYPEX8UGxC19P2-yraYWaoth7QEkCGq6gLxObG0M004f
 Successfully changed project path to: C:\Users\rouch\PuzzleKiosko
 C:/Users/rouch/PuzzleKiosko
 [UnityMemory] Configuration Parameters - Can be set up in boot.config
@@ -81,16 +81,16 @@ C:/Users/rouch/PuzzleKiosko
     "memorysetup-job-temp-allocator-block-size=2097152"
     "memorysetup-job-temp-allocator-block-size-background=1048576"
     "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
-Player connection [8148]  Target information:
+Player connection [29784]  Target information:
 
-Player connection [8148]  * "[IP] 192.168.1.24 [Port] 55504 [Flags] 2 [Guid] 853554776 [EditorId] 853554776 [Version] 1048832 [Id] WindowsEditor(7,PC-BUILD) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+Player connection [29784]  * "[IP] 192.168.1.24 [Port] 55504 [Flags] 2 [Guid] 2138927222 [EditorId] 2138927222 [Version] 1048832 [Id] WindowsEditor(7,PC-BUILD) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
 
-Player connection [8148] Host joined multi-casting on [225.0.0.222:54997]...
-Player connection [8148] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Player connection [29784] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [29784] Host joined alternative multi-casting on [225.0.0.222:34997]...
 Input System module state changed to: Initialized.
 [Physics::Module] Initialized fallback backend.
 [Physics::Module] Id: 0xdecafbad
-[Package Manager] Connected to IPC stream "Upm-8392" after 0.4 seconds.
+[Package Manager] Connected to IPC stream "Upm-12960" after 0.4 seconds.
 [Licensing::Client] Successfully resolved entitlement details
 Library Redirect Path: Library/
 [Physics::Module] Selected backend.
@@ -99,7 +99,7 @@ Library Redirect Path: Library/
 [Physics::Module] SDK Version: 4.1.2
 [Physics::Module] Integration Version: 1.0.0
 [Physics::Module] Threading Mode: Multi-Threaded
-Refreshing native plugins compatible for Editor in 3.56 ms, found 0 plugins.
+Refreshing native plugins compatible for Editor in 2.99 ms, found 0 plugins.
 Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Data/Resources/UnitySubsystems
 [Subsystems] Discovering subsystems at path C:/Users/rouch/PuzzleKiosko/Assets
@@ -124,7 +124,7 @@ Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Data/Managed
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Data/BCLExtensions/runtime/netstandard2.1'
 Mono path[2] = 'C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56392
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56960
 CodeReloadManager initialized
 ImportWorker Server TCP listen port: 0
 AcceleratorClientConnectionCallback - disconnected - :0
@@ -132,30 +132,30 @@ Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
 Register platform support module: C:/Program Files/Unity/Hub/Editor/6000.5.8f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.349850 seconds.
+Registered in 0.338929 seconds.
 Native extension for WindowsStandalone target not found
 Native extension for WebGL target not found
 Package Manager log level set to [2]
 ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  1.650 seconds
-Domain Reload Profiling: 3916ms
-	BeginReloadAssembly (310ms)
-		CreateAndSetChildDomain (5ms)
-	RebuildCommonClasses (6ms)
-	RebuildNativeTypeToScriptingClass (168ms)
-	initialDomainReloadingComplete (559ms)
-	LoadAllAssembliesAndSetupDomain (1222ms)
-		LoadAssemblies (300ms)
-		AnalyzeDomain (1122ms)
-			TypeCache.Refresh (1120ms)
-				TypeCache.ScanAssembly (914ms)
-	FinalizeReload (1651ms)
+- Finished resetting the current domain, in  1.490 seconds
+Domain Reload Profiling: 3847ms
+	BeginReloadAssembly (351ms)
+		CreateAndSetChildDomain (21ms)
+	RebuildCommonClasses (7ms)
+	RebuildNativeTypeToScriptingClass (174ms)
+	initialDomainReloadingComplete (556ms)
+	LoadAllAssembliesAndSetupDomain (1266ms)
+		LoadAssemblies (325ms)
+		AnalyzeDomain (1156ms)
+			TypeCache.Refresh (1154ms)
+				TypeCache.ScanAssembly (950ms)
+	FinalizeReload (1491ms)
 		SetupLoadedEditorAssemblies (0ms)
 			InitializePlatformSupportModulesInManaged (3ms)
-			BeforeProcessingInitializeOnLoad (87ms)
-			ProcessInitializeOnLoadAttributes (113ms)
-			ProcessInitializeOnLoadMethodAttributes (1384ms)
+			BeforeProcessingInitializeOnLoad (103ms)
+			ProcessInitializeOnLoadAttributes (137ms)
+			ProcessInitializeOnLoadMethodAttributes (1174ms)
 [Licensing::Client] Successfully resolved entitlement details
 Application.AssetDatabase Initial Refresh Start
 [Package Manager] Restoring resolved packages state from cache
@@ -242,7 +242,7 @@ info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
 info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
       Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
 info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
-      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - 200 - application/grpc 40.5427ms
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - 200 - application/grpc 44.6549ms
 Starting: C:\Program Files\Unity\Hub\Editor\6000.5.8f1\Editor\Data\Tools\BuildPipeline\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/2000b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
 WorkingDir: C:/Users/rouch/PuzzleKiosko
 info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
@@ -260,99 +260,99 @@ info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
 info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
       Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
 info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
-      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - 200 - application/grpc 350.7222ms
-ExitCode: 0 Duration: 15s
-[636/881    0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
-*** Tundra build success (15.85 seconds), 1 items updated, 881 evaluated
-AssetDatabase: script compilation time: 16.761472s
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - 200 - application/grpc 441.7113ms
+ExitCode: 0 Duration: 0s976ms
+[697/881    0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+*** Tundra build success (0.91 seconds), 1 items updated, 881 evaluated
+AssetDatabase: script compilation time: 1.907353s
 Begin MonoManager ReloadAssembly
-Refreshing native plugins compatible for Editor in 70.87 ms, found 5 plugins.
+Refreshing native plugins compatible for Editor in 88.81 ms, found 5 plugins.
 Native extension for WindowsStandalone target not found
 Native extension for WebGL target not found
-Refreshing native plugins compatible for Editor in 5.22 ms, found 5 plugins.
+Refreshing native plugins compatible for Editor in 4.94 ms, found 5 plugins.
 ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  3.235 seconds
-Domain Reload Profiling: 5516ms
-	BeginReloadAssembly (363ms)
-		DisableScriptedObjects (29ms)
+- Finished resetting the current domain, in  3.739 seconds
+Domain Reload Profiling: 6322ms
+	BeginReloadAssembly (396ms)
+		DisableScriptedObjects (34ms)
 		CreateAndSetChildDomain (152ms)
-	RebuildCommonClasses (7ms)
-	RebuildNativeTypeToScriptingClass (15ms)
-	initialDomainReloadingComplete (87ms)
-	LoadAllAssembliesAndSetupDomain (1807ms)
-		LoadAssemblies (1610ms)
-		AnalyzeDomain (181ms)
-			TypeCache.Refresh (132ms)
-				TypeCache.ScanAssembly (123ms)
-			BuildScriptInfoCaches (44ms)
+	RebuildCommonClasses (8ms)
+	RebuildNativeTypeToScriptingClass (16ms)
+	initialDomainReloadingComplete (102ms)
+	LoadAllAssembliesAndSetupDomain (2061ms)
+		LoadAssemblies (1854ms)
+		AnalyzeDomain (193ms)
+			TypeCache.Refresh (143ms)
+				TypeCache.ScanAssembly (133ms)
+			BuildScriptInfoCaches (46ms)
 			ResolveRequiredComponents (3ms)
-	FinalizeReload (3236ms)
+	FinalizeReload (3740ms)
 		SetupLoadedEditorAssemblies (0ms)
-			BeforeProcessingInitializeOnLoad (79ms)
-			ProcessInitializeOnLoadAttributes (2851ms)
-			ProcessInitializeOnLoadMethodAttributes (105ms)
-			AfterProcessingInitializeOnLoad (17ms)
-		AwakeInstancesAfterBackupRestoration (28ms)
+			BeforeProcessingInitializeOnLoad (91ms)
+			ProcessInitializeOnLoadAttributes (3294ms)
+			ProcessInitializeOnLoadMethodAttributes (134ms)
+			AfterProcessingInitializeOnLoad (19ms)
+		AwakeInstancesAfterBackupRestoration (33ms)
 Starting new worker id: 0 with log in C:/Users/rouch/PuzzleKiosko/Logs/AssetImportWorkerHW0.log
 
-Asset Pipeline Refresh (id=29888aae32e5a484283d68398e4fd4e1): Total: 28.778 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+Asset Pipeline Refresh (id=32dc76142e5a8d34b8bd68729ca11ef2): Total: 15.323 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
 	(Values over 0.05ms)
 	Summary:
 		Imports: total=0 (actual=0, local cache=0, cache server=0)
-		Asset DB Process Time: managed=0 ms, native=9465 ms
-		Asset DB Callback time: managed=35 ms, native=42 ms
-		Scripting: domain reloads=1, domain reload time=2382 ms, compile time=16764 ms, other=89 ms
+		Asset DB Process Time: managed=0 ms, native=10458 ms
+		Asset DB Callback time: managed=99 ms, native=51 ms
+		Scripting: domain reloads=1, domain reload time=2711 ms, compile time=1909 ms, other=92 ms
 		Project Asset Count: scripts=1152, non-scripts=2021
 		Asset File Changes: new=0, changed=0, moved=0, deleted=0
 		Scan Filter Count: 0
-	InvokePackagesCallback: 46.280ms
-	ApplyChangesToAssetFolders: 0.740ms
-	Scan: 184.132ms
-	Collect global state as custom dependencies: 15.566ms
-	CategorizeScriptCompilationAssets: 1694.837ms
-	ProcessAssetsWithTransientArtifactChanges: 58.230ms
-	CategorizeAssets: 25.136ms
-	CompileScripts: 16763.504ms
-	ImportOutOfDateAssets: 3371.116ms (3338.602ms without children)
-		UnloadImportedAssets: 0.144ms
-		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 0.456ms
-		ImportSchedulerStart: 31.911ms
-	PostProcessAllAssets: 35.199ms
-		MonoPostProcessAllAssets: 35.129ms
-			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 9.836ms
-			SyncVS.PostprocessSyncProject 4.815ms
-			EditModeScopePostprocessor.OnPostprocessAllAssets 1.345ms
-			SpeedTree9Postprocessor.OnPostprocessAllAssets 0.907ms
-			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.392ms
-			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.321ms
-			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.260ms
-			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.244ms
-			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.156ms
-			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.078ms
-	UnloadStreamsBegin: 1.581ms
-	PersistCurrentRevisions: 0.069ms
-	GenerateScriptTypeHashes: 2.241ms
-	GenerateScriptTypeSerializationHashes: 4.741ms
-	Untracked: 6575.962ms
+	InvokePackagesCallback: 55.141ms
+	ApplyChangesToAssetFolders: 1.194ms
+	Scan: 381.349ms
+	Collect global state as custom dependencies: 19.896ms
+	CategorizeScriptCompilationAssets: 1704.307ms
+	ProcessAssetsWithTransientArtifactChanges: 69.363ms
+	CategorizeAssets: 33.783ms
+	CompileScripts: 1909.278ms
+	ImportOutOfDateAssets: 3910.136ms (3867.176ms without children)
+		UnloadImportedAssets: 0.175ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 0.539ms
+		ImportSchedulerStart: 42.243ms
+	PostProcessAllAssets: 99.915ms
+		MonoPostProcessAllAssets: 99.842ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 13.397ms
+			SyncVS.PostprocessSyncProject 5.994ms
+			EditModeScopePostprocessor.OnPostprocessAllAssets 1.381ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 1.214ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.646ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.495ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.322ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.272ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.189ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.176ms
+	UnloadStreamsBegin: 1.535ms
+	PersistCurrentRevisions: 0.085ms
+	GenerateScriptTypeHashes: 3.183ms
+	GenerateScriptTypeSerializationHashes: 6.431ms
+	Untracked: 7108.333ms
 
 Application.AssetDatabase Initial Refresh End
-Launched and connected shader compiler UnityShaderCompiler.exe after 0.05 seconds
-Scanning for USB devices : 8.658ms
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.04 seconds
+Scanning for USB devices : 10.930ms
 Initializing Unity extensions:
 [MODES] ModeService[none].Initialize
 [MODES] ModeService[none].LoadModes
 [MODES] Loading mode Default (0) for mode-current-id-PuzzleKiosko
 Unloading 17 Unused Serialized files (Serialized files now loaded: 0)
 Loaded scene 'Assets/Scenes/SampleScene.unity'
-	Deserialize:            135.120 ms
-	Integration:            277.723 ms
-	Integration of assets:  3.236 ms
-	Thread Wait Time:       15.205 ms
-	Total Operation Time:   431.284 ms
-Unloading 5357 unused Assets / (2.6 MB). Loaded Objects now: 6440.
-Memory consumption went from 363.3 MB to 360.7 MB.
-Total: 10.907800 ms (FindLiveObjects: 0.584800 ms CreateObjectMapping: 1.330100 ms MarkObjects: 6.803000 ms  DeleteObjects: 2.029400 ms)
+	Deserialize:            166.622 ms
+	Integration:            344.745 ms
+	Integration of assets:  2.152 ms
+	Thread Wait Time:       3.241 ms
+	Total Operation Time:   516.760 ms
+Unloading 5357 unused Assets / (1.3 MB). Loaded Objects now: 6440.
+Memory consumption went from 361.1 MB to 359.7 MB.
+Total: 15.823300 ms (FindLiveObjects: 1.068600 ms CreateObjectMapping: 2.575300 ms MarkObjects: 9.510100 ms  DeleteObjects: 2.492300 ms)
 
 [LAYOUT] About to load UserSettings\Layouts\default-6000.dwlt, keepMainWindow=False
 Worker ready: AssetImportWorkerHW0 0
@@ -364,19 +364,19 @@ This project uses Input Manager, which is marked for deprecation. To manage inpu
 <RI> Initializing input.
 Using Windows.Gaming.Input
 <RI> Input initialized.
-[Project] Loading completed in 44.414 seconds
-	Project init time: 				42.528 seconds
+[Project] Loading completed in 31.599 seconds
+	Project init time: 				29.380 seconds
 		Template init time: 		0.000 seconds
-		Package Manager init time: 		0.404 seconds
-		Asset Database init time: 		0.533 seconds
-		Global illumination init time: 	0.010 seconds
-		Assemblies load time: 			10.118 seconds
-		Unity extensions init time: 	0.024 seconds
-		Asset Database refresh time: 	28.779 seconds
-	Scene opening time: 			1.669 seconds
-##utp:{"type":"ProjectInfo","version":2,"phase":"Immediate","time":1790818479905,"processId":8392,"projectLoad":44.4135105,"projectInit":42.5275466,"templateInit":0.0,"packageManagerInit":0.4037559,"assetDatabaseInit":0.5328174,"globalIlluminationInit":0.0095091,"assembliesLoad":10.1179237,"unityExtensionsInit":0.024131,"assetDatabaseRefresh":28.7786566,"sceneOpening":1.6690712}
-##utp:{"type":"EditorInfo","version":2,"phase":"Immediate","time":1790818479906,"processId":8392,"editorVersion":"6000.5.8f1 (5cb7df797b7d)","branch":"6000.5/staging","buildType":"Release","platform":"Windows"}
-Asset Pipeline Refresh (id=a8ce9744aec4ac4479b1dc3ceca0a75d): Total: 0.061 seconds - Initiated by RefreshV2(AllowForceSynchronousImport)
+		Package Manager init time: 		0.383 seconds
+		Asset Database init time: 		0.479 seconds
+		Global illumination init time: 	0.012 seconds
+		Assemblies load time: 			10.262 seconds
+		Unity extensions init time: 	0.028 seconds
+		Asset Database refresh time: 	15.324 seconds
+	Scene opening time: 			2.033 seconds
+##utp:{"type":"ProjectInfo","version":2,"phase":"Immediate","time":1790986370285,"processId":12960,"projectLoad":31.5986531,"projectInit":29.3798291,"templateInit":0.0,"packageManagerInit":0.3832473,"assetDatabaseInit":0.4792698,"globalIlluminationInit":0.0115996,"assembliesLoad":10.2622399,"unityExtensionsInit":0.0281998,"assetDatabaseRefresh":15.3239715,"sceneOpening":2.0327767}
+##utp:{"type":"EditorInfo","version":2,"phase":"Immediate","time":1790986370286,"processId":12960,"editorVersion":"6000.5.8f1 (5cb7df797b7d)","branch":"6000.5/staging","buildType":"Release","platform":"Windows"}
+Asset Pipeline Refresh (id=22635c70086d68f45aa66292900f1da1): Total: 0.052 seconds - Initiated by RefreshV2(AllowForceSynchronousImport)
 Dynamic Batching is deprecated and will be removed in a future release. Use GPU Instancing instead. Disable Dynamic Batching in Project Settings > Player > Other Settings to remove this warning.
 UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
 UnityEngine.StackTraceUtility:ExtractStackTrace ()
@@ -387,32 +387,28 @@ UnityEngine.Debug:LogWarning (object)
 UnityEditor.PlayerSettingsBatchingWarning:WarnIfDynamicBatchingEnabled ()
 UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
 
-Start Indexing on Editor startup
-[Indexing] Starting Initial Indexing for Assets
-Created GICache directory at C:/Users/rouch/AppData/LocalLow/Unity/Caches/GiCache. Took: 0.048s, timestamps: [45.485 - 45.533]
-[Licensing::Client] Successfully resolved entitlement details
-[Licensing::Client] Successfully resolved entitlement details
 [Licensing::Client] Successfully resolved entitlement details
 [Licensing::Client] Successfully updated the access token
-[Licensing::Module] Successfully updated access token: "EYf1q5m5"... (expires: 2026-10-01T03:33:02Z)
+[Licensing::Module] Successfully updated access token: "3gKuYPEX"... (expires: 2026-10-03T02:10:57Z)
+Created GICache directory at C:/Users/rouch/AppData/LocalLow/Unity/Caches/GiCache. Took: 0.054s, timestamps: [32.731 - 32.785]
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
 UPID Received 'd4ed1437-545e-476e-9d03-8d47d3de7336'.
 [Licensing::Client] Successfully resolved entitlement details
 TrimDiskCacheJob: Current cache size 0mb
-Scanning for USB devices : 5.155ms
-Scanning for USB devices : 15.793ms
-Scanning for USB devices : 32.548ms
-Scanning for USB devices : 22.833ms
-Scanning for USB devices : 20.899ms
-Scanning for USB devices : 25.888ms
-Scanning for USB devices : 28.916ms
-Scanning for USB devices : 29.929ms
-Scanning for USB devices : 21.738ms
-Scanning for USB devices : 21.890ms
-Scanning for USB devices : 20.824ms
-Scanning for USB devices : 10.811ms
-Scanning for USB devices : 10.914ms
-Asset Pipeline Refresh (id=b5c4446bf0bbbdf499d29ac617042830): Total: 0.007 seconds - Initiated by RefreshV2(AllowForceSynchronousImport)
-MonoPathRemapper: Attempts to remap: 42343; Successful remaps: 16496
+Asset Pipeline Refresh (id=83d84c6195db7664faab9b9967fcb6c6): Total: 0.006 seconds - Initiated by RefreshV2(AllowForceSynchronousImport)
+Start Indexing on Editor startup
+[Indexing] Starting Initial Indexing for Assets
+Starting new worker id: 1 with log in C:/Users/rouch/PuzzleKiosko/Logs/AssetImportWorkerHW1.log
+[Worker0] Imported GUID: 909982c197ca41943855ac91e491233c - Path: Assets/Scripts/Editor/PuzzleSetup.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0f74ad1ff49bc587cdb2b5550420b8f8') in 0.0841258 seconds
+[Worker0] Imported GUID: 7adb7fd8b2bde3645833095dd35d9ffa - Path: Assets/Scripts/Editor/PuzzleSlicer.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '41b76cb8ad49e4efac72b80d575cdedb') in 0.00774 seconds
+[Worker0] Imported GUID: 069143c14d61cdf4ba7ac450d3fa403c - Path: Assets/Scripts/Editor/PuzzleDiagnostico.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '41f2759e3c36842a558fa7cff8ef6731') in 0.0041487 seconds
+[Worker0] Imported GUID: 2575d873076bc034c9f73df8d12ec801 - Path: Assets/Scripts/MenuController.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '969f8c5ceac4a4748fd0e2df65dbc124') in 0.004929 seconds
+Worker ready: AssetImportWorkerHW1 1
+Asset Pipeline Refresh (id=6778c25bf9bff384ab26ca4c213b03c7): Total: 0.021 seconds - Initiated by RefreshV2(AllowForceSynchronousImport)
+Asset Pipeline Refresh (id=f8c990c48c8b571408e0c67e2f347605): Total: 0.005 seconds - Initiated by RefreshV2(AllowForceSynchronousImport)
+Asset Pipeline Refresh (id=5cb79e2aacfbc1d4c97e6072ad454653): Total: 0.005 seconds - Initiated by RefreshV2(AllowForceSynchronousImport)
+MonoPathRemapper: Attempts to remap: 42333; Successful remaps: 16496
 Serialized file version minimum: 23, current 23
 [LAYOUT] About to save layout C:\Users\rouch\PuzzleKiosko\UserSettings\Layouts\default-6000.dwlt
 [LAYOUT] About to save layout C:/Users/rouch/AppData/Roaming/Unity/Editor-5.x/Preferences\Layouts\current\default-6000.dwlt
@@ -427,8 +423,16 @@ Lingering sessions upon destruction of worker manager
 AcceleratorClientConnectionCallback - disconnected - :0
 Cleanup mono
 CodeReloadManager destroyed
-debugger-agent: Unable to listen on 4944
+abort_threads: Failed aborting id: 0000000000005058, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 0000000000005E6C, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 0000000000005058, mono_thread_manage will ignore it
+
+abort_threads: Failed aborting id: 0000000000005E6C, mono_thread_manage will ignore it
+
+debugger-agent: Unable to listen on 5064
 Checking for leaked weakptr:
   Found no leaked weakptrs.
 [Package Manager] Server process was shutdown
-##utp:{"type":"MemoryLeaks","version":2,"phase":"Immediate","time":1790819895176,"processId":8392,"allocatedMemory":50177624,"memoryLabels":[{"Default":213021},{"Permanent":15516},{"NewDelete":64129},{"Thread":4205176},{"Manager":33861},{"VertexData":8},{"Geometry":816},{"Texture":24},{"Shader":854133},{"Material":24},{"GfxDevice":61400},{"Animation":952},{"Audio":1544},{"FreeType":8},{"FontEngine":736},{"Physics":2146},{"Physics2D":16},{"Serialization":2416},{"Input":45280},{"JobScheduler":256},{"TextLib":23254},{"Mono":48},{"ScriptingNativeRuntime":1586772},{"BaseObject":1622024},{"Resource":1208},{"Renderer":3080},{"Transform":4685},{"File":6986},{"WebCam":616},{"Culling":32},{"Terrain":11442},{"Wind":24},{"STL":40},{"String":9959},{"StaticString":3808},{"Utility":2673970},{"Curl":48},{"PoolAlloc":2216},{"AI":80},{"TypeTree":17165},{"CodeReload":448},{"RuntimeInitializeOnLoadManager":64},{"Sprites":102},{"SpriteAtlas":120},{"GI":7816},{"Director":8296},{"CloudService":7208},{"WebRequest":4753},{"VR":47114},{"SceneManager":608},{"Video":208},{"LazyScriptCache":32},{"NativeArray":33048152},{"Camera":17},{"Secure":265},{"SerializationCache":1576},{"APIUpdating":10320},{"Subsystems":336},{"VirtualTexturing":57888},{"StaticSafetyDebugInfo":278528},{"Analytics":728},{"Hierarchy":1176},{"UIElements":353888},{"CoreStats":13688},{"Identifiers":6768},{"Gui":189},{"EditorUtility":196571},{"VersionControl":8},{"Undo":931},{"AssetDatabase":4608384},{"AssetImporter":40},{"EditorGi":328},{"UnityConnect":35345},{"Upm":1988},{"UpmDiagnostics":8},{"AssetCompliance":64},{"DrivenProperties":72},{"LocalIPC":260},{"ProfilerEditor":9746},{"CoreBusinessMetrics":3480},{"Windowing":456},{"Licensing":776},{"AssetReference":32},{"IPCStream":32}]}
+##utp:{"type":"MemoryLeaks","version":2,"phase":"Immediate","time":1790986605885,"processId":12960,"allocatedMemory":50213437,"memoryLabels":[{"Default":213021},{"Permanent":15516},{"NewDelete":65153},{"Thread":4205176},{"Manager":33861},{"VertexData":8},{"Geometry":816},{"Texture":24},{"Shader":854133},{"Material":24},{"GfxDevice":61400},{"Animation":952},{"Audio":1544},{"FreeType":8},{"FontEngine":736},{"Physics":2146},{"Physics2D":16},{"Serialization":2416},{"Input":45280},{"JobScheduler":256},{"TextLib":23254},{"Mono":48},{"ScriptingNativeRuntime":1603172},{"BaseObject":1622024},{"Resource":1208},{"Renderer":3080},{"Transform":4685},{"File":6986},{"WebCam":616},{"Culling":32},{"Terrain":11442},{"Wind":24},{"STL":40},{"String":9958},{"StaticString":3808},{"Utility":2673970},{"Curl":48},{"PoolAlloc":2216},{"AI":80},{"TypeTree":17165},{"CodeReload":448},{"RuntimeInitializeOnLoadManager":64},{"Sprites":102},{"SpriteAtlas":120},{"GI":7816},{"Director":8296},{"CloudService":7208},{"WebRequest":6364},{"VR":47114},{"SceneManager":608},{"Video":208},{"LazyScriptCache":32},{"NativeArray":33047960},{"Camera":17},{"Secure":265},{"SerializationCache":1576},{"APIUpdating":10320},{"Subsystems":336},{"VirtualTexturing":57888},{"StaticSafetyDebugInfo":278528},{"Analytics":728},{"Hierarchy":1176},{"UIElements":370312},{"CoreStats":13688},{"Identifiers":6768},{"Gui":128},{"EditorUtility":197179},{"VersionControl":8},{"Undo":931},{"AssetDatabase":4608384},{"AssetImporter":40},{"EditorGi":328},{"UnityConnect":35345},{"Upm":1988},{"UpmDiagnostics":8},{"AssetCompliance":64},{"DrivenProperties":72},{"LocalIPC":260},{"ProfilerEditor":9746},{"CoreBusinessMetrics":3480},{"Windowing":456},{"Licensing":776},{"AssetReference":32},{"IPCStream":32}]}

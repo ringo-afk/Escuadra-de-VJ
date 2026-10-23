@@ -286,6 +286,7 @@ public class SD_GameController : MonoBehaviour
                 yield break;
 
             CompletedWaves++;
+            SDKiosko.Obtener().OleadaCompletada(CompletedWaves);
             Debug.Log($"{wave.waveName} completada.");
 
             SD_AudioManager.Instance?.Play(
@@ -346,6 +347,6 @@ public class SD_GameController : MonoBehaviour
 
         Time.timeScale = 1f;
 
-        SceneManager.LoadScene("SD_Aftermath");
+        SDKiosko.Obtener().Terminar(victory, CompletedWaves, remainingHealth, "SD_Aftermath");
     }
 }

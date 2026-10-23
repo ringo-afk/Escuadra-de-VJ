@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +16,8 @@ public class SD_TriviaController : MonoBehaviour
 
         [Range(0, 2)]
         public int correctIndex;
+
+        public int id;
 
         [TextArea]
         public string explanation;
@@ -103,6 +107,15 @@ public class SD_TriviaController : MonoBehaviour
 
         if (panel != null)
             panel.SetActive(false);
+    }
+
+    IEnumerator Start()
+    {
+        List<Question> remotas = null;
+        yield return SDKiosko.Obtener().CargarPreguntas(lista => remotas = lista);
+
+        if (remotas != null && remotas.Count > 0)
+            questions = remotas.ToArray();
     }
 
     bool ValidateConfiguration()
@@ -203,6 +216,11 @@ public class SD_TriviaController : MonoBehaviour
         {
             button.interactable = false;
         }
+
+        SDKiosko.Obtener().Respuesta(
+            currentQuestion.id,
+            index == currentQuestion.correctIndex
+        );
 
         if (index == currentQuestion.correctIndex)
         {

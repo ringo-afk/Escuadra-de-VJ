@@ -104,13 +104,15 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
-
-rompecabezas/[Ll]ibrary/
-rompecabezas/[Tt]emp/
-rompecabezas/[Oo]bj/
-rompecabezas/[Ll]ogs/
-rompecabezas/[Uu]ser[Ss]ettings/
-rompecabezas/*.zip
+# Proyectos Unity anidados
+**/[Ll]ibrary/
+**/[Tt]emp/
+**/[Oo]bj/
+**/[Ll]ogs/
+**/[Uu]ser[Ss]ettings/
+**/_backup_*/
 rompecabezas/*.csproj
 rompecabezas/*.sln
-rompecabezas/ziFL798D
+rompecabezas/*.zip
+rompecabezas/New folder/
+rompecabezas/ziFL*

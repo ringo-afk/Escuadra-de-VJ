@@ -3,8 +3,7 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags:
-  - Enemy
+  tags: []
   layers:
   - Default
   - TransparentFX
@@ -41,6 +40,24 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: AE_Capa2
+    uniqueID: 1044748167
+    locked: 0
+  - name: AE_Capa3
+    uniqueID: -2135254995
+    locked: 0
+  - name: AE_Capa4
+    uniqueID: -905790307
+    locked: 0
+  - name: AE_Capa5
+    uniqueID: 666792859
+    locked: 0
+  - name: AE_Capa7
+    uniqueID: -885717567
+    locked: 0
+  - name: AE_Capa8
+    uniqueID: 1782759763
     locked: 0
   m_RenderingLayers:
   - Default
