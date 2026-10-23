@@ -2,18 +2,18 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags: []
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Enemy
+  - Projectile
+  - Border
   - 
   - 
   - 
@@ -41,3 +41,24 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: AE_Capa2
+    uniqueID: 1044748167
+    locked: 0
+  - name: AE_Capa3
+    uniqueID: -2135254995
+    locked: 0
+  - name: AE_Capa4
+    uniqueID: -905790307
+    locked: 0
+  - name: AE_Capa5
+    uniqueID: 666792859
+    locked: 0
+  - name: AE_Capa7
+    uniqueID: -885717567
+    locked: 0
+  - name: AE_Capa8
+    uniqueID: 1782759763
+    locked: 0
+  m_RenderingLayers:
+  - Default
+  m_MigratedRenderPipelines: []
