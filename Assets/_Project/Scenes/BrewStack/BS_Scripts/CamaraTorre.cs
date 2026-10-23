@@ -7,6 +7,9 @@ public class CamaraTorre : MonoBehaviour
     [SerializeField] private float velocidadSeguimiento = 3f;
     // espacio entre el bloque que se balancea y el borde de arriba de la pantalla
     [SerializeField] private float margenSuperior = 2f;
+    // parte de arriba de la pantalla que tapan los paneles del HUD y la barra de estabilidad
+    [Range(0f, 0.5f)]
+    [SerializeField] private float franjaHUD = 0.2f;
 
     [Header("Sacudida")]
     [SerializeField] private float sacudidaMalPuesto = 0.08f;
@@ -45,9 +48,12 @@ public class CamaraTorre : MonoBehaviour
 
     private void LateUpdate()
     {
-        float objetivo = torre.YBloqueBalanceo + margenSuperior - cam.orthographicSize;
+        float altoPantalla = cam.orthographicSize * 2f;
+        float objetivo = torre.YBloqueBalanceo + margenSuperior + altoPantalla * franjaHUD - cam.orthographicSize;
         objetivo = Mathf.Max(objetivo, yInicial);
-        ySeguida = Mathf.Lerp(ySeguida, objetivo, velocidadSeguimiento * Time.deltaTime);
+        // si se quedó atrás alcanza más rápido, así el bloque nuevo no sale debajo del HUD
+        float velocidad = objetivo - ySeguida > 1f ? velocidadSeguimiento * 3f : velocidadSeguimiento;
+        ySeguida = Mathf.Lerp(ySeguida, objetivo, velocidad * Time.deltaTime);
 
         // la sacudida se suma encima del seguimiento, así no lo desacomoda
         Vector2 sacudida = Vector2.zero;
