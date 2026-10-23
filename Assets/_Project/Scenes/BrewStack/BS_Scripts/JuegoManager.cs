@@ -73,6 +73,7 @@ public class JuegoManager : MonoBehaviour
         StartCoroutine(Preparar());
     }
 
+    // antes de jugar se abre la partida en el kiosco y se esperan las preguntas del servidor
     private IEnumerator Preparar()
     {
         preparado = false;
@@ -218,7 +219,7 @@ public class JuegoManager : MonoBehaviour
     {
         float porcentaje = preguntasContestadas > 0 ? (float)aciertos / preguntasContestadas : 0f;
         int bono = Mathf.RoundToInt(puntos * porcentaje * factorBono);
-        BrewKiosko.Obtener().Finalizar(puntos + bono, completada);
         resultado.Mostrar(motivoFinal, torre.AlturaAlcanzada, puntos, bono, puntos + bono, porcentaje);
+        BrewKiosko.Obtener().Finalizar(puntos + bono, completada);
     }
 }

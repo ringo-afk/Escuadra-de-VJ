@@ -55,6 +55,11 @@ public class ResultadoFinalUI : MonoBehaviour
 
     private void IrAMinijuegos()
     {
+        if (BrewKiosko.EnPortal)
+        {
+            BrewKiosko.Obtener().Cerrar();
+            return;
+        }
         if (musica != null) musica.SalirA(escenaMinijuegos);
         else SceneManager.LoadScene(escenaMinijuegos);
     }

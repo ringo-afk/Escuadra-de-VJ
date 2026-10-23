@@ -81,6 +81,7 @@ public static class BrewStackGameBuilder
         HUDJuego hud = CrearHUD(canvas, torre, spriteBloque);
         TriviaUI trivia = CrearTrivia(canvas, spriteBloque);
         CrearAvisoNivel(canvas, hud);
+        GameObject tarjetaTutorial = CrearTarjetaTutorial(canvas);
         ResultadoFinalUI resultado = CrearResultado(canvas);
 
         TextosFlotantes textos = CrearTextosFlotantes();
@@ -94,6 +95,8 @@ public static class BrewStackGameBuilder
         SerializedObject soJuego = new SerializedObject(juego);
         soJuego.FindProperty("pausa").objectReferenceValue = pausa;
         soJuego.ApplyModifiedPropertiesWithoutUndo();
+
+        CrearTutorial(tarjetaTutorial, trivia, torre, resultado, pausa);
 
         EditorSceneManager.SaveScene(escena, RUTA_ESCENA);
         AssetDatabase.Refresh();
@@ -1205,6 +1208,41 @@ public static class BrewStackGameBuilder
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 
+    // a la derecha, en la franja libre junto a la caja de la trivia, para no tapar la torre ni la pregunta
+    private static GameObject CrearTarjetaTutorial(Transform canvas)
+    {
+        TMP_FontAsset fuente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(RUTA_FUENTE);
+        Sprite borde = CargarPrimerSprite(RUTA_BORDE_BOTON);
+
+        GameObject tarjeta = CrearPanelHUD("TarjetaTutorial", canvas, new Vector2(0.81f, 0.3f), new Vector2(0.985f, 0.66f), borde);
+        tarjeta.AddComponent<CanvasGroup>();
+
+        TMP_Text titulo = CrearTexto("TextoTitulo", tarjeta.transform, "Cómo jugar", 28f, colorBase, fuente);
+        Estirar(titulo.gameObject, new Vector2(0.07f, 0.72f), new Vector2(0.93f, 0.95f));
+
+        TMP_Text cuerpo = CrearTexto("TextoCuerpo", tarjeta.transform, "", 23f, colorTexto, fuente);
+        Estirar(cuerpo.gameObject, new Vector2(0.07f, 0.06f), new Vector2(0.93f, 0.7f));
+        cuerpo.alignment = TextAlignmentOptions.TopLeft;
+
+        return tarjeta;
+    }
+
+    private static void CrearTutorial(GameObject tarjeta, TriviaUI trivia, Torre torre, ResultadoFinalUI resultado, PausaJuego pausa)
+    {
+        GameObject obj = new GameObject("Tutorial");
+        TutorialJuego tutorial = obj.AddComponent<TutorialJuego>();
+
+        SerializedObject so = new SerializedObject(tutorial);
+        so.FindProperty("trivia").objectReferenceValue = trivia;
+        so.FindProperty("torre").objectReferenceValue = torre;
+        so.FindProperty("resultado").objectReferenceValue = resultado;
+        so.FindProperty("pausa").objectReferenceValue = pausa;
+        so.FindProperty("tarjeta").objectReferenceValue = tarjeta.GetComponent<CanvasGroup>();
+        so.FindProperty("textoTitulo").objectReferenceValue = tarjeta.transform.Find("TextoTitulo").GetComponent<TMP_Text>();
+        so.FindProperty("textoCuerpo").objectReferenceValue = tarjeta.transform.Find("TextoCuerpo").GetComponent<TMP_Text>();
+        so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
     // fondo azul marino semitransparente con el borde celeste del menú encima
     private static GameObject CrearPanelHUD(string nombre, Transform padre, Vector2 min, Vector2 max, Sprite borde)
     {
@@ -1286,7 +1324,8 @@ public static class BrewStackGameBuilder
         marco.GetComponent<Image>().raycastTarget = false;
         marco.transform.SetAsFirstSibling();
 
-        GameObject panel = CrearImagen("PanelPausa", canvas, colorPanel, null);
+        // fondo sólido: si se pausa durante una pregunta no se debe ver, para no pensarla con el reloj detenido
+        GameObject panel = CrearImagen("PanelPausa", canvas, colorFondo, null);
         Estirar(panel, Vector2.zero, Vector2.one);
 
         GameObject caja = CrearImagen("Caja", panel.transform, colorBordeCeleste, borde);
