@@ -64,7 +64,9 @@ public class PausaJuego : MonoBehaviour
         if (saliendo) return;
 
         Keyboard teclado = Keyboard.current;
-        if (teclado == null || !teclado.escapeKey.wasPressedThisFrame) return;
+        if (teclado == null) return;
+        // en el navegador a pantalla completa Escape solo sale de la pantalla completa, por eso también la P
+        if (!teclado.escapeKey.wasPressedThisFrame && !teclado.pKey.wasPressedThisFrame) return;
 
         if (enPausa) Continuar();
         else Pausar();
