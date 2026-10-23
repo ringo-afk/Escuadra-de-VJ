@@ -9,7 +9,7 @@ public class CamaraTorre : MonoBehaviour
     [SerializeField] private float margenSuperior = 2f;
     // parte de arriba de la pantalla que tapan los paneles del HUD y la barra de estabilidad
     [Range(0f, 0.5f)]
-    [SerializeField] private float franjaHUD = 0.2f;
+    [SerializeField] private float franjaHUD = 0.1f;
 
     [Header("Sacudida")]
     [SerializeField] private float sacudidaMalPuesto = 0.08f;
