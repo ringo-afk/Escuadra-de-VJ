@@ -137,8 +137,15 @@ public class BrewKiosko : MonoBehaviour
     // si hay partida abierta se guarda antes de pedirle al portal que quite el juego
     public void Cerrar()
     {
-        if (corrida) Finalizar(puntaje, false, () => AvisarPortal("cerrar", "{}"));
-        else AvisarPortal("cerrar", "{}");
+        if (corrida) Finalizar(puntaje, false, PedirCierre);
+        else PedirCierre();
+    }
+
+    // si la página no sabe cerrar el juego, el iframe sigue ahí y se ve este aviso
+    private void PedirCierre()
+    {
+        AvisarPortal("cerrar", "{}");
+        MostrarAviso("Para salir usa el botón Cerrar de la página, arriba del juego.", 8f);
     }
 
     public static BrewKiosko Obtener()
