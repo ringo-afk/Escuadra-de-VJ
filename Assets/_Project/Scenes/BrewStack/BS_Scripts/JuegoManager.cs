@@ -1,5 +1,6 @@
-﻿using System.Collections;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 // flujo de la partida: pregunta, bloque, resultado, hasta que la torre cae o se acaba el tiempo
@@ -13,6 +14,7 @@ public class JuegoManager : MonoBehaviour
     [SerializeField] private HUDJuego hud;
     [SerializeField] private ResultadoFinalUI resultado;
     [SerializeField] private TextosFlotantes textosFlotantes;
+    [SerializeField] private PausaJuego pausa;
 
     [Header("Tiempos")]
     [Range(120f, 300f)]
@@ -25,6 +27,9 @@ public class JuegoManager : MonoBehaviour
     [SerializeField] private int puntosMalPuesto = 5;
     [SerializeField] private float factorBono = 0.5f;
 
+    // el nivel es la dificultad de las preguntas, solo sube durante la partida
+    public event System.Action<int> AlCambiarNivel;
+
     private Fase fase;
     private float tiempoEspera;
     private float tiempoRestante;
@@ -32,8 +37,13 @@ public class JuegoManager : MonoBehaviour
     private int preguntasContestadas;
     private int aciertos;
     private string motivoFinal;
+    private int nivel;
     private bool preparado;
     private bool completada;
+
+    public int Nivel => nivel;
+    public float TiempoRestante => tiempoRestante;
+    public bool Terminada => fase == Fase.Terminada;
 
     private void OnEnable()
     {
@@ -95,8 +105,10 @@ public class JuegoManager : MonoBehaviour
         puntos = 0;
         preguntasContestadas = 0;
         aciertos = 0;
+        nivel = trivia.DificultadParaAltura(torre.Altura);
         hud.MostrarPuntos(puntos);
         hud.MostrarTiempo(tiempoRestante);
+        hud.MostrarNivel(nivel, false);
 
         SiguientePregunta();
     }
@@ -104,6 +116,7 @@ public class JuegoManager : MonoBehaviour
     private void Update()
     {
         if (!preparado || fase == Fase.Terminada) return;
+        if (pausa != null && pausa.EnPausa) return;
 
         tiempoRestante -= Time.deltaTime;
         hud.MostrarTiempo(tiempoRestante);
@@ -126,7 +139,9 @@ public class JuegoManager : MonoBehaviour
 
         Keyboard teclado = Keyboard.current;
         Mouse mouse = Mouse.current;
-        bool clic = mouse != null && mouse.leftButton.wasPressedThisFrame;
+        // el clic sobre un botón, como el de pausa, no suelta el bloque
+        bool sobreUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+        bool clic = mouse != null && mouse.leftButton.wasPressedThisFrame && !sobreUI;
         bool espacio = teclado != null && teclado.spaceKey.wasPressedThisFrame;
         if (clic || espacio)
         {
@@ -164,6 +179,14 @@ public class JuegoManager : MonoBehaviour
         if (ganados > 0 && textosFlotantes != null)
         {
             textosFlotantes.Mostrar(ganados, bloque.transform.position, res == Torre.Resultado.BienPuesto);
+        }
+
+        int nuevoNivel = trivia.DificultadParaAltura(torre.Altura);
+        if (nuevoNivel != nivel)
+        {
+            nivel = nuevoNivel;
+            hud.MostrarNivel(nivel, true);
+            AlCambiarNivel?.Invoke(nivel);
         }
 
         fase = Fase.Esperando;

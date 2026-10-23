@@ -1,6 +1,7 @@
 using System.IO;
 using TMPro;
 using UnityEditor;
+using UnityEditor.Events;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -18,12 +19,23 @@ public static class BrewStackGameBuilder
     private const string RUTA_SPRITE_BRILLO = CARPETA + "/BS_Sprites/brillo_suave.png";
     private const string RUTA_ESTRELLA = CARPETA + "/BS_Sprites/punto_estrella_nitida.png";
     private const string RUTA_ESTRELLA_FUGAZ = CARPETA + "/BS_Sprites/estrella_fugaz.png";
-    // la misma música que usa BS_Menu, por referencia
-    private const string RUTA_MUSICA = CARPETA + "/BS_Audio/417884__andrewkn__surrealism-ambient-mix.wav";
+    // si falta algún tema se usa la música del menú, que era la ambiental de antes
+    private const string RUTA_MUSICA = CARPETA + "/BS_Audio/musica_menu.wav";
     private const string RUTA_BORDE_BOTON = CARPETA + "/BS_Sprites/borde_boton.png";
     private const string RUTA_FUENTE = CARPETA + "/BS_Fonts/Orbitron-Bold SDF.asset";
     private const string RUTA_PREGUNTAS = CARPETA + "/BS_Data/preguntas.json";
     private const string RUTA_MENU = CARPETA + "/BS_Scenes/BS_Menu.unity";
+    private const string RUTA_LOGO_BREWSTACK = CARPETA + "/BS_Sprites/logo_brewstack.png";
+    private const string RUTA_LOGO_ESLABON = CARPETA + "/BS_Sprites/logo_eslabon.png";
+    private const string RUTA_PREFAB_HISTORIAL = CARPETA + "/BS_Prefabs/HistorialRow.prefab";
+    private static readonly string[] COLUMNAS_HISTORIAL = { "FechaText", "ModoText", "AlturaText", "PuntosText" };
+    private const float ALTO_FILA_HISTORIAL = 40f;
+    private const float ALTO_SCROLL_HISTORIAL = 380f;
+    private const float ANCHO_BARRA = 12f;
+    private const int MARGEN_HISTORIAL = 24;
+    private const int RELLENO_FILA = 16;
+    private const string CARPETA_AUDIO = CARPETA + "/BS_Audio";
+    private const float CALIDAD_AUDIO = 0.5f;
     private const string NOMBRE_ESCENA_JUEGO = "BS_Game";
 
     private const float ANCHO_BASE = 3f;
@@ -68,13 +80,20 @@ public static class BrewStackGameBuilder
         CrearEventSystem();
         HUDJuego hud = CrearHUD(canvas, torre, spriteBloque);
         TriviaUI trivia = CrearTrivia(canvas, spriteBloque);
+        CrearAvisoNivel(canvas, hud);
         ResultadoFinalUI resultado = CrearResultado(canvas);
 
         TextosFlotantes textos = CrearTextosFlotantes();
-        CrearJuegoManager(torre, trivia, hud, resultado, textos);
+        JuegoManager juego = CrearJuegoManager(torre, trivia, hud, resultado, textos);
         CrearEfectos(torre);
-        CrearSonidos(torre, trivia, resultado);
-        CrearMusica(resultado);
+        SonidosJuego sonidos = CrearSonidos(torre, trivia, resultado, juego);
+        MusicaJuego musica = CrearMusica(resultado, torre, juego, sonidos);
+        PausaJuego pausa = CrearPausa(canvas, resultado, musica, spriteBloque);
+        ConfigurarAudios();
+
+        SerializedObject soJuego = new SerializedObject(juego);
+        soJuego.FindProperty("pausa").objectReferenceValue = pausa;
+        soJuego.ApplyModifiedPropertiesWithoutUndo();
 
         EditorSceneManager.SaveScene(escena, RUTA_ESCENA);
         AssetDatabase.Refresh();
@@ -187,6 +206,523 @@ public static class BrewStackGameBuilder
             EditorSceneManager.CloseScene(menu, true);
         }
         return cambio;
+    }
+
+    // agrega a BS_Menu lo que le falta, busca todo por nombre para que correrlo otra vez no duplique nada
+    [MenuItem("BrewStack/Actualizar menú")]
+    public static void ActualizarMenu()
+    {
+        if (EditorApplication.isPlaying)
+        {
+            Debug.LogWarning("BrewStack: sal de Play antes de actualizar el menú");
+            return;
+        }
+        if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+
+        var menu = EditorSceneManager.GetSceneByPath(RUTA_MENU);
+        bool yaEstabaAbierta = menu.isLoaded;
+        if (yaEstabaAbierta && menu.isDirty)
+        {
+            Debug.LogError("BrewStack: BS_Menu tiene cambios sin guardar. Guárdala o descártalos y vuelve a intentar.");
+            return;
+        }
+        if (!yaEstabaAbierta)
+        {
+            menu = EditorSceneManager.OpenScene(RUTA_MENU, OpenSceneMode.Additive);
+        }
+
+        // los objetos nuevos se crean en la escena activa, por eso se cambia mientras tanto
+        var escenaActiva = EditorSceneManager.GetActiveScene();
+        EditorSceneManager.SetActiveScene(menu);
+
+        MenuManager manager = null;
+        foreach (GameObject raiz in menu.GetRootGameObjects())
+        {
+            if (manager == null) manager = raiz.GetComponentInChildren<MenuManager>(true);
+        }
+
+        if (manager == null)
+        {
+            Debug.LogError("BrewStack: no se encontró ningún MenuManager en BS_Menu");
+        }
+        else
+        {
+            SerializedObject so = new SerializedObject(manager);
+            ActualizarInstrucciones(so, manager);
+            ActualizarLogos(so);
+            ActualizarOpciones(so, manager);
+            ActualizarHistorial(so);
+            ActualizarMusicaMenu(so, manager);
+            so.ApplyModifiedPropertiesWithoutUndo();
+            ConfigurarAudios();
+
+            // al final, para que también lo tengan los botones que se agregaron arriba
+            foreach (GameObject raiz in menu.GetRootGameObjects())
+            {
+                foreach (Button boton in raiz.GetComponentsInChildren<Button>(true))
+                {
+                    if (boton.GetComponent<EscalaAlPasar>() == null) boton.gameObject.AddComponent<EscalaAlPasar>();
+                }
+            }
+
+            EditorSceneManager.MarkSceneDirty(menu);
+            EditorSceneManager.SaveScene(menu);
+            Debug.Log("BrewStack: se actualizó y guardó BS_Menu");
+        }
+
+        if (escenaActiva.IsValid() && escenaActiva != menu) EditorSceneManager.SetActiveScene(escenaActiva);
+        if (!yaEstabaAbierta)
+        {
+            EditorSceneManager.CloseScene(menu, true);
+        }
+    }
+
+    // las tarjetas toman los números de los scripts, si cambian solo hay que volver a correr el menú
+    private static void ActualizarInstrucciones(SerializedObject so, MenuManager manager)
+    {
+        Transform panel = ((GameObject)so.FindProperty("comoSeJuegaPanel").objectReferenceValue).transform;
+        Transform grid1 = panel.Find("InstruccionesGrid");
+        if (grid1 == null)
+        {
+            Debug.LogError("BrewStack: no se encontró InstruccionesGrid en el panel Cómo se juega");
+            return;
+        }
+
+        int minutos = Mathf.RoundToInt(LeerCampo<JuegoManager>("tiempoSesion") / 60f);
+        int segundosPregunta = Mathf.RoundToInt(LeerCampo<TriviaUI>("tiempoPregunta"));
+        int bien = Mathf.RoundToInt(LeerCampo<JuegoManager>("puntosBienPuesto"));
+        int mal = Mathf.RoundToInt(LeerCampo<JuegoManager>("puntosMalPuesto"));
+        int bono = Mathf.RoundToInt(LeerCampo<JuegoManager>("factorBono") * 100f);
+        int malSeguidos = Mathf.RoundToInt(LeerCampo<Torre>("maxMalPuestosSeguidos"));
+        int nivel2 = Mathf.RoundToInt(LeerCampo<TriviaUI>("alturaDificultad2"));
+        int nivel3 = Mathf.RoundToInt(LeerCampo<TriviaUI>("alturaDificultad3"));
+        int alturaMaxima = Mathf.RoundToInt(LeerCampo<Torre>("alturaMaxima"));
+
+        string[] textos =
+        {
+            $"Tienes {minutos} minutos. El bloque va de lado a lado: haz clic o presiona espacio para soltarlo.",
+            $"Antes de cada bloque hay una pregunta y tienes {segundosPregunta} segundos. Si aciertas, el bloque sale ancho y lento. Si fallas, angosto y rápido.",
+            $"Bien puesto: +{bien} puntos. Mal puesto: +{mal} puntos y la torre se inclina.",
+            "Si más de la mitad del bloque queda fuera de la torre, se cae y no suma puntos.",
+            $"La torre colapsa con {malSeguidos} bloques mal puestos o caídos seguidos, o si se inclina demasiado.",
+            $"Al final ganas un bono de hasta {bono}% de tus puntos, según tu porcentaje de aciertos.",
+            $"Las preguntas suben de nivel: nivel 2 a los {nivel2} bloques y nivel 3 a los {nivel3} bloques.",
+            $"La altura máxima es de {alturaMaxima} bloques. Si la alcanzas, la partida termina."
+        };
+
+        // no caben las 8 tarjetas juntas, la segunda página es una copia de la primera
+        Transform grid2 = panel.Find("InstruccionesGrid2");
+        if (grid2 == null)
+        {
+            grid2 = Object.Instantiate(grid1.gameObject, panel).transform;
+            grid2.name = "InstruccionesGrid2";
+            for (int i = 0; i < grid2.childCount; i++) grid2.GetChild(i).name = "Instruccion" + (i + 5);
+        }
+        grid2.SetSiblingIndex(grid1.GetSiblingIndex() + 1);
+
+        Transform[] grids = { grid1, grid2 };
+        for (int g = 0; g < grids.Length; g++)
+        {
+            GridLayoutGroup layout = grids[g].GetComponent<GridLayoutGroup>();
+            layout.cellSize = new Vector2(420f, 120f);
+            LayoutElement elemento = grids[g].GetComponent<LayoutElement>();
+            if (elemento != null) elemento.preferredHeight = layout.cellSize.y * 2f + layout.spacing.y;
+
+            for (int i = 0; i < 4; i++)
+            {
+                Transform tarjeta = grids[g].Find("Instruccion" + (g * 4 + i + 1));
+                TMP_Text texto = tarjeta != null ? tarjeta.GetComponentInChildren<TMP_Text>(true) : null;
+                if (texto == null)
+                {
+                    Debug.LogError("BrewStack: falta la tarjeta Instruccion" + (g * 4 + i + 1));
+                    continue;
+                }
+                texto.text = textos[g * 4 + i];
+                texto.enableAutoSizing = true;
+                texto.fontSizeMin = 16f;
+                texto.fontSizeMax = 22f;
+            }
+        }
+        grid1.gameObject.SetActive(true);
+        grid2.gameObject.SetActive(false);
+
+        Transform volver = panel.Find("VolverButton");
+        Button pagina = BuscarODuplicar(panel, "PaginaButton", volver);
+        pagina.transform.SetAsLastSibling();
+        volver.SetAsLastSibling();
+        TMP_Text textoPagina = pagina.GetComponentInChildren<TMP_Text>(true);
+        textoPagina.text = "Siguiente";
+        CambiarClic(pagina, manager.CambiarPaginaComoSeJuega);
+
+        SerializedProperty paginas = so.FindProperty("paginasComoSeJuega");
+        paginas.arraySize = 2;
+        paginas.GetArrayElementAtIndex(0).objectReferenceValue = grid1.gameObject;
+        paginas.GetArrayElementAtIndex(1).objectReferenceValue = grid2.gameObject;
+        so.FindProperty("textoBotonPagina").objectReferenceValue = textoPagina;
+    }
+
+    private static void ActualizarLogos(SerializedObject so)
+    {
+        Transform principal = ((GameObject)so.FindProperty("mainMenuPanel").objectReferenceValue).transform;
+        Transform titulo = principal.Find("TitleText");
+        Transform canvas = principal.parent;
+
+        // a la izquierda del título, como hijo para que se mueva con él
+        PonerLogo(RUTA_LOGO_BREWSTACK, "LogoBrewStack", titulo, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-24f, 0f), 220f);
+
+        // abajo a la derecha, justo después del fondo para que los paneles queden encima
+        GameObject eslabon = PonerLogo(RUTA_LOGO_ESLABON, "LogoEslabon", canvas, new Vector2(1f, 0f), new Vector2(1f, 0f), new Vector2(-32f, 32f), 160f);
+        Transform fondo = canvas.Find("Background");
+        if (eslabon != null && fondo != null) eslabon.transform.SetSiblingIndex(fondo.GetSiblingIndex() + 1);
+    }
+
+    // otro botón a lo alto ya no cabe en el menú, por eso Opciones va junto a Salir en una fila
+    private static void ActualizarOpciones(SerializedObject so, MenuManager manager)
+    {
+        Transform principal = ((GameObject)so.FindProperty("mainMenuPanel").objectReferenceValue).transform;
+        Transform historial = ((GameObject)so.FindProperty("historialPanel").objectReferenceValue).transform;
+        Transform canvas = principal.parent;
+
+        Transform fila = principal.Find("FilaInferior");
+        if (fila == null)
+        {
+            GameObject obj = new GameObject("FilaInferior", typeof(RectTransform));
+            obj.layer = LayerMask.NameToLayer("UI");
+            obj.transform.SetParent(principal, false);
+            HorizontalLayoutGroup layout = obj.AddComponent<HorizontalLayoutGroup>();
+            layout.spacing = 12f;
+            layout.childControlWidth = true;
+            layout.childControlHeight = true;
+            layout.childForceExpandWidth = true;
+            layout.childForceExpandHeight = true;
+            obj.AddComponent<LayoutElement>().preferredHeight = 64f;
+            fila = obj.transform;
+        }
+        fila.SetAsLastSibling();
+
+        Transform salir = principal.Find("SalirButton");
+        if (salir != null) salir.SetParent(fila, false);
+        else salir = fila.Find("SalirButton");
+
+        Button opciones = BuscarODuplicar(fila, "OpcionesButton", principal.Find("HistorialButton"));
+        opciones.GetComponentInChildren<TMP_Text>(true).text = "Opciones";
+        CambiarClic(opciones, manager.MostrarOpciones);
+        opciones.transform.SetAsFirstSibling();
+        if (salir != null) salir.SetAsLastSibling();
+
+        // copia del panel de historial para que se vea igual, sin la lista
+        Transform panel = canvas.Find("OpcionesPanel");
+        if (panel == null)
+        {
+            panel = Object.Instantiate(historial.gameObject, canvas).transform;
+            panel.name = "OpcionesPanel";
+            foreach (string sobra in new[] { "HistorialContent", "EncabezadoHistorial", "HistorialScroll" })
+            {
+                Transform hijo = panel.Find(sobra);
+                if (hijo != null) Object.DestroyImmediate(hijo.gameObject);
+            }
+        }
+        panel.SetSiblingIndex(historial.GetSiblingIndex() + 1);
+        panel.gameObject.SetActive(false);
+        panel.Find("TitleText").GetComponent<TMP_Text>().text = "OPCIONES";
+
+        Sprite blanco = CrearSpriteBloque();
+        TMP_FontAsset fuente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(RUTA_FUENTE);
+        Slider musica = FilaSlider(panel, "FilaMusica", "Música", blanco, fuente);
+        Slider efectos = FilaSlider(panel, "FilaEfectos", "Efectos", blanco, fuente);
+
+        Transform volver = panel.Find("VolverButton");
+        Button silencio = BuscarODuplicar(panel, "SilencioButton", volver);
+        // el clic lo pone PanelOpciones al iniciar, la copia traía el de Volver
+        CambiarClic(silencio, null);
+        CambiarClic(volver.GetComponent<Button>(), manager.MostrarMainMenu);
+
+        musica.transform.parent.SetAsLastSibling();
+        efectos.transform.parent.SetAsLastSibling();
+        silencio.transform.SetAsLastSibling();
+        volver.SetAsLastSibling();
+
+        PanelOpciones componente = panel.GetComponent<PanelOpciones>();
+        if (componente == null) componente = panel.gameObject.AddComponent<PanelOpciones>();
+        ConectarOpciones(componente, musica, efectos, silencio);
+        so.FindProperty("opcionesPanel").objectReferenceValue = panel.gameObject;
+    }
+
+    // el encabezado va fuera de HistorialContent porque PoblarHistorial borra todo lo que hay adentro
+    private static void ActualizarHistorial(SerializedObject so)
+    {
+        Transform panel = ((GameObject)so.FindProperty("historialPanel").objectReferenceValue).transform;
+        RectTransform contenido = (RectTransform)so.FindProperty("historialContent").objectReferenceValue;
+        HistorialRow prefabFila = (HistorialRow)so.FindProperty("historialRowPrefab").objectReferenceValue;
+        TMP_FontAsset fuente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(RUTA_FUENTE);
+        ArreglarFilaHistorial(fuente);
+
+        // alto fijo con scroll, así el panel no crece aunque haya muchas partidas
+        Transform scroll = panel.Find("HistorialScroll");
+        if (scroll == null)
+        {
+            GameObject obj = new GameObject("HistorialScroll", typeof(RectTransform));
+            obj.layer = LayerMask.NameToLayer("UI");
+            obj.transform.SetParent(panel, false);
+            obj.AddComponent<LayoutElement>();
+            obj.AddComponent<ScrollRect>();
+
+            GameObject vista = CrearImagen("Viewport", obj.transform, new Color(1f, 1f, 1f, 0f), null);
+            vista.AddComponent<RectMask2D>();
+            CrearBarraVertical(obj.transform, CrearSpriteBloque());
+            scroll = obj.transform;
+        }
+        scroll.GetComponent<LayoutElement>().preferredHeight = ALTO_SCROLL_HISTORIAL;
+
+        // el viewport deja libre el espacio de la barra aunque no se vea, para que las columnas no se muevan
+        RectTransform viewport = (RectTransform)scroll.Find("Viewport");
+        Estirar(viewport.gameObject, Vector2.zero, Vector2.one);
+        viewport.offsetMax = new Vector2(-(ANCHO_BARRA + 6f), 0f);
+
+        contenido.SetParent(viewport, false);
+        contenido.anchorMin = new Vector2(0f, 1f);
+        contenido.anchorMax = new Vector2(1f, 1f);
+        contenido.pivot = new Vector2(0.5f, 1f);
+        contenido.anchoredPosition = Vector2.zero;
+        contenido.sizeDelta = new Vector2(0f, contenido.sizeDelta.y);
+        VerticalLayoutGroup layout = contenido.GetComponent<VerticalLayoutGroup>();
+        layout.padding = new RectOffset(MARGEN_HISTORIAL, MARGEN_HISTORIAL, 4, 4);
+        layout.spacing = 6f;
+        layout.childAlignment = TextAnchor.UpperCenter;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = true;
+        layout.childForceExpandHeight = false;
+
+        ScrollRect scrollRect = scroll.GetComponent<ScrollRect>();
+        scrollRect.content = contenido;
+        scrollRect.viewport = viewport;
+        scrollRect.horizontal = false;
+        scrollRect.vertical = true;
+        scrollRect.movementType = ScrollRect.MovementType.Clamped;
+        scrollRect.scrollSensitivity = 30f;
+        scrollRect.verticalScrollbar = scroll.GetComponentInChildren<Scrollbar>(true);
+        scrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.AutoHide;
+
+        // la misma fila del prefab, así las columnas quedan alineadas con las partidas
+        Transform encabezado = panel.Find("EncabezadoHistorial");
+        if (encabezado == null)
+        {
+            encabezado = ((GameObject)PrefabUtility.InstantiatePrefab(prefabFila.gameObject, panel)).transform;
+            encabezado.name = "EncabezadoHistorial";
+        }
+        string[] titulos = { "Fecha", "Modo", "Altura", "Puntos" };
+        for (int i = 0; i < COLUMNAS_HISTORIAL.Length; i++)
+        {
+            TMP_Text texto = encabezado.Find(COLUMNAS_HISTORIAL[i]).GetComponent<TMP_Text>();
+            texto.text = titulos[i];
+            texto.color = colorCeleste;
+        }
+        encabezado.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+        // el encabezado mide lo mismo que el panel, las filas son más angostas por el margen y la barra
+        encabezado.GetComponent<HorizontalLayoutGroup>().padding =
+            new RectOffset(MARGEN_HISTORIAL + RELLENO_FILA, MARGEN_HISTORIAL + RELLENO_FILA + (int)ANCHO_BARRA + 6, 0, 0);
+
+        Transform titulo = panel.Find("TitleText");
+        titulo.SetAsFirstSibling();
+        encabezado.SetSiblingIndex(1);
+        scroll.SetSiblingIndex(2);
+        panel.Find("VolverButton").SetAsLastSibling();
+    }
+
+    // las filas no controlaban el tamaño de sus textos (200x50 cada uno), por eso se salían del panel y quedaban arriba
+    private static void ArreglarFilaHistorial(TMP_FontAsset fuente)
+    {
+        GameObject raiz = PrefabUtility.LoadPrefabContents(RUTA_PREFAB_HISTORIAL);
+
+        RectTransform rect = raiz.GetComponent<RectTransform>();
+        rect.sizeDelta = new Vector2(rect.sizeDelta.x, ALTO_FILA_HISTORIAL);
+        LayoutElement elemento = raiz.GetComponent<LayoutElement>();
+        if (elemento == null) elemento = raiz.AddComponent<LayoutElement>();
+        elemento.minHeight = ALTO_FILA_HISTORIAL;
+        elemento.preferredHeight = ALTO_FILA_HISTORIAL;
+
+        HorizontalLayoutGroup layout = raiz.GetComponent<HorizontalLayoutGroup>();
+        layout.padding = new RectOffset(RELLENO_FILA, RELLENO_FILA, 0, 0);
+        layout.spacing = 12f;
+        layout.childAlignment = TextAnchor.MiddleCenter;
+        layout.childControlWidth = true;
+        layout.childControlHeight = true;
+        layout.childForceExpandWidth = false;
+        layout.childForceExpandHeight = true;
+
+        // con ancho preferido en cero, cada columna toma su parte del ancho según el peso
+        float[] pesos = { 1.2f, 1.5f, 1f, 1f };
+        for (int i = 0; i < COLUMNAS_HISTORIAL.Length; i++)
+        {
+            Transform columna = raiz.transform.Find(COLUMNAS_HISTORIAL[i]);
+            LayoutElement e = columna.GetComponent<LayoutElement>();
+            e.minWidth = 0f;
+            e.preferredWidth = 0f;
+            e.flexibleWidth = pesos[i];
+
+            TMP_Text texto = columna.GetComponent<TMP_Text>();
+            if (fuente != null) texto.font = fuente;
+            texto.fontSize = 22f;
+            texto.enableAutoSizing = true;
+            texto.fontSizeMin = 14f;
+            texto.fontSizeMax = 22f;
+            texto.alignment = TextAlignmentOptions.Center;
+            texto.textWrappingMode = TextWrappingModes.NoWrap;
+            texto.overflowMode = TextOverflowModes.Ellipsis;
+        }
+
+        PrefabUtility.SaveAsPrefabAsset(raiz, RUTA_PREFAB_HISTORIAL);
+        PrefabUtility.UnloadPrefabContents(raiz);
+    }
+
+    private static Scrollbar CrearBarraVertical(Transform padre, Sprite blanco)
+    {
+        GameObject obj = CrearImagen("BarraVertical", padre, new Color(1f, 1f, 1f, 0.08f), blanco);
+        RectTransform rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(1f, 0f);
+        rect.anchorMax = new Vector2(1f, 1f);
+        rect.pivot = new Vector2(1f, 0.5f);
+        rect.anchoredPosition = Vector2.zero;
+        rect.sizeDelta = new Vector2(ANCHO_BARRA, 0f);
+
+        GameObject area = new GameObject("Area", typeof(RectTransform));
+        area.transform.SetParent(obj.transform, false);
+        Estirar(area, Vector2.zero, Vector2.one);
+        GameObject manija = CrearImagen("Manija", area.transform, new Color(colorCeleste.r, colorCeleste.g, colorCeleste.b, 0.6f), blanco);
+        Estirar(manija, Vector2.zero, Vector2.one);
+
+        Scrollbar barra = obj.AddComponent<Scrollbar>();
+        barra.handleRect = manija.GetComponent<RectTransform>();
+        barra.targetGraphic = manija.GetComponent<Image>();
+        barra.direction = Scrollbar.Direction.BottomToTop;
+        return barra;
+    }
+
+    private static Slider FilaSlider(Transform panel, string nombre, string etiqueta, Sprite blanco, TMP_FontAsset fuente)
+    {
+        Transform fila = panel.Find(nombre);
+        if (fila == null)
+        {
+            GameObject obj = new GameObject(nombre, typeof(RectTransform));
+            obj.layer = LayerMask.NameToLayer("UI");
+            obj.transform.SetParent(panel, false);
+            obj.AddComponent<LayoutElement>().preferredHeight = 60f;
+
+            TMP_Text texto = CrearTexto("Etiqueta", obj.transform, etiqueta, 24f, colorTexto, fuente);
+            Estirar(texto.gameObject, new Vector2(0.06f, 0f), new Vector2(0.36f, 1f));
+            texto.alignment = TextAlignmentOptions.Left;
+
+            Slider nuevo = CrearSlider("Slider", obj.transform, blanco);
+            Estirar(nuevo.gameObject, new Vector2(0.4f, 0.15f), new Vector2(0.94f, 0.85f));
+            fila = obj.transform;
+        }
+        return fila.GetComponentInChildren<Slider>(true);
+    }
+
+    // hoy la música del menú es un AudioSource con Play On Awake, ahora la arranca MusicaMenu con fade
+    private static void ActualizarMusicaMenu(SerializedObject so, MenuManager manager)
+    {
+        AudioSource efectos = (AudioSource)so.FindProperty("sfxSource").objectReferenceValue;
+        AudioSource fuente = null;
+        foreach (AudioSource a in manager.GetComponents<AudioSource>())
+        {
+            if (a != efectos) fuente = a;
+        }
+        if (fuente == null) fuente = manager.gameObject.AddComponent<AudioSource>();
+
+        fuente.playOnAwake = false;
+        fuente.loop = true;
+        AudioClip tema = BuscarMusica("musica_menu", "se queda la música ambiental de antes");
+        if (tema != null) fuente.clip = tema;
+        else if (fuente.clip == null) fuente.clip = AssetDatabase.LoadAssetAtPath<AudioClip>(RUTA_MUSICA);
+
+        MusicaMenu musica = manager.GetComponent<MusicaMenu>();
+        if (musica == null) musica = manager.gameObject.AddComponent<MusicaMenu>();
+        SerializedObject soMusica = new SerializedObject(musica);
+        soMusica.FindProperty("fuente").objectReferenceValue = fuente;
+        soMusica.ApplyModifiedPropertiesWithoutUndo();
+        so.FindProperty("musicaMenu").objectReferenceValue = musica;
+    }
+
+    private static GameObject PonerLogo(string ruta, string nombre, Transform padre, Vector2 ancla, Vector2 pivote, Vector2 posicion, float tamano)
+    {
+        Transform existente = padre.Find(nombre);
+        if (!File.Exists(ruta))
+        {
+            Debug.LogWarning($"BrewStack: no existe {ruta}, el menú se generó sin ese logo");
+            if (existente != null) Object.DestroyImmediate(existente.gameObject);
+            return null;
+        }
+
+        ConfigurarSprite(ruta, 100, Vector4.zero);
+        GameObject obj = existente != null ? existente.gameObject : CrearImagen(nombre, padre, Color.white, null);
+        Image img = obj.GetComponent<Image>();
+        img.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(ruta);
+        img.preserveAspect = true;
+        img.raycastTarget = false;
+
+        RectTransform rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = ancla;
+        rect.anchorMax = ancla;
+        rect.pivot = pivote;
+        rect.anchoredPosition = posicion;
+        rect.sizeDelta = new Vector2(tamano, tamano);
+        return obj;
+    }
+
+    // la música larga pesa mucho en el build Web, con Vorbis a media calidad se oye igual y pesa mucho menos
+    private static void ConfigurarAudios()
+    {
+        foreach (string guid in AssetDatabase.FindAssets("t:AudioClip", new[] { CARPETA_AUDIO }))
+        {
+            string ruta = AssetDatabase.GUIDToAssetPath(guid);
+            AudioImporter importer = (AudioImporter)AssetImporter.GetAtPath(ruta);
+            AudioImporterSampleSettings ajustes = importer.defaultSampleSettings;
+            bool listo = ajustes.compressionFormat == AudioCompressionFormat.Vorbis && Mathf.Approximately(ajustes.quality, CALIDAD_AUDIO);
+            if (listo && !importer.ContainsSampleSettingsOverride("WebGL")) continue;
+
+            ajustes.compressionFormat = AudioCompressionFormat.Vorbis;
+            ajustes.quality = CALIDAD_AUDIO;
+            importer.defaultSampleSettings = ajustes;
+            // si alguien puso otro formato solo para Web, se quita para que use el de arriba
+            importer.ClearSampleSettingOverride("WebGL");
+            importer.SaveAndReimport();
+            Debug.Log("BrewStack: " + ruta + " quedó en Vorbis al " + Mathf.RoundToInt(CALIDAD_AUDIO * 100f) + "%");
+        }
+    }
+
+    // lee el valor que trae el script por defecto, el builder no cambia estos campos
+    private static float LeerCampo<T>(string campo) where T : Component
+    {
+        GameObject temp = new GameObject("Temp");
+        temp.hideFlags = HideFlags.HideAndDontSave;
+        SerializedProperty prop = new SerializedObject(temp.AddComponent<T>()).FindProperty(campo);
+        float valor = prop.propertyType == SerializedPropertyType.Integer ? prop.intValue : prop.floatValue;
+        Object.DestroyImmediate(temp);
+        return valor;
+    }
+
+    // copia un botón que ya existe para que se vea igual que los del menú
+    private static Button BuscarODuplicar(Transform padre, string nombre, Transform original)
+    {
+        Transform existente = padre.Find(nombre);
+        if (existente == null)
+        {
+            existente = Object.Instantiate(original.gameObject, padre).transform;
+            existente.name = nombre;
+        }
+        return existente.GetComponent<Button>();
+    }
+
+    // con accion en null solo quita lo que tenía
+    private static void CambiarClic(Button boton, UnityEngine.Events.UnityAction accion)
+    {
+        while (boton.onClick.GetPersistentEventCount() > 0)
+        {
+            UnityEventTools.RemovePersistentListener(boton.onClick, 0);
+        }
+        if (accion != null) UnityEventTools.AddPersistentListener(boton.onClick, accion);
     }
 
     // cuadro blanco de 1x1 unidad, el color se lo pone cada bloque
@@ -471,7 +1007,7 @@ public static class BrewStackGameBuilder
         return torre;
     }
 
-    private static void CrearJuegoManager(Torre torre, TriviaUI trivia, HUDJuego hud, ResultadoFinalUI resultado, TextosFlotantes textos)
+    private static JuegoManager CrearJuegoManager(Torre torre, TriviaUI trivia, HUDJuego hud, ResultadoFinalUI resultado, TextosFlotantes textos)
     {
         GameObject obj = new GameObject("JuegoManager");
         JuegoManager juego = obj.AddComponent<JuegoManager>();
@@ -483,6 +1019,7 @@ public static class BrewStackGameBuilder
         so.FindProperty("resultado").objectReferenceValue = resultado;
         so.FindProperty("textosFlotantes").objectReferenceValue = textos;
         so.ApplyModifiedPropertiesWithoutUndo();
+        return juego;
     }
 
     private static TextosFlotantes CrearTextosFlotantes()
@@ -496,14 +1033,85 @@ public static class BrewStackGameBuilder
         return textos;
     }
 
-    private static void CrearMusica(ResultadoFinalUI resultado)
+    private static MusicaJuego CrearMusica(ResultadoFinalUI resultado, Torre torre, JuegoManager juego, SonidosJuego sonidos)
     {
         GameObject obj = new GameObject("Musica");
         MusicaJuego musica = obj.AddComponent<MusicaJuego>();
 
+        AudioClip temaJuego = BuscarMusica("musica_juego", "se usa la música ambiental de antes");
+        if (temaJuego == null) temaJuego = AssetDatabase.LoadAssetAtPath<AudioClip>(RUTA_MUSICA);
+
         SerializedObject so = new SerializedObject(musica);
         so.FindProperty("resultado").objectReferenceValue = resultado;
-        so.FindProperty("musica").objectReferenceValue = AssetDatabase.LoadAssetAtPath<AudioClip>(RUTA_MUSICA);
+        so.FindProperty("musica").objectReferenceValue = temaJuego;
+        so.FindProperty("musicaTension").objectReferenceValue = BuscarMusica("musica_tension", "la música no cambia con la tensión");
+        so.FindProperty("musicaResultado").objectReferenceValue = BuscarMusica("musica_resultado", "en el resultado sigue la música del juego");
+        so.FindProperty("torre").objectReferenceValue = torre;
+        so.FindProperty("juego").objectReferenceValue = juego;
+        so.FindProperty("sonidos").objectReferenceValue = sonidos;
+        so.ApplyModifiedPropertiesWithoutUndo();
+
+        SerializedObject soResultado = new SerializedObject(resultado);
+        soResultado.FindProperty("musica").objectReferenceValue = musica;
+        soResultado.ApplyModifiedPropertiesWithoutUndo();
+        return musica;
+    }
+
+    // la extensión puede ser cualquiera (mp3, ogg, wav), se busca por nombre dentro de BS_Audio
+    private static AudioClip BuscarMusica(string nombre, string queHace)
+    {
+        foreach (string guid in AssetDatabase.FindAssets(nombre + " t:AudioClip", new[] { CARPETA_AUDIO }))
+        {
+            string ruta = AssetDatabase.GUIDToAssetPath(guid);
+            if (Path.GetFileNameWithoutExtension(ruta) == nombre) return AssetDatabase.LoadAssetAtPath<AudioClip>(ruta);
+        }
+        Debug.LogWarning($"BrewStack: falta {nombre} en {CARPETA_AUDIO}, {queHace}");
+        return null;
+    }
+
+    // slider de 0 a 1 con fondo, relleno y manija, el tamaño lo pone quien lo llama
+    private static Slider CrearSlider(string nombre, Transform padre, Sprite spriteBlanco)
+    {
+        GameObject obj = new GameObject(nombre, typeof(RectTransform));
+        obj.layer = LayerMask.NameToLayer("UI");
+        obj.transform.SetParent(padre, false);
+
+        GameObject fondo = CrearImagen("Fondo", obj.transform, new Color(1f, 1f, 1f, 0.12f), spriteBlanco);
+        Estirar(fondo, new Vector2(0f, 0.35f), new Vector2(1f, 0.65f));
+
+        GameObject areaRelleno = new GameObject("AreaRelleno", typeof(RectTransform));
+        areaRelleno.transform.SetParent(obj.transform, false);
+        Estirar(areaRelleno, new Vector2(0f, 0.35f), new Vector2(1f, 0.65f));
+        GameObject relleno = CrearImagen("Relleno", areaRelleno.transform, colorCeleste, spriteBlanco);
+        Estirar(relleno, Vector2.zero, Vector2.one);
+        relleno.GetComponent<Image>().raycastTarget = false;
+
+        GameObject areaManija = new GameObject("AreaManija", typeof(RectTransform));
+        areaManija.transform.SetParent(obj.transform, false);
+        Estirar(areaManija, Vector2.zero, Vector2.one);
+        GameObject manija = CrearImagen("Manija", areaManija.transform, colorTexto, spriteBlanco);
+        RectTransform rectManija = manija.GetComponent<RectTransform>();
+        rectManija.anchorMin = Vector2.zero;
+        rectManija.anchorMax = new Vector2(0f, 1f);
+        rectManija.sizeDelta = new Vector2(20f, 0f);
+
+        Slider slider = obj.AddComponent<Slider>();
+        slider.fillRect = relleno.GetComponent<RectTransform>();
+        slider.handleRect = rectManija;
+        slider.targetGraphic = manija.GetComponent<Image>();
+        slider.minValue = 0f;
+        slider.maxValue = 1f;
+        slider.value = 0.8f;
+        return slider;
+    }
+
+    private static void ConectarOpciones(PanelOpciones opciones, Slider musica, Slider efectos, Button silencio)
+    {
+        SerializedObject so = new SerializedObject(opciones);
+        so.FindProperty("sliderMusica").objectReferenceValue = musica;
+        so.FindProperty("sliderEfectos").objectReferenceValue = efectos;
+        so.FindProperty("botonSilencio").objectReferenceValue = silencio;
+        so.FindProperty("textoSilencio").objectReferenceValue = silencio.GetComponentInChildren<TMP_Text>(true);
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 
@@ -518,7 +1126,7 @@ public static class BrewStackGameBuilder
     }
 
     // los clips se dejan vacíos para que se generen por código, se pueden arrastrar después
-    private static void CrearSonidos(Torre torre, TriviaUI trivia, ResultadoFinalUI resultado)
+    private static SonidosJuego CrearSonidos(Torre torre, TriviaUI trivia, ResultadoFinalUI resultado, JuegoManager juego)
     {
         GameObject obj = new GameObject("Sonidos");
         SonidosJuego sonidos = obj.AddComponent<SonidosJuego>();
@@ -527,7 +1135,9 @@ public static class BrewStackGameBuilder
         so.FindProperty("torre").objectReferenceValue = torre;
         so.FindProperty("trivia").objectReferenceValue = trivia;
         so.FindProperty("resultado").objectReferenceValue = resultado;
+        so.FindProperty("juego").objectReferenceValue = juego;
         so.ApplyModifiedPropertiesWithoutUndo();
+        return sonidos;
     }
 
     private static HUDJuego CrearHUD(Transform canvas, Torre torre, Sprite spriteBlanco)
@@ -558,6 +1168,10 @@ public static class BrewStackGameBuilder
         TMP_Text etiqueta = CrearTexto("TextoEstabilidad", panelEstabilidad.transform, "Estabilidad", 22f, colorTexto, fuente);
         Estirar(etiqueta.gameObject, new Vector2(0.05f, 0.5f), new Vector2(0.95f, 0.95f));
 
+        GameObject panelNivel = CrearPanelHUD("PanelNivel", hudObj.transform, new Vector2(0.02f, 0.81f), new Vector2(0.16f, 0.885f), borde);
+        TMP_Text nivel = CrearTexto("TextoNivel", panelNivel.transform, "Nivel 1", 30f, colorTexto, fuente);
+        Estirar(nivel.gameObject, Vector2.zero, Vector2.one);
+
         GameObject fondoBarra = CrearImagen("BarraEstabilidadFondo", panelEstabilidad.transform, new Color(1f, 1f, 1f, 0.1f), spriteBlanco);
         Estirar(fondoBarra, new Vector2(0.06f, 0.18f), new Vector2(0.94f, 0.4f));
         fondoBarra.GetComponent<Image>().raycastTarget = false;
@@ -573,8 +1187,22 @@ public static class BrewStackGameBuilder
         so.FindProperty("textoTiempo").objectReferenceValue = tiempo;
         so.FindProperty("barraEstabilidad").objectReferenceValue = relleno.GetComponent<RectTransform>();
         so.FindProperty("imagenEstabilidad").objectReferenceValue = relleno.GetComponent<Image>();
+        so.FindProperty("textoNivel").objectReferenceValue = nivel;
         so.ApplyModifiedPropertiesWithoutUndo();
         return hud;
+    }
+
+    // va aparte y después de la trivia para que se vea encima de la pregunta, en la franja de abajo
+    private static void CrearAvisoNivel(Transform canvas, HUDJuego hud)
+    {
+        TMP_FontAsset fuente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(RUTA_FUENTE);
+        TMP_Text aviso = CrearTexto("TextoAvisoNivel", canvas, "¡Nivel 2!", 44f, colorBase, fuente);
+        Estirar(aviso.gameObject, new Vector2(0.1f, 0.015f), new Vector2(0.9f, 0.11f));
+        aviso.gameObject.SetActive(false);
+
+        SerializedObject so = new SerializedObject(hud);
+        so.FindProperty("textoAvisoNivel").objectReferenceValue = aviso;
+        so.ApplyModifiedPropertiesWithoutUndo();
     }
 
     // fondo azul marino semitransparente con el borde celeste del menú encima
@@ -640,11 +1268,95 @@ public static class BrewStackGameBuilder
         return resultado;
     }
 
+    // se crea al final del canvas: el botón queda encima de la trivia y el panel encima de todo
+    private static PausaJuego CrearPausa(Transform canvas, ResultadoFinalUI resultado, MusicaJuego musica, Sprite spriteBlanco)
+    {
+        TMP_FontAsset fuente = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(RUTA_FUENTE);
+        Sprite borde = CargarPrimerSprite(RUTA_BORDE_BOTON);
+
+        Button pausar = CrearBoton("BotonPausa", canvas, "Pausa", borde, fuente);
+        Estirar(pausar.gameObject, new Vector2(0.86f, 0.81f), new Vector2(0.98f, 0.885f));
+        // como los paneles del HUD: fondo oscuro y el borde encima, para que se lea sobre los bloques
+        Image imagenPausa = pausar.GetComponent<Image>();
+        imagenPausa.sprite = null;
+        imagenPausa.type = Image.Type.Simple;
+        imagenPausa.color = colorPanel;
+        GameObject marco = CrearImagen("Borde", pausar.transform, colorBordeCeleste, borde);
+        Estirar(marco, Vector2.zero, Vector2.one);
+        marco.GetComponent<Image>().raycastTarget = false;
+        marco.transform.SetAsFirstSibling();
+
+        GameObject panel = CrearImagen("PanelPausa", canvas, colorPanel, null);
+        Estirar(panel, Vector2.zero, Vector2.one);
+
+        GameObject caja = CrearImagen("Caja", panel.transform, colorBordeCeleste, borde);
+        Estirar(caja, new Vector2(0.28f, 0.12f), new Vector2(0.72f, 0.88f));
+
+        TMP_Text titulo = CrearTexto("Titulo", caja.transform, "Pausa", 64f, colorCeleste, fuente);
+        Estirar(titulo.gameObject, new Vector2(0.05f, 0.8f), new Vector2(0.95f, 0.95f));
+
+        GameObject botones = new GameObject("Botones", typeof(RectTransform));
+        botones.transform.SetParent(caja.transform, false);
+        Estirar(botones, new Vector2(0.1f, 0.08f), new Vector2(0.9f, 0.75f));
+
+        Button continuar = CrearBoton("BotonContinuar", botones.transform, "Continuar", borde, fuente);
+        Estirar(continuar.gameObject, new Vector2(0f, 0.78f), new Vector2(1f, 1f));
+        Button opciones = CrearBoton("BotonOpciones", botones.transform, "Opciones", borde, fuente);
+        Estirar(opciones.gameObject, new Vector2(0f, 0.52f), new Vector2(1f, 0.74f));
+        Button menu = CrearBoton("BotonMenu", botones.transform, "Volver al menú de Brew Stack", borde, fuente);
+        Estirar(menu.gameObject, new Vector2(0f, 0.26f), new Vector2(1f, 0.48f));
+        Button minijuegos = CrearBoton("BotonMinijuegos", botones.transform, "Salir a minijuegos", borde, fuente);
+        Estirar(minijuegos.gameObject, new Vector2(0f, 0f), new Vector2(1f, 0.22f));
+
+        // los mismos controles que el panel de opciones del menú
+        GameObject panelOpciones = new GameObject("Opciones", typeof(RectTransform));
+        panelOpciones.transform.SetParent(caja.transform, false);
+        Estirar(panelOpciones, new Vector2(0.1f, 0.08f), new Vector2(0.9f, 0.75f));
+
+        TMP_Text textoMusica = CrearTexto("TextoMusica", panelOpciones.transform, "Música", 30f, colorTexto, fuente);
+        Estirar(textoMusica.gameObject, new Vector2(0f, 0.78f), new Vector2(0.35f, 1f));
+        textoMusica.alignment = TextAlignmentOptions.Left;
+        Slider sliderMusica = CrearSlider("SliderMusica", panelOpciones.transform, spriteBlanco);
+        Estirar(sliderMusica.gameObject, new Vector2(0.4f, 0.8f), new Vector2(1f, 0.98f));
+
+        TMP_Text textoEfectos = CrearTexto("TextoEfectos", panelOpciones.transform, "Efectos", 30f, colorTexto, fuente);
+        Estirar(textoEfectos.gameObject, new Vector2(0f, 0.52f), new Vector2(0.35f, 0.74f));
+        textoEfectos.alignment = TextAlignmentOptions.Left;
+        Slider sliderEfectos = CrearSlider("SliderEfectos", panelOpciones.transform, spriteBlanco);
+        Estirar(sliderEfectos.gameObject, new Vector2(0.4f, 0.54f), new Vector2(1f, 0.72f));
+
+        Button silencio = CrearBoton("BotonSilencio", panelOpciones.transform, "Silenciar", borde, fuente);
+        Estirar(silencio.gameObject, new Vector2(0f, 0.26f), new Vector2(1f, 0.48f));
+        Button volverOpciones = CrearBoton("BotonVolverOpciones", panelOpciones.transform, "Volver", borde, fuente);
+        Estirar(volverOpciones.gameObject, new Vector2(0f, 0f), new Vector2(1f, 0.22f));
+
+        ConectarOpciones(panelOpciones.AddComponent<PanelOpciones>(), sliderMusica, sliderEfectos, silencio);
+        panelOpciones.SetActive(false);
+
+        GameObject obj = new GameObject("Pausa");
+        PausaJuego pausa = obj.AddComponent<PausaJuego>();
+        SerializedObject so = new SerializedObject(pausa);
+        so.FindProperty("panel").objectReferenceValue = panel;
+        so.FindProperty("panelBotones").objectReferenceValue = botones;
+        so.FindProperty("panelOpciones").objectReferenceValue = panelOpciones;
+        so.FindProperty("botonPausa").objectReferenceValue = pausar;
+        so.FindProperty("botonContinuar").objectReferenceValue = continuar;
+        so.FindProperty("botonOpciones").objectReferenceValue = opciones;
+        so.FindProperty("botonVolverOpciones").objectReferenceValue = volverOpciones;
+        so.FindProperty("botonMenu").objectReferenceValue = menu;
+        so.FindProperty("botonMinijuegos").objectReferenceValue = minijuegos;
+        so.FindProperty("resultado").objectReferenceValue = resultado;
+        so.FindProperty("musica").objectReferenceValue = musica;
+        so.ApplyModifiedPropertiesWithoutUndo();
+        return pausa;
+    }
+
     private static Button CrearBoton(string nombre, Transform padre, string texto, Sprite borde, TMP_FontAsset fuente)
     {
         GameObject obj = CrearImagen(nombre, padre, colorBordeCeleste, borde);
         Button boton = obj.AddComponent<Button>();
         boton.targetGraphic = obj.GetComponent<Image>();
+        obj.AddComponent<EscalaAlPasar>();
 
         TMP_Text tmp = CrearTexto("Texto", obj.transform, texto, 32f, colorTexto, fuente);
         Estirar(tmp.gameObject, Vector2.zero, Vector2.one);
@@ -708,6 +1420,7 @@ public static class BrewStackGameBuilder
             GameObject objBoton = CrearImagen("Opcion" + (i + 1), listaBotones.transform, colorBordeCeleste, borde);
             botones[i] = objBoton.AddComponent<Button>();
             botones[i].targetGraphic = objBoton.GetComponent<Image>();
+            objBoton.AddComponent<EscalaAlPasar>();
             textos[i] = CrearTexto("Texto", objBoton.transform, "Opción", 32f, colorTexto, fuente);
             Estirar(textos[i].gameObject, Vector2.zero, Vector2.one);
             textos[i].rectTransform.offsetMin = new Vector2(24f, 0f);
