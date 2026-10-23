@@ -1,0 +1,49 @@
+
+{
+  "preguntas": [
+    {
+      "id": 1,
+      "pregunta": "Ordena los pasos para ingresar a una página web.",
+      "pasos": [
+        {
+          "texto": "Abrir el navegador",
+          "orden": 1
+        },
+        {
+          "texto": "Escribir la dirección web",
+          "orden": 2
+        },
+        {
+          "texto": "Presionar Enter",
+          "orden": 3
+        },
+        {
+          "texto": "Esperar a que cargue la página",
+          "orden": 4
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "pregunta": "Ordena los pasos para iniciar sesión.",
+      "pasos": [
+        {
+          "texto": "Abrir la página de inicio de sesión",
+          "orden": 1
+        },
+        {
+          "texto": "Ingresar el correo electrónico",
+          "orden": 2
+        },
+        {
+          "texto": "Escribir la contraseña",
+          "orden": 3
+        },
+        {
+          "texto": "Presionar Iniciar sesión",
+          "orden": 4
+        }
+      ]
+    }
+  ]
+}

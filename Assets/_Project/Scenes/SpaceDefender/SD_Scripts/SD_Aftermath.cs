@@ -43,6 +43,9 @@ public class SD_Aftermath : MonoBehaviour
 
         estadisticasText.text =
             $"Puntos ganados: {SD_RunResults.Points}\n" +
+            (SD_RunResults.HasCoins
+                ? $"Monedas ganadas: +{SD_RunResults.Coins}\n"
+                : "") +
             $"Oleadas superadas: " +
             $"{SD_RunResults.CompletedWaves}/{SD_RunResults.TotalWaves}\n" +
             $"Vida restante: {SD_RunResults.RemainingHealth:0}";
