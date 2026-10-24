@@ -1,0 +1,12 @@
+Poppins  (c) Indian Type Foundry, Jonny Pinhorn
+Licencia: SIL Open Font License, Version 1.1
+Texto completo: https://openfontlicense.org
+
+La OFL permite usar, estudiar, modificar y redistribuir la tipografia,
+incluida su incrustacion en productos comerciales, siempre que:
+  - no se venda la tipografia por si sola,
+  - se conserve este aviso de copyright y licencia,
+  - las versiones modificadas no usen "Poppins" en su nombre.
+
+Uso en este proyecto: se genera un TMP Font Asset a partir del .ttf
+para los textos de la interfaz de Head Breaker. Uso permitido por la OFL.
