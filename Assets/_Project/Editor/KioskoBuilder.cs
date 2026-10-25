@@ -21,7 +21,7 @@ public static class KioskoBuilder
         new Juego { nombre = "BrewStack", escenas = new[] { Base + "BrewStack/BS_Scenes/BS_Menu.unity", Base + "BrewStack/BS_Scenes/BS_Game.unity" } },
         new Juego { nombre = "AtlasExpress", escenas = new[] { Base + "AtlasExpress/AE_Scenes/AE_Menu.unity", Base + "AtlasExpress/AE_Scenes/AE_Instrucciones.unity", Base + "AtlasExpress/AE_Scenes/AE_Jugar.unity", Base + "AtlasExpress/AE_Scenes/AE_Pantalla_Victoria.unity", Base + "AtlasExpress/AE_Scenes/AE_Pantalla_Derrota.unity" } },
         new Juego { nombre = "SpaceDefender", escenas = new[] { Base + "SpaceDefender/SD_Scenes/SD_MainMenu.unity", Base + "SpaceDefender/SD_Scenes/SD_Instrucciones.unity", Base + "SpaceDefender/SD_Scenes/SD_Gameplay.unity", Base + "SpaceDefender/SD_Scenes/SD_Aftermath.unity" } },
-        new Juego { nombre = "HeadBreaker", escenas = new[] { Base + "Headbreaker/HB_Scenes/HB_MainMenu.unity" } }
+        new Juego { nombre = "HeadBreaker", escenas = new[] { Base + "Headbreaker/HB_Scenes/HB_Game.unity" } }
     };
 
     [MenuItem("Kiosko/Build WebGL/Orbit Payment")]
